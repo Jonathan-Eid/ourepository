@@ -150,6 +150,43 @@ if($request_type == "CREATE_USER"){
         echo json_encode("true");
     }
 
+}else if($request_type == "CREATE_ORGANIZATION"){
+    $name = $_POST['name'];
+    $visible = $_POST['visible'];
+
+    $existingOrg=$entityManager->getRepository('Organization')
+        ->findOneBy(array('name' => $name));
+
+
+
+    if (isset($existingOrg)){
+        error_log(json_encode($existingOrg->getName()));
+        error_log("ORGANIZATION EXISTS");
+        echo error_msg("org_exists","An organization with this name already exists");
+        return;
+    }
+
+    $newOrg = new Organization();
+    $newOrg->setName($name);
+    $newOrg->setVisible($visible);
+
+    try{
+        $entityManager->flush();
+
+        $existingUser=$entityManager->getRepository('Organization')
+            ->findOneBy(array('name' => $name));
+        error_log("ORGANIZATION EXISTS");
+
+        $_SESSION["uid"]= $existingUser->getId();
+        $_SESSION["id"]= session_id();
+        echo error_msg("created_organization",$_SESSION["id"]);
+
+    }
+    catch (Exception $e) {
+        echo 'Caught exception: ',  $e->getMessage(), "\n";
+    }
+
+
 }
 
 
