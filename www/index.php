@@ -1,12 +1,13 @@
 <?php
 
+
 $cwd[__FILE__] = __FILE__;
 if (is_link($cwd[__FILE__])) $cwd[__FILE__] = readlink($cwd[__FILE__]);
 $cwd[__FILE__] = dirname($cwd[__FILE__]);
 
 require_once($cwd[__FILE__] . "/header.php");
 require_once($cwd[__FILE__] . "/navbar.php");
-require_once($cwd[__FILE__] . "/../../Mustache.php/src/Mustache/Autoloader.php");
+require_once($cwd[__FILE__] . "/Mustache.php/src/Mustache/Autoloader.php");
 Mustache_Autoloader::register();
 
 $additional_css = array();
@@ -18,7 +19,7 @@ $additional_js = array();
 //$additional_js[] = "<script type='text/javascript' src='./js/openseadragon-svg-overlay.js'></script>";
 //$additional_js[] = "<script type='text/javascript' src='//d3js.org/d3.v3.min.js' charset='utf-8'></script>";
 $additional_js[] = "<script type='text/javascript' src='./js/spark-md5.js'></script>";
-$additional_js[] = "<script type='text/javascript'>var id_token;</script>"; //define an id_token variable for use by all other scripts
+$additional_js[] = "<script type='text/javascript'>var id_token='user';</script>"; //define an id_token variable for use by all other scripts
 $additional_js[] = "<script type='text/javascript' src='./js/resumable2.js'></script>";
 //$additional_js[] = "<script type='text/javascript' src='./js/mosaics.js'></script>";
 $additional_js[] = "<script type='text/javascript' src='./js/index.js'></script>";
