@@ -11,7 +11,7 @@ class ApiService {
     }
 
 
-    createUser(email,username,given_name,family_name,password,shake){
+    createUser(email,given_name,family_name,password,shake){
         return axios({
             method: 'post',
             url: '/test_bed.php',
@@ -19,7 +19,6 @@ class ApiService {
                 request:"CREATE_USER",
                 email: email,
                 password,
-                username,
                 given_name,
                 family_name,
                 id_token:1,
@@ -62,6 +61,33 @@ class ApiService {
             url: '/test_bed.php',
             params: {
                 request:"LOGOUT_USER"
+            },
+            withCredentials: true,
+            responseType: 'text'
+          });
+    }
+
+    createOrg(name, visible){
+        return axios({
+            method: 'post',
+            url: '/test_bed.php',
+            data: new URLSearchParams({
+                request:"CREATE_ORG",
+                name,
+                visible,
+                id_token:1
+            }),
+            withCredentials: true,
+            responseType: 'text'
+          });
+    }
+
+    getOrgs(){
+        return axios({
+            method: 'get',
+            url: '/test_bed.php',
+            params: {
+                request:"GET_ORGS"
             },
             withCredentials: true,
             responseType: 'text'

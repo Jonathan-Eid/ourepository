@@ -53,7 +53,7 @@ if($request_type == "CREATE_USER"){
     $given_name = $_POST['given_name'];
     $family_name = $_POST['family_name'];
 
-    
+
     $existingUser=$entityManager->getRepository('User')
                                 ->findOneBy(array('email' => $email));
 
@@ -74,7 +74,6 @@ if($request_type == "CREATE_USER"){
     $newUser->setEmail($email);
     $newUser->setShake($shake);
 
-    $newUser->setUserName($username);
     $newUser->setGivenName($given_name);
     $newUser->setFamilyName($family_name);
 
@@ -108,7 +107,6 @@ if($request_type == "CREATE_USER"){
     $email = $_POST['email'];
     error_log(json_encode("email: " . $_POST['email']));
 
-
     $existingUser=$entityManager->getRepository('User')
                                 ->findOneBy(array('email' => $email));
 
@@ -132,7 +130,7 @@ if($request_type == "CREATE_USER"){
         return;
     }
 } else if($request_type == "GET_AUTH"){
-    
+
     error_log(session_id()."SESSION".$_SESSION["id"]);
 
     if($_SESSION["id"] == session_id()){
@@ -143,51 +141,88 @@ if($request_type == "CREATE_USER"){
     }
 
 }else if($request_type == "LOGOUT_USER"){
-    
-    if($_SESSION["id"] == session_id()){
-        session_unset();
-        session_destroy();
-        echo json_encode("true");
+
+    if($_SESSION["id"] != session_id()){
+        echo json_encode("USER NOT AUTHENTICATED");
     }
-
-}else if($request_type == "CREATE_ORGANIZATION"){
-    $name = $_POST['name'];
-    $visible = $_POST['visible'];
-
-    $existingOrg=$entityManager->getRepository('Organization')
-        ->findOneBy(array('name' => $name));
+    session_unset();
+    session_destroy();
+    echo json_encode("true");
 
 
+}else if($request_type == "CREATE_ORG"){
 
-    if (isset($existingOrg)){
-        error_log(json_encode($existingOrg->getName()));
-        error_log("ORGANIZATION EXISTS");
-        echo error_msg("org_exists","An organization with this name already exists");
+    if($_SESSION["id"] != session_id()){
+        echo json_encode("USER NOT AUTHENTICATED");
         return;
     }
 
-    $newOrg = new Organization();
-    $newOrg->setName($name);
-    $newOrg->setVisible($visible);
+    $existingUser=$entityManager->getRepository('User')
+    ->findOneBy(array('id' => $_SESSION['uid']));
+
+    $visible = $_POST['visible'];
+    $org_name = $_POST['name'];
+
+    $newRole = new Role();
+    $newRole->setName("admin");
+    $entityManager->persist($newRole);
+
+    $newRole2= new Role();
+    $newRole2->setName("default");
+    $entityManager->persist($newRole2);
+
+    $newMemberRole = new MemberRole();
+    $newMemberRole->setMember($existingUser);
+    $newMemberRole->setRole($newRole);
+    $entityManager->persist($newMemberRole);
+
+    $newOrgACL = new OrgACL();
+    $newOrgACL->setPermission("all");
+    $newOrgACL->setRole($newRole);
+    $entityManager->persist($newOrgACL);
+
+    $newOrganization = new Organization();
+    $newOrganization->addMemberRole($newMemberRole);
+    $newOrganization->addOrgACL($newOrgACL);
+    $newOrganization->addRole($newRole);
+    $newOrganization->addRole($newRole2);
+    $newOrganization->setName($org_name);
+    $newOrganization->setVisible($visible);
+
+    $newMemberRole->setOrganization($newOrganization);
+    $newRole->setOrganization($newOrganization);
+    $newRole2->setOrganization($newOrganization);
+    $newOrgACL->setOrganization($newOrganization);
+
+    $entityManager->persist($newOrganization);
 
     try{
         $entityManager->flush();
 
-        $existingUser=$entityManager->getRepository('Organization')
-            ->findOneBy(array('name' => $name));
-        error_log("ORGANIZATION EXISTS");
-
-        $_SESSION["uid"]= $existingUser->getId();
-        $_SESSION["id"]= session_id();
-        echo error_msg("created_organization",$_SESSION["id"]);
+        echo error_msg("ORG_CREATED","org_created");
 
     }
     catch (Exception $e) {
         echo 'Caught exception: ',  $e->getMessage(), "\n";
     }
 
+}else if($request_type == "GET_ORGS"){
+    if($_SESSION["id"] != session_id()){
+        echo json_encode("USER NOT AUTHENTICATED");
+        return;
+    }
 
-}
+    $uid = $_SESSION['uid'];
+
+
+    $query = $entityManager->createQuery('SELECT o FROM Organization o JOIN o.memberRoles m WHERE m.member = '.$uid);
+
+    $orgs = $query->getResult();
+
+    error_log($orgs[0]->getName());
+
+    echo json_encode($orgs,JSON_NUMERIC_CHECK);
+} else if($request_type == )
 
 
 function error_msg($code,$message){
