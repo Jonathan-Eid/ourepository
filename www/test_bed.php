@@ -222,7 +222,66 @@ if($request_type == "CREATE_USER"){
     error_log($orgs[0]->getName());
 
     echo json_encode($orgs,JSON_NUMERIC_CHECK);
-} else if($request_type == )
+} else if($request_type == "JOIN_ORGANIZATION"){
+    if($_SESSION["id"] != session_id()){
+      echo json_encode("USER NOT AUTHENTICATED");
+      return;
+    }
+
+    $user = $_POST['user'];
+    $organization = $_POST['organization'];
+    $role = $_POST['role'];
+
+    $existingUser=$entityManager->getRepository('User')
+    ->findOneBy(array('id' => $user));
+    $existingRole=$entityManager->getRepository('Role')
+    ->findOneBy(array('id' => $role ));
+    $existingOrganization=$entityManager->getRepository('Organization')
+    ->findOneBy(array('id' => $organization));
+
+    $newMemberRole = $entityManager->getRepository('RoleGr');
+    $newMemberRole->setMember($existingUser);
+    $newMemberRole->setRole($existingRole);
+    $newMemberRole->setOrganization($existingOrganization);
+    $entityManager->persist($newMemberRole);
+
+    try{
+        $entityManager->flush();
+        echo error_msg("USER_JOINED","user_joined");
+    }
+    catch (Exception $e) {
+        echo 'Caught exception: ',  $e->getMessage(), "\n";
+    }
+}else if($request_type == "CHANGE_ROLE"){
+    if($_SESSION["id"] != session_id()){
+      echo json_encode("USER NOT AUTHENTICATED");
+      return;
+    }
+
+    $user = $_POST['user'];
+    $organization = $_POST['organization'];
+    $role = $_POST['role'];
+
+    $existingUser=$entityManager->getRepository('User')
+    ->findOneBy(array('id' => $user));
+    $existingRole=$entityManager->getRepository('Role')
+    ->findOneBy(array('id' => $role ));
+    $existingOrganization=$entityManager->getRepository('Organization')
+    ->findOneBy(array('id' => $organization));
+
+    $changedMemberRole = $entityManager->getRepository('MemberRole')
+    ->findOneBy(array('member' => $existingUser,'organization' => $existingOrganization );
+    $changedMemberRole->setRole($existingRole);
+    $entityManager->persist($changedMemberRole);
+
+    try{
+        $entityManager->flush();
+        echo error_msg("ROLE_CHANGED","role_changed");
+    }
+    catch (Exception $e) {
+        echo 'Caught exception: ',  $e->getMessage(), "\n";
+    }
+}
 
 
 function error_msg($code,$message){
