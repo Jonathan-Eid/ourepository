@@ -33,17 +33,20 @@ foreach ($_POST as $key => $value) {
 }
 
 // Get $id_token via HTTPS POST.
-if (isset($_POST['id_token'])) {
-    $id_token = $_POST['id_token'];
+if (isset($_POST['request'])) {
     $request_type = $_POST['request'];
 
-} else {
-    error_log(json_encode("GOTTEN HERE"));
+} else if(isset($_GET['request'])){
 
-    $id_token = $_GET['id_token'];
     $request_type = $_GET['request'];
 
+}else{
+
+    return;
 }
+
+
+
 
 if($request_type == "CREATE_USER"){
     //TODO: Check if User is already created
@@ -62,7 +65,7 @@ if($request_type == "CREATE_USER"){
     if (isset($existingUser)){
         error_log(json_encode($existingUser->getEmail()));
         error_log("USER EXISTS");
-        echo error_msg("user_exists","A user with this email already exists");
+        echo rsp_msg("user_exists","A user with this email already exists");
         return;
     }
 
@@ -96,7 +99,7 @@ if($request_type == "CREATE_USER"){
 
         $_SESSION["uid"]= $existingUser->getId();
         $_SESSION["id"]= session_id();
-        echo error_msg("created_user",$_SESSION["id"]);
+        echo rsp_msg("created_user",$_SESSION["id"]);
 
     }
     catch (Exception $e) {
@@ -122,13 +125,17 @@ if($request_type == "CREATE_USER"){
             error_log("USER EXISTS");
             $_SESSION["uid"]= $existingUser->getId();
             $_SESSION["id"]=session_id();
-            echo error_msg("hash_matches",$_SESSION["id"]);
+            echo rsp_msg("hash_matches",$_SESSION["id"]);
             return;
         }
+
     }else{
+
         echo json_encode(session_id());
         return;
+
     }
+    
 } else if($request_type == "GET_AUTH"){
 
     error_log(session_id()."SESSION".$_SESSION["id"]);
@@ -163,29 +170,29 @@ if($request_type == "CREATE_USER"){
     $visible = $_POST['visible'];
     $org_name = $_POST['name'];
 
-    $newRole = new Role();
-    $newRole->setName("admin");
-    $entityManager->persist($newRole);
+    $adminRole = new Role();
+    $adminRole->setName("admin");
+    $entityManager->persist($adminRole);
 
-    $newRole2= new Role();
-    $newRole2->setName("default");
-    $entityManager->persist($newRole2);
+    $defaultRole= new Role();
+    $defaultRole->setName("default");
+    $entityManager->persist($defaultRole);
 
     $newMemberRole = new MemberRole();
     $newMemberRole->setMember($existingUser);
-    $newMemberRole->setRole($newRole);
+    $newMemberRole->setRole($adminRole);
     $entityManager->persist($newMemberRole);
 
     $newOrgACL = new OrgACL();
     $newOrgACL->setPermission("all");
-    $newOrgACL->setRole($newRole);
+    $newOrgACL->setRole($adminRole);
     $entityManager->persist($newOrgACL);
 
     $newOrganization = new Organization();
     $newOrganization->addMemberRole($newMemberRole);
     $newOrganization->addOrgACL($newOrgACL);
-    $newOrganization->addRole($newRole);
-    $newOrganization->addRole($newRole2);
+    $newOrganization->addRole($adminRole);
+    $newOrganization->addRole($defaultRole);
     $newOrganization->setName($org_name);
     $newOrganization->setVisible($visible);
 
@@ -199,7 +206,7 @@ if($request_type == "CREATE_USER"){
     try{
         $entityManager->flush();
 
-        echo error_msg("ORG_CREATED","org_created");
+        echo rsp_msg("ORG_CREATED","org_created");
 
     }
     catch (Exception $e) {
@@ -219,72 +226,20 @@ if($request_type == "CREATE_USER"){
 
     $orgs = $query->getResult();
 
+    if(isset($orgs)){
+        echo rsp_msg("ORGS_RECEIVED_FAILED","no orgs were returned in the query");
+        return;
+    }
+
     error_log($orgs[0]->getName());
 
-    echo json_encode($orgs,JSON_NUMERIC_CHECK);
-} else if($request_type == "JOIN_ORGANIZATION"){
-    if($_SESSION["id"] != session_id()){
-      echo json_encode("USER NOT AUTHENTICATED");
-      return;
-    }
+    echo rsp_msg("ORGS_RECEIVED",$orgs);
 
-    $user = $_POST['user'];
-    $organization = $_POST['organization'];
-    $role = $_POST['role'];
-
-    $existingUser=$entityManager->getRepository('User')
-    ->findOneBy(array('id' => $user));
-    $existingRole=$entityManager->getRepository('Role')
-    ->findOneBy(array('id' => $role ));
-    $existingOrganization=$entityManager->getRepository('Organization')
-    ->findOneBy(array('id' => $organization));
-
-    $newMemberRole = $entityManager->getRepository('RoleGr');
-    $newMemberRole->setMember($existingUser);
-    $newMemberRole->setRole($existingRole);
-    $newMemberRole->setOrganization($existingOrganization);
-    $entityManager->persist($newMemberRole);
-
-    try{
-        $entityManager->flush();
-        echo error_msg("USER_JOINED","user_joined");
-    }
-    catch (Exception $e) {
-        echo 'Caught exception: ',  $e->getMessage(), "\n";
-    }
-}else if($request_type == "CHANGE_ROLE"){
-    if($_SESSION["id"] != session_id()){
-      echo json_encode("USER NOT AUTHENTICATED");
-      return;
-    }
-
-    $user = $_POST['user'];
-    $organization = $_POST['organization'];
-    $role = $_POST['role'];
-
-    $existingUser=$entityManager->getRepository('User')
-    ->findOneBy(array('id' => $user));
-    $existingRole=$entityManager->getRepository('Role')
-    ->findOneBy(array('id' => $role ));
-    $existingOrganization=$entityManager->getRepository('Organization')
-    ->findOneBy(array('id' => $organization));
-
-    $changedMemberRole = $entityManager->getRepository('MemberRole')
-    ->findOneBy(array('member' => $existingUser,'organization' => $existingOrganization );
-    $changedMemberRole->setRole($existingRole);
-    $entityManager->persist($changedMemberRole);
-
-    try{
-        $entityManager->flush();
-        echo error_msg("ROLE_CHANGED","role_changed");
-    }
-    catch (Exception $e) {
-        echo 'Caught exception: ',  $e->getMessage(), "\n";
-    }
+    
 }
 
 
-function error_msg($code,$message){
+function rsp_msg($code,$message){
     return json_encode(["code" => $code , "message" => $message ]);
 }
 
