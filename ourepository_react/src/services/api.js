@@ -86,6 +86,21 @@ class ApiService {
           });
     }
 
+    addUser(email,org,role){
+        return axios({
+            method: 'post',
+            url,
+            params: {
+                request:"ADD_USER",
+                email,
+                org,
+                role,
+            },
+            withCredentials: true,
+            responseType: 'text'
+        })
+    }
+
 }
 
 const apiService = new ApiService()

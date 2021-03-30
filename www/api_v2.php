@@ -210,6 +210,7 @@ if($request_type == "CREATE_USER"){
 
     }
     catch (Exception $e) {
+        echo json_encode("error in org creation");
         echo 'Caught exception: ',  $e->getMessage(), "\n";
     }
 
@@ -227,14 +228,50 @@ if($request_type == "CREATE_USER"){
     $orgs = $query->getResult();
 
     if(isset($orgs)){
-        echo rsp_msg("ORGS_RECEIVED_FAILED","no orgs were returned in the query");
+        echo rsp_msg("ORGS_RECEIVED_FAILED",(string)$_SESSION['uid']);
         return;
     }
 
     error_log($orgs[0]->getName());
 
     echo rsp_msg("ORGS_RECEIVED",$orgs);
+}else if($request_type == "ADD_USER"){
+    
+    if($_SESSION["id"] != session_id()){
+        echo json_encode("USER NOT AUTHENTICATED");
+        return;
+    }
 
+    $uid = $_SESSION['uid'];
+    $role = $_POST['role'];
+    $email = $_POST['email'];
+    $org_name = $_POST['org'];
+    
+
+    $existingOrg=$entityManager->getRepository('Organization')
+    ->findOneBy(array('name' => $org_name));
+    
+    $existingRole=$entityManager->getRepository('Role')
+    ->findOneBy(array('name' => $role, 'organization' => $existingOrg));
+
+    $existingUser=$entityManager->getRepository('User')
+    ->findOneBy(array('email' => $email));
+
+    $newMemberRole = new MemberRole();
+    $newMemberRole->setMember($existingUser);
+    $newMemberRole->setRole($existingRole);
+    $newMemberRole->setOrganization($existingOrg);
+    $entityManager->persist($newMemberRole);
+
+    try{
+        $entityManager->flush();
+
+        echo rsp_msg("USER_ADDED","user_added");
+
+    }
+    catch (Exception $e) {
+        echo 'Caught exception: ',  $e->getMessage(), "\n";
+    }
     
 }
 
