@@ -151,6 +151,40 @@ class ApiService {
             responseType: 'text'
           });
     }
+    cropMosaic(name,dataDir,width,height,strideLength,ratio){
+        return axios({
+            method: 'post',
+            url,
+            data: new URLSearchParams({
+                request:"CROP_MOSAIC",
+                name,
+                dataDir,
+                width,
+                height,
+                strideLength,
+                ratio
+            }),
+            withCredentials: true,
+            responseType: 'text'
+        })
+    }
+    interfaceMosaic(name,imagePath,model,width,height,strideLength){
+        return axios({
+            method: 'post',
+            url,
+            data: new URLSearchParams({
+                request:"INTERFACE_MOSAIC",
+                name,
+                imagePath,
+                model,
+                width,
+                height,
+                strideLength
+            }),
+            withCredentials: true,
+            responseType: 'text'
+        })
+    }
 
 }
 

@@ -3,9 +3,9 @@
 use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity 
- * @ORM\Table(name="org_acl")
+ * @ORM\Table(name="mosaic_acl")
  */
-class Organization
+class MosaicACL
 {
     /** @ORM\Id 
      * @ORM\Column(type="integer") 

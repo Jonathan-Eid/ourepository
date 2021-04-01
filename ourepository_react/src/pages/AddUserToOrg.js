@@ -14,8 +14,6 @@ const AddUserPage = (props) => {
     const [role, setRole] = React.useState(null)
     const [created, setCreated] = React.useState(false)
 
-    let placeholderOrg = "org"
-
     React.useEffect(()=>{
         navbarService.setHeading(<>
             <Popup  arrow={true} contentStyle={{ padding: '0px', border: 'none' }} trigger={<button class="w-6 bg-blue-300 rounded-full shadow-outline"><img src="/images/arrow-button-circle-down-1.png" /></button>}>
@@ -29,7 +27,7 @@ const AddUserPage = (props) => {
 
     
     if(created){
-      return <Redirect exact to="/"></Redirect>
+      return <Redirect exact to='/organization/${id}'></Redirect>
     }
 
     let setTitle = (event) => {

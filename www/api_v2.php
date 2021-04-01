@@ -402,6 +402,11 @@ if($request_type == "CREATE_USER"){
         echo json_encode("error in adding user to org");
         echo 'Caught exception: ',  $e->getMessage(), "\n";
     }
+} else if($request_type == "CROP_MOSAIC"){
+    echo rsp_msg("PLACEHOLDER","lorem ipsum");
+
+} else if($request_type == "INTERFACE_MOSAIC"){
+    echo rsp_msg("PLACEHOLDER","lorem ipsum")
 }
 
 
