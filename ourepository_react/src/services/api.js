@@ -90,12 +90,12 @@ class ApiService {
         return axios({
             method: 'post',
             url,
-            params: {
+            data: new URLSearchParams({
                 request:"ADD_USER",
                 email,
                 org,
-                role,
-            },
+                role
+            }),
             withCredentials: true,
             responseType: 'text'
         })

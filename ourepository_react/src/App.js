@@ -25,9 +25,9 @@ function App() {
     {path: "/landing", page: LandingPage},
     {path: "/organization/:id" ,page: OrganizationPage},
     {path: "/org-settings/:id" ,page: OrgSettingsPage},
+    {path: "/add-user/:id", page:AddUserPage},
     {path: "/UserStatus", page:UserStatusPage},
-    {path: "/create-org", page:CreateOrgPage},
-    {path: "/add-user", page:AddUserPage}
+    {path: "/create-org", page:CreateOrgPage}
   ]
 
   const [protectedRoutes, setProtectedRoutes] = React.useState([])

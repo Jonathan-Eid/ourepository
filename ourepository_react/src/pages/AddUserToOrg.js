@@ -1,13 +1,15 @@
 import React from 'react';
 import navbarService from "../services/navbar"
 import sidebarService from "../services/sidebar"
+import {Link, useRouteMatch, Switch, Route,useParams} from "react-router-dom"
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import apiService from "../services/api"
 import {  Redirect } from "react-router-dom";
 
 const AddUserPage = (props) => {
-
+    let { id } = useParams();
+    let {path, url} = useRouteMatch();
     const [name, setName] = React.useState(null)
     const [role, setRole] = React.useState(null)
     const [created, setCreated] = React.useState(false)
@@ -43,7 +45,7 @@ const AddUserPage = (props) => {
 
     let submitAddUser = (event) => {
       console.log(event.target.value);
-      apiService.addUser(name,placeholderOrg,role).then((data) => {
+      apiService.addUser(name,id,role).then((data) => {
         if(data.data.code == "USER_ADDED"){
           alert(` user: ' ${name} ' added to organization `)
           setCreated(true)
@@ -62,7 +64,7 @@ const AddUserPage = (props) => {
 
       return (
 <div class="bg-blue-100 shadow-md rounded px-8 pt-6 pb-8 mb-4 flex flex-col w-1/2">
-        <h2 class="text text-black pb-10"> Create An Organization </h2>
+        <h2 class="text text-black pb-10"> Add User to Organization </h2>
         <div class="mb-4 text-left">
           <label class="text-2xl text-black text-left"> Enter email</label> 
           <input onChange={setTitle} class="shadow  placeholder-blue-500 appearance-none border rounded w-full py-2 px-3  text-black" id="email" type="email" placeholder="User email"/>

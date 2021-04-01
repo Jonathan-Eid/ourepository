@@ -377,9 +377,12 @@ if($request_type == "CREATE_USER"){
 
     $existingOrg=$entityManager->getRepository('Organization')
     ->findOneBy(array('name' => $org_name));
-    
-    $existingRole=$entityManager->getRepository('Role')
-    ->findOneBy(array('name' => $role, 'organization' => $existingOrg));
+
+    $existingUser=$entityManager->getRepository('User')
+    ->findOneBy(array('id' => $uid));
+
+    $existingRole = $entityManager->getRepository('Role')
+    ->findOneBy(array('name' => $role));
 
     $existingUser=$entityManager->getRepository('User')
     ->findOneBy(array('email' => $email));
@@ -389,7 +392,6 @@ if($request_type == "CREATE_USER"){
     $newMemberRole->setRole($existingRole);
     $newMemberRole->setOrganization($existingOrg);
     $entityManager->persist($newMemberRole);
-
     try{
         $entityManager->flush();
 
@@ -397,6 +399,7 @@ if($request_type == "CREATE_USER"){
 
     }
     catch (Exception $e) {
+        echo json_encode("error in adding user to org");
         echo 'Caught exception: ',  $e->getMessage(), "\n";
     }
 }

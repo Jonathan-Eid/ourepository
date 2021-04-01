@@ -50,7 +50,7 @@ const OrganizationPage = (props) => {
         }).catch((err) => console.log(err))
 
 
-        navbarService.setToolbar([<Link to={`/organization/${id}`}>Create Project</Link>,<Link to="/">Home</Link>])
+        navbarService.setToolbar([<Link to={`/organization/${id}`}>Create Project</Link>,<Link to="/">Home</Link>,<Link to={`/add-user/${id}`}>Add User</Link>])
         sidebarService.setHeader(<div class="relative text-left"> 
                                       <h2 class="text-2xl underline"> Recent Projects</h2>
                                       {/* {data.projects.map((project) => {
