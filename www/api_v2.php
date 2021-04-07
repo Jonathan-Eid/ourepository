@@ -406,8 +406,9 @@ if($request_type == "CREATE_USER"){
     echo rsp_msg("PLACEHOLDER","lorem ipsum");
 
 } else if($request_type == "INTERFACE_MOSAIC"){
-    echo rsp_msg("PLACEHOLDER","lorem ipsum")
+    echo rsp_msg("PLACEHOLDER","lorem ipsum");
 }
+
 
 
 
