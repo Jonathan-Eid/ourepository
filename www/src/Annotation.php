@@ -24,20 +24,11 @@ class Annotation
      /** @ORM\Column(type="string") */
      protected $type;
 
-     /** @ORM\Column(type="integer") */
-     protected $point1X;
-
-     /** @ORM\Column(type="integer") */
-     protected $point2X;
-
-     /** @ORM\Column(type="integer") */
-     protected $point1Y;
-
-     /** @ORM\Column(type="integer") */
-     protected $point2Y;
-
      /** @ORM\Column(type="string") */
      protected $description;
+
+     /** @ORM\Column(type="string") */
+     protected $color;
 
      public function getId()
      {
@@ -64,43 +55,13 @@ class Annotation
          $this->description = $description;
      }
 
-     public function getPoint1X()
+     public function getColor()
      {
-         return $this->point1X;
+         return $this->color;
      }
 
-     public function setPoint1X($point1X)
+     public function setColor($color)
      {
-         $this->point1X = $point1X;
-     }
-
-     public function getPoint1Y()
-     {
-         return $this->point1Y;
-     }
-
-     public function setPoint1Y($point1Y)
-     {
-         $this->point1Y = $point1Y;
-     }
-
-     public function getPoint2X()
-     {
-         return $this->point2X;
-     }
-
-     public function setPoint2X($point2X)
-     {
-         $this->point2X = $point2X;
-     }
-
-     public function getPoint2Y()
-     {
-         return $this->point2Y;
-     }
-
-     public function setPoint2Y($point2Y)
-     {
-         $this->point2Y = $point2Y;
+         $this->color = $color;
      }
 }
