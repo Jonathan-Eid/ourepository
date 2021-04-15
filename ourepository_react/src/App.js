@@ -19,6 +19,7 @@ import OrgSettingsPage from './pages/OrgSettings';
 import MosaicPage from './pages/Mosaic';
 import ProjectPage from './pages/Project';
 import CreateProjectPage from './pages/CreateProject'
+import CreateMosaicPage from './pages/CreateMosaic'
 
 
 function App() {
@@ -33,7 +34,8 @@ function App() {
     {path: "/create-org", page:CreateOrgPage},
     {path: "/mosaic", page:MosaicPage},
     {path: "/organization/:org/project/:id", page:ProjectPage},
-    {path: "/createProject/:id", page:CreateProjectPage}
+    {path: "/createProject/:id", page:CreateProjectPage},
+    {path: "/create-mosaic/:org/:proj", page:CreateMosaicPage}
   ]
 
   const [protectedRoutes, setProtectedRoutes] = React.useState([])

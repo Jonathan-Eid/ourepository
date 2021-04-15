@@ -7,7 +7,7 @@ import 'reactjs-popup/dist/index.css';
 import apiService from "../services/api"
 import {  Redirect } from "react-router-dom";
 
-const CreateOrgPage = (props) => {
+const CreateProjectPage = (props) => {
 
     let { id } = useParams();
     const [name, setName] = React.useState(null)
@@ -26,7 +26,7 @@ const CreateOrgPage = (props) => {
 
     
     if(created){
-      return <Redirect exact to={'/organization/'+id}></Redirect>
+      return <Redirect exact to={'/organization/'+id+'/project/'+name}></Redirect>
     }
 
     let setTitle = (event) => {
@@ -73,4 +73,4 @@ const CreateOrgPage = (props) => {
     );
 };
 
-export default CreateOrgPage; 
+export default CreateProjectPage; 

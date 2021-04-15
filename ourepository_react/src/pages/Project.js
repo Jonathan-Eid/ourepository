@@ -9,7 +9,8 @@ import apiService from '../services/api';
 import button from '../logo.svg'
  
 const ProjectPage = (props) => {
-    let { id } = useParams();
+    let { proj } = useParams();
+    let { org } = useParams();
     let {path, url} = useRouteMatch();
     const [organization, setOrganization] = React.useState(null)
     const [edit_enabled, enableEdit] = React.useState(null)
@@ -18,10 +19,10 @@ const ProjectPage = (props) => {
 
     React.useEffect(() => {
         navbarService.setHeading(<>
-            <Link class="p-3" to={`/organization/${id}`}>{organization ? organization.name :"PlaceHolder" }</Link>
+            <Link class="p-3" to={`/organization/${org}`}>{organization ? organization.name :"PlaceHolder" }</Link>
             <Popup  arrow={true} contentStyle={{ padding: '0px', border: 'none' }} trigger={<button class="w-6 bg-blue-300 rounded-full shadow-outline"><img src="/images/arrow-button-circle-down-1.png" /></button>}>
                 <ul>
-                    {edit_enabled && <li><Link to={`/org-settings/${id}`} >Edit Organization</Link></li>}
+                    {edit_enabled && <li><Link to={`/org-settings/${org}`} >Edit Organization</Link></li>}
                     <li><div>Popup content here !!</div></li>
                 </ul>
                 
@@ -31,9 +32,9 @@ const ProjectPage = (props) => {
     },[edit_enabled,organization])
 
     React.useEffect(()=>{
-        console.log("NAME"+id);
+        console.log("NAME"+org);
 
-        apiService.getOrgByName(id).then((data) => {
+        apiService.getOrgByName(org).then((data) => {
             const resp = data.data
             if(resp.code == "ORGS_RECEIVED"){
                 let org = resp.message
@@ -53,7 +54,7 @@ const ProjectPage = (props) => {
         }).catch((err) => console.log(err))
 
 
-        navbarService.setToolbar([<Link to={`/organization/${id}`}>Create Project</Link>,<Link to="/">Home</Link>,<Link to={`/add-user/${id}`}>Add User</Link>])
+        navbarService.setToolbar([<Link to={`/organization/${org}/createProject`}>Create Project</Link>,<Link to="/">Home</Link>,<Link to={`/add-user/${org}`}>Add User</Link>])
         sidebarService.setHeader(<div class="relative text-left"> 
                                       <h2 class="text-2xl underline"> Recent Projects</h2>
                                       {/* {data.projects.map((project) => {
@@ -87,16 +88,16 @@ const ProjectPage = (props) => {
 
     return (
         <div class="bg-gray-600 shadow-md rounded px-8 pt-6 pb-8 mb-4 flex ">
-
+          <h3 class="text-lg ml-8" ><Link class="p-3" to={'/create-mosaic/'+org+'/'+proj}>create mosaic</Link> </h3>
           <div class="bg-gray-700 shadow-md rounded px-8 pt-6 pb-8"> Project's Mosaics
           <div class=" p-1"></div>
 
-          <div class = "row"> 
-          {organizations && organizations.map((org) => ( 
+          <div class="row"> 
+          {organizations && organizations.map((mos) => ( 
             <div class="bg-gray-800  shadow-md rounded px-4 pt-3 pb-4">
             
             <img src={button} alt="Thumbnail Image" width="175" height="175"></img>
-            <Link to={`/organization/${org.name}`}>{org.name} </Link>
+            <Link to={`/organization/${mos.name}`}>{mos.name} </Link>
             <Popup  arrow={true} contentStyle={{ padding: '0px', border: 'none' }} trigger={<button class="w-6 bg-blue-300 rounded-full shadow-outline"><img src="/images/arrow-button-circle-down-1.png" /></button>}>
             <ul>
                 <li><div>view Mosaic</div></li>

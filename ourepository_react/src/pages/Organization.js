@@ -97,7 +97,7 @@ const OrganizationPage = (props) => {
             Select A Project                
         </Route>
         {projects && projects.map((proj) => ( 
-                                        <h3 class="text-lg ml-8" ><Link to={'/organization/'+id+'/project/'+proj.name}>{proj.name}</Link> </h3>
+            <h3 class="text-lg ml-8" ><Link to={'/organization/'+id+'/project/'+proj.name}>{proj.name}</Link> </h3>
         ))}
     </div>
 

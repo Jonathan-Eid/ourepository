@@ -86,6 +86,18 @@ class ApiService {
             responseType: 'text'
         });
     }
+    createMosaic(name,proj,vis){
+        return axios({
+            method: 'post',
+            url,
+            data: new URLSearchParams({
+                request:"CREATE_MOS",
+                name,
+                proj,
+                vis
+            })
+        })
+    }
 
     getOrgs(){
         return axios({
@@ -119,6 +131,19 @@ class ApiService {
             params: {
                 request: "GET_PROJECTS",
                 org
+            },
+            withCredentials: true,
+            responseType: 'text'
+        })
+    }
+
+    getMosaics(proj){
+        return axios({
+            method: 'get',
+            url ,
+            params: {
+                request: "GET_MOSAICS",
+                proj
             },
             withCredentials: true,
             responseType: 'text'

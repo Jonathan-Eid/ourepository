@@ -462,11 +462,43 @@ if($request_type == "CREATE_USER"){
     catch (Exception $e){
         echo 'Caught exception: ',  $e->getMessage(), "\n";
 
+    }  
+
+
+} else if($request_type == "CREATE_MOSAIC"){
+
+    if($_SESSION["id"] != session_id()){
+        echo json_encode("USER NOT AUTHENTICATED");
+        return;
     }
 
+    $uid = $_SESSION['uid'];
+    $name = $_POST['name'];
+    $proj_name = $_POST['proj'];
+    $visible = $_POST['vis'];
 
+    $existingProj=$entityManager->getRepository('Project')
+    ->findOneBy(array('name' => $proj_name));
 
-    
+    $newMosaic = new Mosaic();
+    $newMosaic->setName($name);
+    $newMosaic->setVisible(true);
+    $newMosaic->setMembers($visible);
+    $newMosaic->setRoles(true);
+    $newMosaic->setProject($existingProj);
+
+    $entityManager->persist($newMosaic);
+
+    try{
+        $entityManager->flush();
+        echo rsp_msg("MOS_CREATED","mosaic created");
+
+    }
+    catch (Exception $e) {
+        echo json_encode("error in creating mosaic");
+        echo 'Caught exception: ',  $e->getMessage(), "\n";
+    }
+
 }else if($request_type == "CROP_MOSAIC"){
     echo rsp_msg("PLACEHOLDER","lorem ipsum");
 
