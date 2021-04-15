@@ -278,7 +278,7 @@ if($request_type == "CREATE_USER"){
     $permission = $_GET['permission'];
     $organization = $_GET['organization'];
 
-    echo rsp_msg("ORGS_RECEIVED",$orgs);    
+    //echo rsp_msg("ORGS_RECEIVED",$orgs);    
     try{
 
         $query = $entityManager->createQuery('SELECT o FROM OrgACL o JOIN o.organization g WITH g.name = :org JOIN g.memberRoles m WITH m.member = :uid AND m.role = o.role WHERE o.permission IN (:permissions)');
@@ -402,7 +402,72 @@ if($request_type == "CREATE_USER"){
         echo json_encode("error in adding user to org");
         echo 'Caught exception: ',  $e->getMessage(), "\n";
     }
-} else if($request_type == "CROP_MOSAIC"){
+}else if ($request_type == "CREATE_PROJ"){
+    if($_SESSION["id"] != session_id()){
+        echo json_encode("USER NOT AUTHENTICATED");
+        return;
+    }
+
+    $uid = $_SESSION['uid'];
+    $name = $_POST['name'];
+    $org_name = $_POST['org'];
+
+    $existingOrg=$entityManager->getRepository('Organization')
+    ->findOneBy(array('name' => $org_name));
+
+    $newProject = new Project();
+    $newProject ->setName($name);
+    $newProject ->setOrganization($existingOrg);
+    $newProject ->setMosaics("");
+    $newProject ->setOwners(true);
+
+    $entityManager->persist($newProject);
+
+    try{
+        $entityManager->flush();
+        echo rsp_msg("PROJ_CREATED","project created");
+
+    }
+    catch (Exception $e) {
+        echo json_encode("error in creating project");
+        echo 'Caught exception: ',  $e->getMessage(), "\n";
+    }
+
+
+
+
+}else if($request_type == "GET_PROJECTS"){
+    if($_SESSION["id"] != session_id()){
+        echo json_encode("USER NOT AUTHENTICATED");
+        return;
+    }
+
+    $uid = $_SESSION['uid'];
+    $org_name = $_GET['org'];
+
+    try{
+        $existingOrg=$entityManager->getRepository('Organization')->findOneBy(array('name' => $org_name));
+        $query = $entityManager->createQuery('SELECT p FROM Project p');
+        $projs = $query->getResult();
+        if(!isset($projs)){
+            echo rsp_msg("PROJS_RECEIVED_FAILED","no projects were returned in the query");
+            return;
+        }
+    
+        error_log($projs[0]->getName());
+    
+        echo rsp_msg("PROJS_RECEIVED",$projs);
+    }
+
+    catch (Exception $e){
+        echo 'Caught exception: ',  $e->getMessage(), "\n";
+
+    }
+
+
+
+    
+}else if($request_type == "CROP_MOSAIC"){
     echo rsp_msg("PLACEHOLDER","lorem ipsum");
 
 } else if($request_type == "INTERFACE_MOSAIC"){

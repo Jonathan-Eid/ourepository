@@ -1,10 +1,11 @@
 <?php
 use Doctrine\ORM\Mapping as ORM;
+
 /**
  * @ORM\Entity 
- * @ORM\Table(name="projects")
+ * @ORM\Table(name="proj_acl")
  */
-class Project
+class ProjACL
 {
 
 
@@ -14,17 +15,16 @@ class Project
     protected $id;
 
     /** @ORM\Column(type="string") */
-    protected $mosaics;
+    protected $entityId;
 
-    /** @ORM\Column(type="proj_acl") */
-    protected $proj_acl;
+    /** @ORM\Column(type="string") */
+    protected $listType;
+    
+    /** @ORM\Column(type="string") */
+    protected $entityType;
 
-    /** @ORM\Column(type="boolean") */
-    protected $organization;
-
-    /** @ORM\Column(type="boolean") */
-    protected $owners;
-
+    /** @ORM\Column(type="string") */
+    protected $project;
 
 
     public function getId()

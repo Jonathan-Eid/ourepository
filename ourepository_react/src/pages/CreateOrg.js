@@ -6,7 +6,7 @@ import 'reactjs-popup/dist/index.css';
 import apiService from "../services/api"
 import {  Redirect } from "react-router-dom";
 
-const CreateOrgPage = (props) => {
+const CreateProjectPage = (props) => {
 
     const [visible, setVisible] = React.useState(null)
     const [vis_set, setVis] = React.useState(null)
@@ -90,4 +90,4 @@ const CreateOrgPage = (props) => {
     );
 };
 
-export default CreateOrgPage; 
+export default CreateProjectPage; 

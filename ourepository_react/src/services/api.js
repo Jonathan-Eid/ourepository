@@ -73,6 +73,19 @@ class ApiService {
             responseType: 'text'
           });
     }
+    createProject(name,org){
+        return axios({
+            method: 'post',
+            url,
+            data: new URLSearchParams({
+                request:"CREATE_PROJ",
+                name,
+                org
+            }),
+            withCredentials: true,
+            responseType: 'text'
+        });
+    }
 
     getOrgs(){
         return axios({
@@ -84,6 +97,32 @@ class ApiService {
             withCredentials: true,
             responseType: 'text'
           });
+    }
+
+    getMosaics(project){
+        return axios({
+            method: 'get',
+            url ,
+            params: {
+                request: "GET_MOSAICS",
+                project
+            },
+            withCredentials: true,
+            responseType: 'text'
+        })
+    }
+
+    getProjects(org){
+        return axios({
+            method: 'get',
+            url ,
+            params: {
+                request: "GET_PROJECTS",
+                org
+            },
+            withCredentials: true,
+            responseType: 'text'
+        })
     }
 
     addUser(email,org,role){

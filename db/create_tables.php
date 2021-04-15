@@ -185,53 +185,6 @@ $query = "CREATE TABLE `label_access` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1";
 query_our_db($query);
 
-
-
-$query = "CREATE TABLE `points` (
-    `point_id` INT(11) NOT NULL AUTO_INCREMENT,
-    `owner_id` INT(11) NOT NULL,
-    `mosaic_id` INT(11) NOT NULL,
-    `label_id` INT(11) NOT NULL,
-    `cx` double NOT NULL,
-    `cy` double NOT NULL,
-    `radius` double NOT NULL,
-
-    PRIMARY KEY (`point_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1";
-
-query_our_db($query);
-
-$query = "CREATE TABLE `lines` (
-    `line_id` INT(11) NOT NULL AUTO_INCREMENT,
-    `owner_id` INT(11) NOT NULL,
-    `mosaic_id` INT(11) NOT NULL,
-    `label_id` INT(11) NOT NULL,
-    `x1` double NOT NULL,
-    `x2` double NOT NULL,
-    `y1` double NOT NULL,
-    `y2` double NOT NULL,
-
-    PRIMARY KEY (`line_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1";
-
-query_our_db($query);
-
-$query = "CREATE TABLE `rectangles` (
-    `rectangle_id` INT(11) NOT NULL AUTO_INCREMENT,
-    `owner_id` INT(11) NOT NULL,
-    `mosaic_id` INT(11) NOT NULL,
-    `label_id` INT(11) NOT NULL,
-    `x1` double NOT NULL,
-    `x2` double NOT NULL,
-    `y1` double NOT NULL,
-    `y2` double NOT NULL,
-
-    PRIMARY KEY (`rectangle_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1";
-
-query_our_db($query);
-
-
 $query = "CREATE TABLE `polygons` (
     `polygon_id` INT(11) NOT NULL AUTO_INCREMENT,
     `owner_id` INT(11) NOT NULL,
