@@ -52,6 +52,21 @@ const ProjectPage = (props) => {
             }
         }).catch((err) => console.log(err))
 
+        apiService.getOrgs().then((data) => {
+            console.log("ORG DATA: "+JSON.stringify(data.data))
+            const resp = data.data
+            if (resp.code == "ORGS_RECEIVED_FAILED"){
+              return;
+            }
+            else if (data.data) {
+              setOrganizations(resp.message)
+            }
+            console.log(data.data[0]);
+          }).catch((err) => {
+            console.log(err);
+          })
+    
+
 
         navbarService.setToolbar([<Link to={`/organization/${id}`}>Create Project</Link>,<Link to="/">Home</Link>,<Link to={`/add-user/${id}`}>Add User</Link>])
         sidebarService.setHeader(<div class="relative text-left"> 
@@ -71,20 +86,8 @@ const ProjectPage = (props) => {
                                       })} */}
                                  </div>)
     },[])
-    apiService.getOrgs().then((data) => {
-        console.log("ORG DATA: "+JSON.stringify(data.data))
-        const resp = data.data
-        if (resp.code == "ORGS_RECEIVED_FAILED"){
-          return;
-        }
-        else if (data.data) {
-          setOrganizations(resp.message)
-        }
-        console.log(data.data[0]);
-      }).catch((err) => {
-        console.log(err);
-      })
 
+    
     return (
         <div class="bg-gray-600 shadow-md rounded px-8 pt-6 pb-8 mb-4 flex ">
 

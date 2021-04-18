@@ -619,8 +619,6 @@ if($request_type == "CREATE_USER"){
     }
 
 
-
-
 }else if($request_type == "GET_PROJECTS"){
     if($_SESSION["id"] != session_id()){
         echo json_encode("USER NOT AUTHENTICATED");

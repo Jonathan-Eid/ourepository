@@ -165,9 +165,6 @@ const ManageRoles = (props) => {
             console.log("PERMISSIONS" + JSON.stringify(resp));
 
             if(resp.code == "ROLE_DELETED"){
-
-                
-
                 setAddView(true)
                 setAddView(false)
             }
@@ -212,7 +209,7 @@ const ManageRoles = (props) => {
                 <div class="p-1"></div>
 
                 {!add_view && roles && roles.map((role, idx) => ( 
-                    <div onClick={()=>changeActiveRole(idx)} class={"border-white border shadow-md rounded px-4 pt-3 pb-4 " + ((role && role==active_role) ? "bg-gray-400" : "bg-gray-8i00")}>
+                    <div onClick={()=>changeActiveRole(idx)} class={"border-white border shadow-md rounded px-4 pt-3 pb-4 " + ((role && role==active_role) ? "bg-gray-400" : "bg-gray-800")}>
                         {role.name.charAt(0).toUpperCase() + role.name.slice(1)}
                     </div>
                 ))} 
