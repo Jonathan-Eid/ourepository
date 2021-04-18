@@ -2,7 +2,7 @@
 use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity
- * @ORM\Table(name="projects")
+ * @ORM\Table(name="annotations")
  */
 class Annotation
 {
@@ -22,9 +22,16 @@ class Annotation
      protected $annotations;
 
      /** @ORM\Column(type="string") */
+     protected $type;
+
+     /** @ORM\Column(type="string") */
      protected $description;
 
+     /** @ORM\Column(type="string") */
+     protected $color;
+
      public function getId()
+     {
         return $this->id;
      }
 
@@ -43,8 +50,18 @@ class Annotation
          return $this->description;
      }
 
-     public function setDescription(description)
+     public function setDescription($description)
      {
          $this->description = $description;
+     }
+
+     public function getColor()
+     {
+         return $this->color;
+     }
+
+     public function setColor($color)
+     {
+         $this->color = $color;
      }
 }

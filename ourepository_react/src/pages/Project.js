@@ -5,15 +5,16 @@ import {Link, useRouteMatch, Switch, Route,useParams} from "react-router-dom"
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import Project from '../components/Project';
-import ProjectPage from './Project'
 import apiService from '../services/api';
+import button from '../logo.svg'
  
-const OrganizationPage = (props) => {
+const ProjectPage = (props) => {
     let { id } = useParams();
     let {path, url} = useRouteMatch();
     const [organization, setOrganization] = React.useState(null)
     const [edit_enabled, enableEdit] = React.useState(null)
-    const [projects, setProjects] = React.useState(null)
+    
+    const [organizations, setOrganizations] = React.useState(null)
 
     React.useEffect(() => {
         navbarService.setHeading(<>
@@ -51,20 +52,8 @@ const OrganizationPage = (props) => {
             }
         }).catch((err) => console.log(err))
 
-        apiService.getProjects(id).then((data) => {
-            console.log("PROJECT DATA: "+JSON.stringify(data.data))
-            const resp = data.data
-            if (resp.code == "PROJS_RECEIVED_FAILED"){
-              return;
-            }
-            else if (data.data) {
-              setProjects(resp.message)
-            }
-          }).catch((err) => {
-            console.log(err);
-          })
 
-        navbarService.setToolbar([<Link to={`/createproject/${id}`}>Create Project</Link>,<Link to="/">Home</Link>,<Link to={`/add-user/${id}`}>Add User</Link>])
+        navbarService.setToolbar([<Link to={`/organization/${id}`}>Create Project</Link>,<Link to="/">Home</Link>,<Link to={`/add-user/${id}`}>Add User</Link>])
         sidebarService.setHeader(<div class="relative text-left"> 
                                       <h2 class="text-2xl underline"> Recent Projects</h2>
                                       {/* {data.projects.map((project) => {
@@ -77,32 +66,53 @@ const OrganizationPage = (props) => {
                                       })} */}
                                       <div class="p-5"></div>
                                       <h2 class="text-2xl underline"> All Projects</h2>
-                                      {projects && projects.map((proj) => ( 
-                                        <h3 class="text-lg ml-8" key={proj.id}><Link to={'/organization/'+id+'/project/'+proj.name}>{proj.name}</Link> </h3>
-                                      ))}
+                                      {/* {data.projects.map((project) => {
+                                          return <h3 class="text-lg ml-8" ><Link to="/">{project.name}</Link></h3>  
+                                      })} */}
                                  </div>)
     },[])
+    apiService.getOrgs().then((data) => {
+        console.log("ORG DATA: "+JSON.stringify(data.data))
+        const resp = data.data
+        if (resp.code == "ORGS_RECEIVED_FAILED"){
+          return;
+        }
+        else if (data.data) {
+          setOrganizations(resp.message)
+        }
+        console.log(data.data[0]);
+      }).catch((err) => {
+        console.log(err);
+      })
 
-      return (
-        <div class="bg-grey-900 shadow-md rounded px-8 pt-6 pb-8 absolute left-0 top-0 pt-32 h-full" style={{marginLeft:"16vw", width:"84vw"}}>
+    return (
+        <div class="bg-gray-600 shadow-md rounded px-8 pt-6 pb-8 mb-4 flex ">
+
+          <div class="bg-gray-700 shadow-md rounded px-8 pt-6 pb-8"> Project's Mosaics
+          <div class=" p-1"></div>
+
+          <div class = "row"> 
+          {organizations && organizations.map((org) => ( 
+            <div class="bg-gray-800  shadow-md rounded px-4 pt-3 pb-4">
+            
+            <img src={button} alt="Thumbnail Image" width="175" height="175"></img>
+            <Link to={`/organization/${org.name}`}>{org.name} </Link>
+            <Popup  arrow={true} contentStyle={{ padding: '0px', border: 'none' }} trigger={<button class="w-6 bg-blue-300 rounded-full shadow-outline"><img src="/images/arrow-button-circle-down-1.png" /></button>}>
+            <ul>
+                <li><div>view Mosaic</div></li>
+                <li><div>delete Mosaic</div></li>
+            </ul>
+            </Popup></div>
+            
+          ))}
+          </div>
+
+        </div>
         
-        <Switch>
-        <Route path={`${path}/project/:project`}>
-                <ProjectPage></ProjectPage>
-                
-                
-                
-        </Route>
-        </Switch>
-        <Route exact path={path}>
-            Select A Project                
-        </Route>
-        {projects && projects.map((proj) => ( 
-                                        <h3 class="text-lg ml-8" ><Link to={'/organization/'+id+'/project/'+proj.name}>{proj.name}</Link> </h3>
-        ))}
-    </div>
 
+    </div>
     );
+
 };
 
-export default OrganizationPage; 
+export default ProjectPage; 

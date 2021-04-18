@@ -1,30 +1,25 @@
+  
 <?php
 use Doctrine\ORM\Mapping as ORM;
-
 /**
  * @ORM\Entity 
- * @ORM\Table(name="projects")
+ * @ORM\Table(name="mosaic_acl")
  */
-class Project
+class MosaicACL
 {
-
-
     /** @ORM\Id 
      * @ORM\Column(type="integer") 
      * @ORM\GeneratedValue */
     protected $id;
 
     /** @ORM\Column(type="string") */
-    protected $entityId;
+    protected $name;
 
-    /** @ORM\Column(type="string") */
-    protected $listType;
-    
-    /** @ORM\Column(type="string") */
-    protected $entityType;
+    /** @ORM\Column(type="boolean") */
+    protected $visible;
 
-    /** @ORM\Column(type="string") */
-    protected $project;
+    /** @ORM\Column(type="boolean") */
+    protected $u;
 
 
     public function getId()

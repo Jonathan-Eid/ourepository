@@ -73,6 +73,19 @@ class ApiService {
             responseType: 'text'
           });
     }
+    createProject(name,org){
+        return axios({
+            method: 'post',
+            url,
+            data: new URLSearchParams({
+                request:"CREATE_PROJ",
+                name,
+                org
+            }),
+            withCredentials: true,
+            responseType: 'text'
+        });
+    }
 
     getOrgs(){
         return axios({
@@ -86,6 +99,46 @@ class ApiService {
           });
     }
 
+    getMosaics(project){
+        return axios({
+            method: 'get',
+            url ,
+            params: {
+                request: "GET_MOSAICS",
+                project
+            },
+            withCredentials: true,
+            responseType: 'text'
+        })
+    }
+
+    getProjects(org){
+        return axios({
+            method: 'get',
+            url ,
+            params: {
+                request: "GET_PROJECTS",
+                org
+            },
+            withCredentials: true,
+            responseType: 'text'
+        })
+    }
+
+    addUser(email,org,role){
+        return axios({
+            method: 'post',
+            url,
+            data: new URLSearchParams({
+                request:"ADD_USER",
+                email,
+                org,
+                role
+            }),
+            withCredentials: true,
+            responseType: 'text'
+        })
+    }
     getOrgByName(name){
         return axios({
             method: 'get',
@@ -136,6 +189,40 @@ class ApiService {
             withCredentials: true,
             responseType: 'text'
           });
+    }
+    cropMosaic(name,dataDir,width,height,strideLength,ratio){
+        return axios({
+            method: 'post',
+            url,
+            data: new URLSearchParams({
+                request:"CROP_MOSAIC",
+                name,
+                dataDir,
+                width,
+                height,
+                strideLength,
+                ratio
+            }),
+            withCredentials: true,
+            responseType: 'text'
+        })
+    }
+    interfaceMosaic(name,imagePath,model,width,height,strideLength){
+        return axios({
+            method: 'post',
+            url,
+            data: new URLSearchParams({
+                request:"INTERFACE_MOSAIC",
+                name,
+                imagePath,
+                model,
+                width,
+                height,
+                strideLength
+            }),
+            withCredentials: true,
+            responseType: 'text'
+        })
     }
 
     changeRolePermissions(role, changes){
