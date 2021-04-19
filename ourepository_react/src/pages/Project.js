@@ -9,8 +9,8 @@ import apiService from '../services/api';
 import button from '../logo.svg'
  
 const ProjectPage = (props) => {
-    let { proj } = useParams();
-    let { org } = useParams();
+    let { project } = useParams();
+    let { id } = useParams();
     let {path, url} = useRouteMatch();
     const [organization, setOrganization] = React.useState(null)
     const [edit_enabled, enableEdit] = React.useState(null)
@@ -19,10 +19,10 @@ const ProjectPage = (props) => {
 
     React.useEffect(() => {
         navbarService.setHeading(<>
-            <Link class="p-3" to={`/organization/${org}`}>{organization ? organization.name :"PlaceHolder" }</Link>
+            <Link class="p-3" to={`/organization/${id}`}>{organization ? organization.name :"PlaceHolder" }</Link>
             <Popup  arrow={true} contentStyle={{ padding: '0px', border: 'none' }} trigger={<button class="w-6 bg-blue-300 rounded-full shadow-outline"><img src="/images/arrow-button-circle-down-1.png" /></button>}>
                 <ul>
-                    {edit_enabled && <li><Link to={`/org-settings/${org}`} >Edit Organization</Link></li>}
+                    {edit_enabled && <li><Link to={`/org-settings/${id}`} >Edit Organization</Link></li>}
                     <li><div>Popup content here !!</div></li>
                 </ul>
                 
@@ -32,14 +32,14 @@ const ProjectPage = (props) => {
     },[edit_enabled,organization])
 
     React.useEffect(()=>{
-        console.log("NAME"+org);
+        console.log("NAME"+id);
 
-        apiService.getOrgByName(org).then((data) => {
+        apiService.getOrgByName(id).then((data) => {
             const resp = data.data
             if(resp.code == "ORGS_RECEIVED"){
                 let org = resp.message
                 setOrganization(org)
-                apiService.hasPermission("edit_org",org.name).then((data)=> {
+                apiService.hasPermission("edit_org",id.name).then((data)=> {
                     const resp = data.data
                     console.log(JSON.stringify(resp));
                     if(resp.code=="HAS_ORG_PERMISSION"){
@@ -54,7 +54,7 @@ const ProjectPage = (props) => {
         }).catch((err) => console.log(err))
 
 
-        navbarService.setToolbar([<Link to={`/organization/${org}/createProject`}>Create Project</Link>,<Link to="/">Home</Link>,<Link to={`/add-user/${org}`}>Add User</Link>])
+        navbarService.setToolbar([<Link to={`/organization/${id}/createProject`}>Create Project</Link>,<Link to="/">Home</Link>,<Link to={`/add-user/${id}`}>Add User</Link>])
         sidebarService.setHeader(<div class="relative text-left"> 
                                       <h2 class="text-2xl underline"> Recent Projects</h2>
                                       {/* {data.projects.map((project) => {
@@ -88,7 +88,7 @@ const ProjectPage = (props) => {
 
     return (
         <div class="bg-gray-600 shadow-md rounded px-8 pt-6 pb-8 mb-4 flex ">
-          <h3 class="text-lg ml-8" ><Link class="p-3" to={'/create-mosaic/'+org+'/'+proj}>create mosaic</Link> </h3>
+          <h3 class="text-lg ml-8" ><Link to={'/create-mosaic/'+id+'/'+project}>create mosaic</Link></h3>
           <div class="bg-gray-700 shadow-md rounded px-8 pt-6 pb-8"> Project's Mosaics
           <div class=" p-1"></div>
 
