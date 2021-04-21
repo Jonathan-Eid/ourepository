@@ -476,6 +476,7 @@ if($request_type == "CREATE_USER"){
     $name = $_POST['name'];
     $proj_name = $_POST['proj'];
     $visible = $_POST['vis'];
+    $file = $_POST['file'];
 
     $existingProj=$entityManager->getRepository('Project')
     ->findOneBy(array('name' => $proj_name));

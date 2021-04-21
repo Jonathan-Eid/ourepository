@@ -86,7 +86,7 @@ class ApiService {
             responseType: 'text'
         });
     }
-    createMosaic(name,proj,vis){
+    createMosaic(name,proj,vis,file){
         return axios({
             method: 'post',
             url,
@@ -94,7 +94,8 @@ class ApiService {
                 request:"CREATE_MOS",
                 name,
                 proj,
-                vis
+                vis,
+                file
             })
         })
     }

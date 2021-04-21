@@ -6,6 +6,7 @@ import {Link, useRouteMatch, Switch, Route,useParams} from "react-router-dom"
 import 'reactjs-popup/dist/index.css';
 import apiService from "../services/api"
 import {  Redirect } from "react-router-dom";
+import { useState } from "react";
 
 const CreateMosaicPage = (props) => {
     
@@ -15,11 +16,18 @@ const CreateMosaicPage = (props) => {
     const [vis_set, setVis] = React.useState(null)
     const [name, setName] = React.useState(null)
     const [created, setCreated] = React.useState(false)
+    const [selectedFile, setSelectedFile] = useState();
+	  const [isSelected, setIsSelected] = useState(false);
 
     let choices =[
       { text: 'Yes', value: true },
       { text: 'No', value: false }
     ]
+
+    const changeHandler = (event) => {
+      setSelectedFile(event.target.files[0]);
+      setIsSelected(true);
+    };
 
     React.useEffect(()=>{
         navbarService.setHeading(<>
@@ -51,7 +59,7 @@ const CreateMosaicPage = (props) => {
 
     let submitMos = (event) => {
       console.log(event.target.value);
-      apiService.createMosaic(name,proj,visible).then((data) => {
+      apiService.createMosaic(name,proj,visible,selectedFile).then((data) => {
         if(data.data.code == "MOS_CREATED"){
           alert(` Mosaic ' ${name} ' created `)
           setCreated(true)
@@ -86,11 +94,12 @@ const CreateMosaicPage = (props) => {
           ))}
         <div class="pb-4"></div>
         <button class="p-1 rounded-md bg-gradient-to-bl bg-gray-400 hover:bg-blue-900 disabled" > upload image</button>
+        <input type="file" name="file" onChange={changeHandler} />
         </div>
         <div class="mb-6 items-left text-left"> 
         <label class="text-2xl text-black text-left"> </label> 
           
-          <button onClick={submitMos} class="p-1 rounded-md bg-gradient-to-bl bg-gray-400 hover:bg-blue-900 disabled" disabled={!(name)}> Create </button>
+          <button onClick={submitMos} class="p-1 rounded-md bg-gradient-to-bl bg-gray-400 hover:bg-blue-900 disabled" disabled={!(name && isSelected)}> Create </button>
 
         </div>
     </div>
