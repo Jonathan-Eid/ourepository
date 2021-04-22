@@ -25,7 +25,6 @@ function App() {
 
 
   const protected_routes = [
-    {path: "/landing", page: LandingPage},
     {path: "/organization/:id" ,page: OrganizationPage},
     {path: "/org-settings/:id" ,page: OrgSettingsPage},
     {path: "/add-user/:id", page:AddUserPage},
@@ -37,6 +36,7 @@ function App() {
   ]
 
   const [protectedRoutes, setProtectedRoutes] = React.useState([])
+  const [authStatus,setAuthStatus] = React.useState(false)
 
   React.useEffect(()=>{
 
@@ -49,12 +49,13 @@ function App() {
         if( res.data == "true"){
 
           localStorage.setItem("user",true)
-
+          setAuthStatus(true)
           setProtectedRoutes(protected_routes)
 
         }else{
 
           localStorage.removeItem("user")
+          setAuthStatus(false)
 
           setProtectedRoutes([])
 
@@ -66,9 +67,11 @@ function App() {
   
           if( res.data == "true"){
             localStorage.setItem("user",true)
-
+            setAuthStatus(true)
             setProtectedRoutes(protected_routes)
+
           }else{
+            setAuthStatus(false)
             setProtectedRoutes([])
           }
 
@@ -86,14 +89,14 @@ function App() {
       <BrowserRouter forceRefresh={true}>
         <header className="App-header">
           <Nav></Nav>
-          {localStorage.getItem("user") ? <Sidebar></Sidebar> : <></>}
+          {authStatus ? <Sidebar></Sidebar> : <></>}
 
 
 
 
         <Switch>
-        <Route exact path="/" >
-          {localStorage.getItem("user") ? <Redirect to="/landing" /> : <HomePage></HomePage>}
+        <Route exact path="/" component={HomePage} >
+          {/* {authStatus ? <Redirect to="/landing" /> : <HomePage></HomePage>} */}
         </Route>
         <Route path="/login" component={LoginPage}></Route>
         {protectedRoutes.map((route)=>{

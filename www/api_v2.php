@@ -19,6 +19,7 @@ header("Access-Control-Allow-Headers: alg, X-Requested-With, Content-Type, Origi
 header("Access-Control-Allow-Methods: PUT, POST, GET, OPTIONS, DELETE");
 
 require_once "bootstrap.php";
+require_once "permissions.php";
 
 foreach ($_FILES as $file) {
     error_log("file: " . json_encode($file));
@@ -159,6 +160,8 @@ if($request_type == "CREATE_USER"){
 
 }else if($request_type == "CREATE_ORG"){
 
+    global $org_perm_map;
+
     if($_SESSION["id"] != session_id()){
         echo json_encode("USER NOT AUTHENTICATED");
         return;
@@ -184,9 +187,14 @@ if($request_type == "CREATE_USER"){
     $entityManager->persist($newMemberRole);
 
     $newOrgACL = new OrgACL();
-    $newOrgACL->setPermission("all");
+    $newOrgACL->setPermission($org_perm_map->{'ALL'});
     $newOrgACL->setRole($adminRole);
     $entityManager->persist($newOrgACL);
+
+    $defaultACL = new OrgACL();
+    $defaultACL->setPermission($org_perm_map->{'VIEW_PROJECTS'});
+    $defaultACL->setRole($defaultRole);
+    $entityManager->persist($defaultACL);
 
     $newOrganization = new Organization();
     $newOrganization->addMemberRole($newMemberRole);
@@ -200,6 +208,7 @@ if($request_type == "CREATE_USER"){
     $adminRole->setOrganization($newOrganization);
     $defaultRole->setOrganization($newOrganization);
     $newOrgACL->setOrganization($newOrganization);
+    $defaultACL->setOrganization($newOrganization);
 
     $entityManager->persist($newOrganization);
 

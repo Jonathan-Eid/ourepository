@@ -19,6 +19,14 @@ let permissions = [
         "description": "Delete users from the organization",
         "value":"delete_members"
     },{
+        "title":"Add Roles",
+        "description": "Add roles to the organization",
+        "value":"add_roles"
+    },{
+        "title":"Delete Roles",
+        "description": "Delete roles from the organization",
+        "value":"delete_roles"
+    },{
         "title":"View Projects",
         "description": "View projects",
         "value":"view_projects"
@@ -38,14 +46,6 @@ let permissions = [
         "title":"Share Mosaics",
         "description": "Share Mosaics",
         "value":"share_mosaics"
-    },{
-        "title":"Share Annotations",
-        "description": "Can share annotations in the org",
-        "value":"share_annotations"
-    },{
-        "title":"Share Models",
-        "description": "Can share models in the org",
-        "value":"share_models"
     }
 ]
 

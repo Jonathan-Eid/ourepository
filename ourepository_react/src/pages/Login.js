@@ -15,6 +15,7 @@ const LoginPage = (props) => {
     const [password, setPassword] = React.useState('')
     const [given_name, setGivenName] = React.useState('')
     const [family_name, setFamilyName] = React.useState('')
+    const [authStatus, setAuthStatus] = React.useState(false)
 
 
     const { x, y } = useMousePosition();
@@ -59,10 +60,11 @@ const LoginPage = (props) => {
 
         if(res.data.code=="hash_matches"){
           localStorage.setItem("user","true")     
-          setSignUp(true)
           setCookie("session_id",res.data.message);
           alert("Successfully logged in")
+          setAuthStatus(true)
           emitter.emit("storage")    
+          setSignUp(true)
 
         }
 
@@ -73,7 +75,7 @@ const LoginPage = (props) => {
 
     }
 
-    if(localStorage.getItem("user")){
+    if(authStatus){
       return <Redirect exact to="/"></Redirect>
     }
 

@@ -89,6 +89,14 @@ const CreateOrgPage = (props) => {
     }
 
 
+    let changeTab = (tab) => {
+
+      setActiveTab(tab)
+      
+    
+    }
+
+
 
       return (
 <div class="bg-blue-100 shadow-md rounded px-8 pt-6 pb-8 mb-4 flex flex-col w-1/2">
@@ -105,7 +113,7 @@ const CreateOrgPage = (props) => {
 
         {permissionTabs.map((tab) => (
           <>
-          <button onClick={() => {setActiveTab(tab)}} class={"p-2 border-gray-900 border-2 " + ((tab.value == activeTab.value) ? "bg-gray-400" : "bg-gray-800")}>{tab.title}</button>
+          <button onClick={() => {changeTab(tab)}} class={"p-2 border-gray-900 border-2 " + ((tab.value == activeTab.value) ? "bg-gray-400" : "bg-gray-800")}>{tab.title}</button>
           </>
 
         ))}

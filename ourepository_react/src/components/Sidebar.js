@@ -14,8 +14,8 @@ const Sidebar = (props) => {
         emitter.addListener("updateHeader",(header)=>{
             setHeader(header)
         })
-        emitter.addListener("updateContent",(header)=>{
-            setContent(header)
+        emitter.addListener("updateContent",(content)=>{
+            setContent(content)
         })
     },[])
 
@@ -26,6 +26,7 @@ const Sidebar = (props) => {
                 <div class="m-32"></div>
                 <div class="absolute h-40 w-full">
                     {header}
+                    {content}
                 </div>
 
             </div>
