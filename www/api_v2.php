@@ -19,6 +19,7 @@ header("Access-Control-Allow-Headers: alg, X-Requested-With, Content-Type, Origi
 header("Access-Control-Allow-Methods: PUT, POST, GET, OPTIONS, DELETE");
 
 require_once "bootstrap.php";
+require_once "upload_2.php";
 
 foreach ($_FILES as $file) {
     error_log("file: " . json_encode($file));
@@ -514,7 +515,8 @@ if($request_type == "CREATE_USER"){
     $entityManager->persist($newMosaic);
     try{
     
-        $entityManager->flush();
+        $entityManager->flush(); 
+        initiate_upload($uid,$filename,$name,$chunks,$size_bytes,$md5_hash);
         echo rsp_msg("MOS_CREATED","mosaic created");
 
     }

@@ -6,6 +6,7 @@ $cwd[__FILE__] = dirname($cwd[__FILE__]);
 
 require_once($cwd[__FILE__] . "/settings.php");
 require_once($cwd[__FILE__] . "/../db/my_query.php");
+require_once "bootstrap.php";
 
 /**
  * 
@@ -36,7 +37,7 @@ function rrmdir($dir) {
 
 
 function get_mosaic_info($owner_id, $md5_hash) {
-    $query = "SELECT id, filename, identifier, uploaded_chunks, number_chunks, size_bytes, bytes_uploaded, chunk_status, tiling_progress, status FROM mosaics WHERE md5_hash = '$md5_hash' AND owner_id = '$owner_id'";
+    $query = "SELECT id, name, identifier, uploaded_chunks, number_chunks, size_bytes, bytes_uploaded, chunk_status, tiling_progress, status FROM mosaics WHERE md5_hash = '$md5_hash' AND owner_id = '$owner_id'";
     $result = query_our_db($query);
     $row = $result->fetch_assoc();
     $row['md5_hash'] = $md5_hash;
@@ -51,18 +52,18 @@ function get_mosaic_info($owner_id, $md5_hash) {
     return $row;
 }
 
-function initiate_upload($owner_id) {
+function initiate_upload($owner_id, $filename, $identifier, $number_chunks, $size_bytes, $md5_hash) {
     connect_our_db();
     global $our_db, $UPLOAD_DIRECTORY;
     error_log(json_encode($_POST));
     error_log(json_encode($our_db));
-
+    /*
     $filename = $our_db->real_escape_string($_POST['filename']);
     $identifier = $our_db->real_escape_string($_POST['identifier']);
     $number_chunks = $our_db->real_escape_string($_POST['number_chunks']);
     $size_bytes = $our_db->real_escape_string($_POST['size_bytes']);
     $md5_hash = $our_db->real_escape_string($_POST['md5_hash']);
-
+    */
     $filename = str_replace(" ", "_", $filename);
     if (!preg_match("/^[a-zA-Z0-9_.-]*$/", $filename)) {
         //  4. file does exist but with different hash -- error message
@@ -81,7 +82,7 @@ function initiate_upload($owner_id) {
     //  3. file does exist and has finished uploading -- report finished
     //  4. file does exist but with different hash -- error message
 
-    $query = "SELECT md5_hash, number_chunks, uploaded_chunks, chunk_status, status FROM mosaics WHERE filename = '$filename' AND owner_id = '$owner_id'";
+    $query = "SELECT md5_hash, number_chunks, uploaded_chunks, chunk_status, status FROM mosaics WHERE name = '$filename' AND owner_id = '$owner_id'";
     error_log($query);
     $result = query_our_db($query);
     $row = $result->fetch_assoc();
@@ -92,7 +93,7 @@ function initiate_upload($owner_id) {
             $chunk_status .= '0';
         }
 
-        $query = "INSERT INTO mosaics SET owner_id = '$owner_id', filename = '$filename', identifier = '$identifier', size_bytes = '$size_bytes', number_chunks = '$number_chunks', md5_hash='$md5_hash', uploaded_chunks = 0, chunk_status = '$chunk_status', status = 'UPLOADING'";
+        $query = "INSERT INTO mosaics SET owner_id = '$owner_id', name = '$filename', identifier = '$identifier', size_bytes = '$size_bytes', number_chunks = '$number_chunks', md5_hash='$md5_hash', uploaded_chunks = 0, chunk_status = '$chunk_status', status = 'UPLOADING'";
         error_log($query);
         query_our_db($query);
 
@@ -102,7 +103,8 @@ function initiate_upload($owner_id) {
 
     } else {
         $db_md5_hash = $row['md5_hash'];
-
+        error_log($db_md5_hash);
+        error_log($md5_hash);
         if ($db_md5_hash != $md5_hash) {
             //  4. file does exist but with different hash -- error message
 

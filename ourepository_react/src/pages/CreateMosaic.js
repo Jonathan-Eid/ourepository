@@ -51,7 +51,62 @@ const CreateMosaicPage = (props) => {
       setName(event.target.value)
 
     }
+/*
+    function get_md5_hash(file, on_finish) {
 
+      var blobSlice = File.prototype.slice || File.prototype.mozSlice || File.prototype.webkitSlice,
+      chunkSize = 2097152,                             // Read in chunks of 2MB
+      chunks = Math.ceil(file.size / chunkSize),
+      currentChunk = 0,
+      spark = new SparkMD5.ArrayBuffer(),
+      fileReader = new FileReader();
+
+      //set_progressbar_status(file.identifier, "hashing");
+  
+      fileReader.onload = function (e) {
+          //console.log('read chunk nr', currentChunk + 1, 'of', chunks);
+          spark.append(e.target.result);                   // Append array buffer
+          currentChunk++;
+  
+          if (currentChunk % 5 == 0) {
+              var percent = (currentChunk / chunks) * 100.0;
+              //set_progressbar_percent(file.identifier, percent);
+          }
+  
+          if (currentChunk < chunks) {
+              //console.log('loaded chunk ' + currentChunk + ' of ' + chunks);
+              loadNext();
+          } else {
+              //console.log('finished loading');
+              //console.info('computed hash', spark.end());  // Compute hash
+  
+              //reset progress bar for uploading
+              var percent = 0.0;
+  
+              //set_progressbar_color(file.identifier, 'bg-warning');
+              //set_progressbar_percent(file.identifier, percent);
+              //set_progressbar_status(file.identifier, "uploading");
+              on_finish(spark.end());
+          }
+      };
+  
+      fileReader.onerror = function () {
+        console.log("File upload error");
+          //$("#error-modal-title").html("File Upload Error");
+          //$("#error-modal-body").html("Could not upload file because of an error generating it's MD5 hash. Please reload the page and try again.");
+          //$("#error-modal").modal();
+      };
+  
+      function loadNext() {
+          var start = currentChunk * chunkSize,
+          end = ((start + chunkSize) >= file.size) ? file.size : start + chunkSize;
+  
+          fileReader.readAsArrayBuffer(blobSlice.call(file, start, end));
+      }
+  
+      loadNext();
+  }
+*/
     let setChunk = (event) => {
       setChunks(event.target.value)
     }
@@ -70,7 +125,8 @@ const CreateMosaicPage = (props) => {
       formData.append("part", 50, selectedFile.fileName);*/
 
       console.log(event.target.value);
-      apiService.createMosaic(name,proj,visible,selectedFile,selectedFile.name,selectedFile.size,selectedFile.md5_hash,chunks).then((data) => {
+      console.log(selectedFile.md5_hash);
+      apiService.createMosaic(name,proj,visible,selectedFile,selectedFile.name,selectedFile.size,555555,chunks).then((data) => {
         if(data.data.code == "MOS_CREATED"){
           alert(` Mosaic ' ${name} ' created `)
           setCreated(true)
