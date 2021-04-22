@@ -6,8 +6,6 @@ require_once($cwd[__FILE__] . "/my_query.php");
 
 $drop_tables = false;
 
-query_our_db("DROP TABLE mosaics");
-
 if ($drop_tables) {
 	query_our_db("DROP TABLE users");
 	query_our_db("DROP TABLE projects");
@@ -30,53 +28,6 @@ if ($drop_tables) {
 query_our_db("DROP TABLE mark_attributes");
 query_our_db("DROP TABLE jobs");
 query_our_db("DROP TABLE prediction");
-
-$query = "CREATE TABLE `mosaics` (
-	`id` INT(11) NOT NULL AUTO_INCREMENT,
-	`owner_id` INT(11) NOT NULL,
-	`filename` VARCHAR(256) NOT NULL,
-    `identifier` VARCHAR(128) NOT NULL,
-    `number_chunks` int(11) NOT NULL,
-    `uploaded_chunks` int(11) NOT NULL,
-    `chunk_status` VARCHAR(8096) NOT NULL,
-    `md5_hash` VARCHAR(32) NOT NULL,
-    `size_bytes` BIGINT NOT NULL,
-    `bytes_uploaded` BIGINT DEFAULT 0,
-    `tiling_progress` double default 0,
-    `status` varchar(16),
-	`height` INT(11),
-	`width` INT(11),
-    `channels` INT(11),
-    `geotiff` tinyint(1),
-    `coordinate_system` BLOB,
-    `metadata` BLOB,
-    `image_metadata` BLOB,
-    `bands` BLOB,
-    `utm_zone` VARCHAR(4) DEFAULT NULL,
-    `lat_upper_left` VARCHAR(16) DEFAULT NULL,
-    `lon_upper_left` VARCHAR(16) DEFAULT NULL,
-    `lat_upper_right` VARCHAR(16) DEFAULT NULL,
-    `lon_upper_right` VARCHAR(16) DEFAULT NULL,
-    `lat_lower_left` VARCHAR(16) DEFAULT NULL,
-    `lon_lower_left` VARCHAR(16) DEFAULT NULL,
-    `lat_lower_right` VARCHAR(16) DEFAULT NULL,
-    `lon_lower_right` VARCHAR(16) DEFAULT NULL,
-    `lat_center` VARCHAR(16) DEFAULT NULL,
-    `lon_center` VARCHAR(16) DEFAULT NULL,
-    `utm_e_upper_left` double DEFAULT NULL,
-    `utm_n_upper_left` double DEFAULT NULL,
-    `utm_e_upper_right` double DEFAULT NULL,
-    `utm_n_upper_right` double DEFAULT NULL,
-    `utm_e_lower_left` double DEFAULT NULL,
-    `utm_n_lower_left` double DEFAULT NULL,
-    `utm_e_lower_right` double DEFAULT NULL,
-    `utm_n_lower_right` double DEFAULT NULL,
-    `utm_e_center` double DEFAULT NULL,
-    `utm_n_center` double DEFAULT NULL,
-
-	PRIMARY KEY (`id`),
-	UNIQUE KEY (`owner_id`, `filename`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1";
 
 query_our_db($query);
 

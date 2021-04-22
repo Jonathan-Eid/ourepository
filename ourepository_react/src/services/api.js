@@ -86,17 +86,23 @@ class ApiService {
             responseType: 'text'
         });
     }
-    createMosaic(name,proj,vis,file){
+    createMosaic(name,proj,vis,file,filename,size_bytes,md5_hash,chunks){
         return axios({
             method: 'post',
             url,
             data: new URLSearchParams({
-                request:"CREATE_MOS",
+                request:"CREATE_MOSAIC",
                 name,
                 proj,
                 vis,
-                file
-            })
+                file,
+                size_bytes,
+                filename,
+                md5_hash,
+                chunks
+            }),
+            withCredentials: true,
+            responseType: 'text'
         })
     }
 

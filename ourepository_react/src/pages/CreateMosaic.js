@@ -15,6 +15,7 @@ const CreateMosaicPage = (props) => {
     const [visible, setVisible] = React.useState(null)
     const [vis_set, setVis] = React.useState(null)
     const [name, setName] = React.useState(null)
+    const [chunks, setChunks] = React.useState(null)
     const [created, setCreated] = React.useState(false)
     const [selectedFile, setSelectedFile] = useState();
 	  const [isSelected, setIsSelected] = useState(false);
@@ -42,13 +43,17 @@ const CreateMosaicPage = (props) => {
 
     
     if(created){
-      return <Redirect exact to={'/organization/'+org+"/project"+proj}></Redirect>
+      return <Redirect exact to={'/organization/'+org+"/project/"+proj}></Redirect>
     }
 
     let setTitle = (event) => {
       console.log(event.target.value);
       setName(event.target.value)
 
+    }
+
+    let setChunk = (event) => {
+      setChunks(event.target.value)
     }
 
     let radioChange = (event) => {
@@ -58,8 +63,14 @@ const CreateMosaicPage = (props) => {
     }
 
     let submitMos = (event) => {
+      /*var formData = new FormData();
+      formData.append("chunk", 5);
+      formData.append("identifier", selectedFile.identifier);
+      formData.append("md5_hash", selectedFile.md5_hash);
+      formData.append("part", 50, selectedFile.fileName);*/
+
       console.log(event.target.value);
-      apiService.createMosaic(name,proj,visible,selectedFile).then((data) => {
+      apiService.createMosaic(name,proj,visible,selectedFile,selectedFile.name,selectedFile.size,selectedFile.md5_hash,chunks).then((data) => {
         if(data.data.code == "MOS_CREATED"){
           alert(` Mosaic ' ${name} ' created `)
           setCreated(true)
@@ -95,6 +106,10 @@ const CreateMosaicPage = (props) => {
         <div class="pb-4"></div>
         <button class="p-1 rounded-md bg-gradient-to-bl bg-gray-400 hover:bg-blue-900 disabled" > upload image</button>
         <input type="file" name="file" onChange={changeHandler} />
+        </div>
+        <div class="mb-4 text-left">
+          <label class="text-2xl text-black text-left"> Enter number of chunks</label> 
+          <input onChange={setChunk} class="shadow  placeholder-blue-500 appearance-none border rounded w-full py-2 px-3  text-black" id="chunks" type="chunks" placeholder="1"/>
         </div>
         <div class="mb-6 items-left text-left"> 
         <label class="text-2xl text-black text-left"> </label> 
