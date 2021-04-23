@@ -604,10 +604,10 @@ if($request_type == "CREATE_USER"){
 
     $uid = $_SESSION['uid'];
     $name = $_POST['name'];
-    $org_name = $_POST['org'];
+    $org = $_POST['org'];
 
     $existingOrg=$entityManager->getRepository('Organization')
-    ->findOneBy(array('name' => $org_name));
+    ->findOneBy(array('uuid' => $org));
 
     $newProject = new Project();
     $newProject ->setName($name);
@@ -635,10 +635,10 @@ if($request_type == "CREATE_USER"){
     }
 
     $uid = $_SESSION['uid'];
-    $org_name = $_GET['org'];
+    $org = $_GET['org'];
 
     try{
-        $existingOrg=$entityManager->getRepository('Organization')->findOneBy(array('name' => $org_name));
+        $existingOrg=$entityManager->getRepository('Organization')->findOneBy(array('uuid' => $org));
         $query = $entityManager->createQuery('SELECT p FROM Project p');
         $projs = $query->getResult();
         if(!isset($projs)){
@@ -742,7 +742,7 @@ if($request_type == "CREATE_USER"){
     // Get the organization, project, and mosaic IDs
     // These are used for organizing the shared drive filesystem.
     $organizationId = $entityManager->getRepository('Organization')
-        ->findOneBy(array('name' => $_POST['organizationId']))->getId();
+        ->findOneBy(array('uuid' => $_POST['organizationId']))->getId();
 //    $projectId = $entityManager->getRepository('Project')
 //        ->findOneBy(array('name' => $_POST['projectName']))->getId();
     $mosaicId = $_POST['mosaicId'];

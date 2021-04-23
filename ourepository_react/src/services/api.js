@@ -115,32 +115,6 @@ class ApiService {
     formData.append('md5_hash', md5_hash);
     formData.append('part', part);
 
-    addUser(email,org,role){
-        return axios({
-            method: 'post',
-            url,
-            data: new URLSearchParams({
-                request:"ADD_USER",
-                email,
-                org,
-                role
-            }),
-            withCredentials: true,
-            responseType: 'text'
-        })
-    }
-    getOrgByUUID(uuid){
-        return axios({
-            method: 'get',
-            url ,
-            params: {
-                request:"GET_AUTH_ORG_BY_UUID",
-                uuid
-            },
-            withCredentials: true,
-            responseType: 'text'
-          });
-    }
 
     return axios({
       method: 'post',
@@ -153,21 +127,35 @@ class ApiService {
       responseType: 'text'
     })
 
-
-    //     return axios({
-    //     method: 'post',
-    //     url,
-    //     data: new URLSearchParams({
-    //         request:"UPLOAD_CHUNK",
-    //         chunk,
-    //         identifier,
-    //         md5_hash,
-    //         part
-    //     }),
-    //     withCredentials: true,
-    //     responseType: 'text'
-    // })
   }
+
+  addUser(email,org,role){
+    return axios({
+        method: 'post',
+        url,
+        data: new URLSearchParams({
+            request:"ADD_USER",
+            email,
+            org,
+            role
+        }),
+        withCredentials: true,
+        responseType: 'text'
+    })
+}
+
+getOrgByUUID(uuid){
+    return axios({
+        method: 'get',
+        url ,
+        params: {
+            request:"GET_AUTH_ORG_BY_UUID",
+            uuid
+        },
+        withCredentials: true,
+        responseType: 'text'
+      });
+}
 
   getOrgs() {
     return axios({

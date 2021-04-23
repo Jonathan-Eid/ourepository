@@ -2,6 +2,7 @@
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use Ramsey\Uuid\Uuid;
 
 /**
  * @ORM\Entity 
@@ -34,8 +35,17 @@ class Project implements JsonSerializable
     /** @ORM\Column(type="boolean") */
     protected $owners;
 
+
+
+    /** 
+     * @var \Ramsey\Uuid\UuidInterface
+     * @ORM\Column(type="uuid", unique=true)
+     */
+    protected $uuid;
+
     public function __construct() {
         $this->proj_Acls = new ArrayCollection();
+        $this->uuid = Uuid::uuid4()->toString();
 
 
         

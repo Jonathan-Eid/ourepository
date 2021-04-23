@@ -51,37 +51,36 @@ const LoginPage = (props) => {
     setSignUp(true)
   }
 
-        if(res.data.code=="hash_matches"){
-          localStorage.setItem("user","true")     
-          setCookie("session_id",res.data.message);
-          alert("Successfully logged in")
-          setAuthStatus(true)
-          emitter.emit("storage")    
-          setSignUp(true)
 
+  async function handleSignInClick() {
+    try{
+      console.log(REACT_APP_PHP_DOMAIN, REACT_APP_PHP_PORT)
+      const res = await apiService.loginUser(email,password)
+    
       console.log(res);
 
 
-      if (res.data.code == "hash_matches") {
-        localStorage.setItem("user", "true")
-        setSignUp(true)
-        setCookie("session_id", res.data.message);
+      if(res.data.code=="hash_matches"){
+        localStorage.setItem("user","true")     
+        setCookie("session_id",res.data.message);
         alert("Successfully logged in")
-        emitter.emit("storage")
+        setAuthStatus(true)
+        emitter.emit("storage")    
+        setSignUp(true)
 
       }
 
-    } catch (err) {
+    }
+    catch(err){
       console.log(err);
     }
 
-    if(authStatus){
-      return <Redirect exact to="/"></Redirect>
-    }
+  }
 
-  if (localStorage.getItem("user")) {
+  if(authStatus){
     return <Redirect exact to="/"></Redirect>
   }
+
 
   if (!signUp) {
     button = <>

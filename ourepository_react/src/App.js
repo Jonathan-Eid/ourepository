@@ -33,36 +33,37 @@ function App() {
     {path: "/UserStatus", page:UserStatusPage},
     {path: "/mosaic", page:MosaicPage},
     {path: "/organization/:org/project/:id", page:ProjectPage},
-    {path: "/createProject/:id", page:CreateProjectPage}
+    {path: "/createProject/:id", page:CreateProjectPage},
     {path: "/create-mosaic/:org/:proj", page: CreateMosaicPage}
   ]
 
   const [protectedRoutes, setProtectedRoutes] = React.useState([])
   const [authStatus,setAuthStatus] = React.useState(false)
 
-  React.useEffect(() => {
+
+  React.useEffect(()=>{
 
     let revealRoutes = async () => {
 
-      let res = await apiService.isAuth()
+        let res = await apiService.isAuth()
+        
+        console.log(res);
 
-      console.log(res);
+        if( res.data == "true"){
 
           localStorage.setItem("user",true)
           setAuthStatus(true)
           setProtectedRoutes(protected_routes)
 
-        setProtectedRoutes(protected_routes)
+        }else{
 
           localStorage.removeItem("user")
           setAuthStatus(false)
 
-        localStorage.removeItem("user")
+          setProtectedRoutes([])
 
-        setProtectedRoutes([])
-
-      }
-
+        }
+  
       emitter.addListener("storage", async () => {
           let res = await apiService.isAuth()
           console.log(res);
@@ -77,21 +78,16 @@ function App() {
             setProtectedRoutes([])
           }
 
-          setProtectedRoutes(protected_routes)
-        } else {
-          setProtectedRoutes([])
-        }
-
       });
 
     }
-
+    
     revealRoutes()
 
-  }, [])
-
+    },[])
+    
   return (
-    <div className="App">
+      <div className="App">
 
       <BrowserRouter forceRefresh={true}>
         <header className="App-header">
@@ -99,14 +95,7 @@ function App() {
           {authStatus ? <Sidebar></Sidebar> : <></>}
 
 
-          <Switch>
-            <Route exact path="/">
-              {localStorage.getItem("user") ? <Redirect to="/landing"/> : <HomePage></HomePage>}
-            </Route>
-            <Route path="/login" component={LoginPage}></Route>
-            {protectedRoutes.map((route) => {
 
-              return <Route path={route.path} component={route.page}></Route>
 
         <Switch>
         <Route exact path="/" component={HomePage} >
@@ -115,11 +104,15 @@ function App() {
         <Route path="/login" component={LoginPage}></Route>
         {protectedRoutes.map((route)=>{
 
-          </Switch>
+          return <Route path={route.path} component={route.page}></Route>
+
+        })}
+
+        </Switch>
 
         </header>
 
-      </BrowserRouter>
+        </BrowserRouter>
 
     </div>
 
