@@ -139,13 +139,13 @@ class ApiService {
             responseType: 'text'
         })
     }
-    getOrgByName(name){
+    getOrgByUUID(uuid){
         return axios({
             method: 'get',
             url ,
             params: {
-                request:"GET_AUTH_ORG_BY_NAME",
-                name
+                request:"GET_AUTH_ORG_BY_UUID",
+                uuid
             },
             withCredentials: true,
             responseType: 'text'

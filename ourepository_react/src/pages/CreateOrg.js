@@ -55,7 +55,7 @@ const CreateProjectPage = (props) => {
           setCreated(true)
         }
         else{
-          alert(data.data.message)
+          alert(data.data)
         }
 
 

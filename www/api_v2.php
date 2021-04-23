@@ -252,18 +252,18 @@ if($request_type == "CREATE_USER"){
 
 
     
-}else if($request_type == "GET_AUTH_ORG_BY_NAME"){
+}else if($request_type == "GET_AUTH_ORG_BY_UUID"){
     if($_SESSION["id"] != session_id()){
         echo json_encode("USER NOT AUTHENTICATED");
         return;
     }
 
     $uid = $_SESSION['uid'];
-    $name = $_GET['name'];
+    $oid = $_GET['uuid'];
 
     try{
 
-        $query = $entityManager->createQuery('SELECT o FROM Organization o JOIN o.memberRoles m WHERE m.member = '.$uid.' AND  o.name = \''.$name.'\'');
+        $query = $entityManager->createQuery('SELECT o FROM Organization o JOIN o.memberRoles m WHERE m.member = '.$uid.' AND  o.uuid = \''.$oid.'\'');
         $orgs = $query->getResult();
        if(!isset($orgs)){
         echo rsp_msg("ORGS_RECEIVED_FAILED","no orgs were returned in the query");
@@ -290,7 +290,7 @@ if($request_type == "CREATE_USER"){
     //echo rsp_msg("ORGS_RECEIVED",$orgs);    
     try{
 
-        $query = $entityManager->createQuery('SELECT o FROM OrgACL o JOIN o.organization g WITH g.name = :org JOIN g.memberRoles m WITH m.member = :uid AND m.role = o.role WHERE o.permission IN (:permissions)');
+        $query = $entityManager->createQuery('SELECT o FROM OrgACL o JOIN o.organization g WITH g.uuid = :org JOIN g.memberRoles m WITH m.member = :uid AND m.role = o.role WHERE o.permission IN (:permissions)');
         $query->setParameter('org', $organization);
         $query->setParameter('uid', $uid);
         $query->setParameter('permissions', array('all',$permission));
@@ -566,17 +566,16 @@ if($request_type == "CREATE_USER"){
     $uid = $_SESSION['uid'];
     $role = $_POST['role'];
     $email = $_POST['email'];
-    $org_name = $_POST['org'];
     
 
-    $existingOrg=$entityManager->getRepository('Organization')
-    ->findOneBy(array('name' => $org_name));
 
     $existingUser=$entityManager->getRepository('User')
     ->findOneBy(array('id' => $uid));
 
     $existingRole = $entityManager->getRepository('Role')
-    ->findOneBy(array('name' => $role));
+    ->findOneBy(array('id' => $role));
+
+    $existingOrg = $existingRole->getOrganization();
 
     $existingUser=$entityManager->getRepository('User')
     ->findOneBy(array('email' => $email));

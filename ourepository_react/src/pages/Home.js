@@ -89,7 +89,7 @@ const HomePage = (props) => {
       <div class=" p-1"></div>
 
       {organizations && organizations.map((org) => ( 
-        <div class="bg-gray-800  shadow-md rounded px-4 pt-3 pb-4"><Link to={`/organization/${org.name}`}>{org.name}</Link> </div>
+        <div class="bg-gray-800  shadow-md rounded px-4 pt-3 pb-4"><Link to={`/organization/${org.uuid}`}>{org.name}</Link> </div>
       ))}
 
       </div>

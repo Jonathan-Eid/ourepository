@@ -32,12 +32,12 @@ const OrganizationPage = (props) => {
     React.useEffect(()=>{
         console.log("NAME"+id);
 
-        apiService.getOrgByName(id).then((data) => {
+        apiService.getOrgByUUID(id).then((data) => {
             const resp = data.data
             if(resp.code == "ORGS_RECEIVED"){
                 let org = resp.message
                 setOrganization(org)
-                apiService.hasPermission("edit_org",org.name).then((data)=> {
+                apiService.hasPermission("edit_org",id).then((data)=> {
                     const resp = data.data
                     console.log(JSON.stringify(resp));
                     if(resp.code=="HAS_ORG_PERMISSION"){
