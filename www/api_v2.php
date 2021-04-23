@@ -325,7 +325,7 @@ if($request_type == "CREATE_USER"){
 
     try{
 
-        $query = $entityManager->createQuery('SELECT r FROM Role r JOIN r.organization g WITH g.name = :org JOIN g.memberRoles m WITH m.member = :uid');
+        $query = $entityManager->createQuery('SELECT r FROM Role r JOIN r.organization g WITH g.uuid = :org JOIN g.memberRoles m WITH m.member = :uid');
         $query->setParameter('org', $organization);
         $query->setParameter('uid', $uid);
 
@@ -570,13 +570,18 @@ if($request_type == "CREATE_USER"){
     
 
 
-    $existingUser=$entityManager->getRepository('User')
+    $owningUser=$entityManager->getRepository('User')
     ->findOneBy(array('id' => $uid));
 
     $existingRole = $entityManager->getRepository('Role')
     ->findOneBy(array('id' => $role));
 
+    error_log("ROLE".json_encode($existingRole));
+
+
     $existingOrg = $existingRole->getOrganization();
+
+    error_log("ROLE".json_encode($existingRole)."ORG".json_encode($existingOrg));
 
     $existingUser=$entityManager->getRepository('User')
     ->findOneBy(array('email' => $email));
