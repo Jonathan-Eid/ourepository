@@ -222,24 +222,29 @@ class ApiService {
             responseType: 'text'
           });
     }
-    cropMosaic(name,dataDir,width,height,strideLength,ratio){
+    trainMosaic(name, dataDir, modelWidth, modelHeight, strideLength, ratio,
+                modelName, continueFromCheckpoint) {
         return axios({
             method: 'post',
             url,
             data: new URLSearchParams({
                 request:"CROP_MOSAIC",
                 name,
+                // crop phase
                 dataDir,
-                width,
-                height,
+                modelWidth,
+                modelHeight,
                 strideLength,
-                ratio
+                ratio,
+                // train phase
+                modelName,
+                continueFromCheckpoint,
             }),
             withCredentials: true,
             responseType: 'text'
         })
     }
-    interfaceMosaic(name,imagePath,model,width,height,strideLength){
+    inferenceMosaic(name, imagePath, model, width, height, strideLength){
         return axios({
             method: 'post',
             url,
