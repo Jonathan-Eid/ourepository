@@ -4,13 +4,19 @@ INSTALL COMPOSER FOR PHP
 ### Make sure mysqli is enabled for PHP
 
 #### Create SQL DB info file
+
+Fill in the fields with the correct values.
+
 ```
 cat << EOF >> ./db/db_info.php
 <?php
 \$our_db_host="localhost:3306";
-\$our_db_user="jon";
-\$our_db_password="password";
+\$our_db_user="$db_username";
+\$our_db_password="$db_password";
 \$our_db_name="our";
+\our_cluster_server="$cluster_server_name";
+\our_cluster_username="$rit_username";
+\our_cluster_password="$rit_password";
 ?>
 EOF
 ```
