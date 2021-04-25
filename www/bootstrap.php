@@ -33,10 +33,10 @@ $config = Setup::createAnnotationMetadataConfiguration(array(__DIR__."/src"), $i
 // the connection configuration
 $dbParams = array(
     'driver'   => 'pdo_mysql',
-    'user'     => 'root',
-    'password' => '',
-    'dbname'   => 'our',
-    'url' => 'mysql://root:@localhost:3306/our',
+    'user'     => $our_db_user,
+    'password' => $our_db_password,
+    'dbname'   => $our_db_name,
+    'url' => 'mysql://'.$our_db_user.':'.$our_db_password.'@'.$our_db_host.'/'.$our_db_name,
 
 );
 

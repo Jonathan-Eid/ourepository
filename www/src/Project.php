@@ -1,5 +1,8 @@
 <?php
+
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+
 /**
  * @ORM\Entity 
  * @ORM\Table(name="projects")
@@ -31,7 +34,13 @@ class Project implements JsonSerializable
     /** @ORM\Column(type="boolean") */
     protected $owners;
 
+    public function __construct() {
+        $this->proj_Acls = new ArrayCollection();
 
+
+        
+
+    }
 
     public function getId()
     {
