@@ -1,5 +1,13 @@
-Dependencies:
-INSTALL COMPOSER FOR PHP
+### Dependencies:
+- Install PHP
+- Install Composer for PHP
+- Install Node.js
+- Install [libvips](https://libvips.github.io/libvips/install.html)
+    - Check installation with `vipsthumbnail -h`
+- Install GDAL
+    - [Instructions for Windows](https://sandbox.idre.ucla.edu/sandbox/tutorials/installing-gdal-for-windows)
+        - May be able to skip the Python bindings part
+    - Check installation with `gdalinfo --version`
 
 ### Make sure mysqli is enabled for PHP
 

@@ -112,13 +112,13 @@ function initiate_upload($uid, $entityManager) {
         $newMosaic->setMembers($visible);
         $newMosaic->setRoles(true);
         $newMosaic->setProject($existingProj);
-        $newMosaic->setOwner($uid);
+        $newMosaic->setOwnerId($uid);
         $newMosaic->setNumberChunks($number_chunks);
         $newMosaic->setUploadedChunks(0);
         $newMosaic->setChunkStatus($chunk_status);
         $newMosaic->setSizeBytes($size_bytes);
-        $newMosaic->setUploadedBytes(0);
-        $newMosaic->setHash($md5_hash);
+        $newMosaic->setBytesUploaded(0);
+        $newMosaic->setMd5Hash($md5_hash);
         $newMosaic->setTilingProgress(0);
         $newMosaic->setStatus("UPLOADING");
         $newMosaic->setHeight(0);
