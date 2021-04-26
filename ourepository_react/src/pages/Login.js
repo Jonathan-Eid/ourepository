@@ -10,12 +10,13 @@ const {REACT_APP_PHP_DOMAIN, REACT_APP_PHP_PORT} = process.env;
 
 const LoginPage = (props) => {
 
-  const [cookies, setCookie, removeCookie] = useCookies(['session_id']);
-  const [signUp, setSignUp] = React.useState(false)
-  const [email, setEmail] = React.useState('')
-  const [password, setPassword] = React.useState('')
-  const [given_name, setGivenName] = React.useState('')
-  const [family_name, setFamilyName] = React.useState('')
+    const [cookies, setCookie, removeCookie] = useCookies(['session_id']);
+    const [signUp, setSignUp] = React.useState(false)
+    const [email, setEmail] = React.useState('')
+    const [password, setPassword] = React.useState('')
+    const [given_name, setGivenName] = React.useState('')
+    const [family_name, setFamilyName] = React.useState('')
+    const [authStatus, setAuthStatus] = React.useState(false)
 
 
   const {x, y} = useMousePosition();
@@ -50,32 +51,36 @@ const LoginPage = (props) => {
     setSignUp(true)
   }
 
-  async function handleSignInClick() {
-    try {
-      console.log(REACT_APP_PHP_DOMAIN, REACT_APP_PHP_PORT)
-      const res = await apiService.loginUser(email, password)
 
+  async function handleSignInClick() {
+    try{
+      console.log(REACT_APP_PHP_DOMAIN, REACT_APP_PHP_PORT)
+      const res = await apiService.loginUser(email,password)
+    
       console.log(res);
 
 
-      if (res.data.code == "hash_matches") {
-        localStorage.setItem("user", "true")
-        setSignUp(true)
-        setCookie("session_id", res.data.message);
+      if(res.data.code=="hash_matches"){
+        localStorage.setItem("user","true")     
+        setCookie("session_id",res.data.message);
         alert("Successfully logged in")
-        emitter.emit("storage")
+        setAuthStatus(true)
+        emitter.emit("storage")    
+        setSignUp(true)
 
       }
 
-    } catch (err) {
+    }
+    catch(err){
       console.log(err);
     }
 
   }
 
-  if (localStorage.getItem("user")) {
+  if(authStatus){
     return <Redirect exact to="/"></Redirect>
   }
+
 
   if (!signUp) {
     button = <>

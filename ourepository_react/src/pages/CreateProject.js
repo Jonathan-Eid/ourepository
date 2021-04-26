@@ -89,28 +89,33 @@ const CreateProjectPage = (props) => {
     })
   }
 
+    let changeTab = (tab) => {
 
-  return (
-    <div class="bg-blue-100 shadow-md rounded px-8 pt-6 pb-8 mb-4 flex flex-col w-1/2">
-      <h2 class="text text-black pb-10"> Create A Project </h2>
-      <div class="mb-4 text-left">
-        <label class="text-2xl text-black text-left"> Enter Project Title</label>
-        <input onChange={setTitle}
-               class="shadow  placeholder-blue-500 appearance-none border rounded w-full py-2 px-3  text-black"
-               id="email" type="email" placeholder="Project Title"/>
-      </div>
-      <div class="pb-4"></div>
-      <div class="mb-6 items-left text-left">
+      setActiveTab(tab)
+      
+    
+    }
+
+
+
+      return (
+<div class="bg-blue-100 shadow-md rounded px-8 pt-6 pb-8 mb-4 flex flex-col w-1/2">
+        <h2 class="text text-black pb-10"> Create A Project </h2>
+        <div class="mb-4 text-left">
+          <label class="text-2xl text-black text-left"> Enter Project Title</label> 
+          <input onChange={setTitle} class="shadow  placeholder-blue-500 appearance-none border rounded w-full py-2 px-3  text-black" id="email" type="email" placeholder="Project Title"/>
+        </div>
+        <div class="pb-4"></div>
+        <div class="mb-6 items-left text-left"> 
+          
+        <label class="text-2xl text-black text-left"> </label> 
 
         <label class="text-2xl text-black text-left"> </label>
 
 
         {permissionTabs.map((tab) => (
           <>
-            <button onClick={() => {
-              setActiveTab(tab)
-            }}
-                    class={"p-2 border-gray-900 border-2 " + ((tab.value == activeTab.value) ? "bg-gray-400" : "bg-gray-800")}>{tab.title}</button>
+          <button onClick={() => {changeTab(tab)}} class={"p-2 border-gray-900 border-2 " + ((tab.value == activeTab.value) ? "bg-gray-400" : "bg-gray-800")}>{tab.title}</button>
           </>
 
         ))}

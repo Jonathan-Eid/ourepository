@@ -21,6 +21,7 @@ header("Access-Control-Allow-Methods: PUT, POST, GET, OPTIONS, DELETE");
 
 require_once "bootstrap.php";
 require_once "upload_2.php";
+require_once "permissions.php";
 
 global $entityManager;
 
@@ -160,6 +161,8 @@ if($request_type == "CREATE_USER"){
 
 }else if($request_type == "CREATE_ORG"){
 
+    global $org_perm_map;
+
     if($_SESSION["id"] != session_id()){
         echo json_encode("USER NOT AUTHENTICATED");
         return;
@@ -185,9 +188,14 @@ if($request_type == "CREATE_USER"){
     $entityManager->persist($newMemberRole);
 
     $newOrgACL = new OrgACL();
-    $newOrgACL->setPermission("all");
+    $newOrgACL->setPermission($org_perm_map->{'ALL'});
     $newOrgACL->setRole($adminRole);
     $entityManager->persist($newOrgACL);
+
+    $defaultACL = new OrgACL();
+    $defaultACL->setPermission($org_perm_map->{'VIEW_PROJECTS'});
+    $defaultACL->setRole($defaultRole);
+    $entityManager->persist($defaultACL);
 
     $newOrganization = new Organization();
     $newOrganization->addMemberRole($newMemberRole);
@@ -201,6 +209,7 @@ if($request_type == "CREATE_USER"){
     $adminRole->setOrganization($newOrganization);
     $defaultRole->setOrganization($newOrganization);
     $newOrgACL->setOrganization($newOrganization);
+    $defaultACL->setOrganization($newOrganization);
 
     $entityManager->persist($newOrganization);
 
@@ -244,18 +253,18 @@ if($request_type == "CREATE_USER"){
 
 
     
-}else if($request_type == "GET_AUTH_ORG_BY_NAME"){
+}else if($request_type == "GET_AUTH_ORG_BY_UUID"){
     if($_SESSION["id"] != session_id()){
         echo json_encode("USER NOT AUTHENTICATED");
         return;
     }
 
     $uid = $_SESSION['uid'];
-    $name = $_GET['name'];
+    $oid = $_GET['uuid'];
 
     try{
 
-        $query = $entityManager->createQuery('SELECT o FROM Organization o JOIN o.memberRoles m WHERE m.member = '.$uid.' AND  o.name = \''.$name.'\'');
+        $query = $entityManager->createQuery('SELECT o FROM Organization o JOIN o.memberRoles m WHERE m.member = '.$uid.' AND  o.uuid = \''.$oid.'\'');
         $orgs = $query->getResult();
        if(!isset($orgs)){
         echo rsp_msg("ORGS_RECEIVED_FAILED","no orgs were returned in the query");
@@ -282,7 +291,7 @@ if($request_type == "CREATE_USER"){
     //echo rsp_msg("ORGS_RECEIVED",$orgs);    
     try{
 
-        $query = $entityManager->createQuery('SELECT o FROM OrgACL o JOIN o.organization g WITH g.name = :org JOIN g.memberRoles m WITH m.member = :uid AND m.role = o.role WHERE o.permission IN (:permissions)');
+        $query = $entityManager->createQuery('SELECT o FROM OrgACL o JOIN o.organization g WITH g.uuid = :org JOIN g.memberRoles m WITH m.member = :uid AND m.role = o.role WHERE o.permission IN (:permissions)');
         $query->setParameter('org', $organization);
         $query->setParameter('uid', $uid);
         $query->setParameter('permissions', array('all',$permission));
@@ -558,17 +567,16 @@ if($request_type == "CREATE_USER"){
     $uid = $_SESSION['uid'];
     $role = $_POST['role'];
     $email = $_POST['email'];
-    $org_name = $_POST['org'];
     
 
-    $existingOrg=$entityManager->getRepository('Organization')
-    ->findOneBy(array('name' => $org_name));
 
     $existingUser=$entityManager->getRepository('User')
     ->findOneBy(array('id' => $uid));
 
     $existingRole = $entityManager->getRepository('Role')
-    ->findOneBy(array('name' => $role));
+    ->findOneBy(array('id' => $role));
+
+    $existingOrg = $existingRole->getOrganization();
 
     $existingUser=$entityManager->getRepository('User')
     ->findOneBy(array('email' => $email));
@@ -596,10 +604,10 @@ if($request_type == "CREATE_USER"){
 
     $uid = $_SESSION['uid'];
     $name = $_POST['name'];
-    $org_name = $_POST['org'];
+    $org = $_POST['org'];
 
     $existingOrg=$entityManager->getRepository('Organization')
-    ->findOneBy(array('name' => $org_name));
+    ->findOneBy(array('uuid' => $org));
 
     $newProject = new Project();
     $newProject ->setName($name);
@@ -627,10 +635,10 @@ if($request_type == "CREATE_USER"){
     }
 
     $uid = $_SESSION['uid'];
-    $org_name = $_GET['org'];
+    $org = $_GET['org'];
 
     try{
-        $existingOrg=$entityManager->getRepository('Organization')->findOneBy(array('name' => $org_name));
+        $existingOrg=$entityManager->getRepository('Organization')->findOneBy(array('uuid' => $org));
         $query = $entityManager->createQuery('SELECT p FROM Project p');
         $projs = $query->getResult();
         if(!isset($projs)){
@@ -734,7 +742,7 @@ if($request_type == "CREATE_USER"){
     // Get the organization, project, and mosaic IDs
     // These are used for organizing the shared drive filesystem.
     $organizationId = $entityManager->getRepository('Organization')
-        ->findOneBy(array('name' => $_POST['organizationId']))->getId();
+        ->findOneBy(array('uuid' => $_POST['organizationId']))->getId();
 //    $projectId = $entityManager->getRepository('Project')
 //        ->findOneBy(array('name' => $_POST['projectName']))->getId();
     $mosaicId = $_POST['mosaicId'];

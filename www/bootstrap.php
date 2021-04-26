@@ -14,6 +14,7 @@
 
 use Doctrine\ORM\Tools\Setup;
 use Doctrine\ORM\EntityManager;
+use Doctrine\DBAL\Types\Type;
 
 require_once "vendor/autoload.php";
 require_once "../db/db_info.php";
@@ -40,6 +41,7 @@ $dbParams = array(
 
 );
 
+Type::addType('uuid', 'Ramsey\Uuid\Doctrine\UuidType');
 
 // obtaining the entity manager
 $entityManager = EntityManager::create($dbParams, $config);

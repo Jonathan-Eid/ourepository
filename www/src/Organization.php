@@ -2,8 +2,7 @@
 <?php
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
-
-
+use Ramsey\Uuid\Uuid;
 /**
  * @ORM\Entity 
  * @ORM\Table(name="organizations")
@@ -36,6 +35,13 @@ class Organization implements JsonSerializable
      */
     protected $roles;
 
+
+    /** 
+     * @var \Ramsey\Uuid\UuidInterface
+     * @ORM\Column(type="uuid", unique=true)
+     */
+    protected $uuid;
+
     // /** @ORM\Column(type="boolean") */
     // protected $projects;
 
@@ -43,9 +49,8 @@ class Organization implements JsonSerializable
         $this->orgAcls = new ArrayCollection();
         $this->memberRoles = new ArrayCollection();
         $this->roles = new ArrayCollection();
-
-        
-
+        $this->uuid = Uuid::uuid4()->toString();
+    
     }
 
 
@@ -85,11 +90,14 @@ class Organization implements JsonSerializable
         $this->roles->add($role);
     }
 
+    
+
     public function jsonSerialize()
     {
         return array(
             'name' => $this->name,
             'visible'=> $this->visible,
+            'uuid'=> $this->uuid
         );
     }
 

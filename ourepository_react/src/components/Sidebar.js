@@ -8,23 +8,24 @@ const Sidebar = (props) => {
   const [header, setHeader] = React.useState(<></>);
   const [content, setContent] = React.useState(<></>);
 
-  React.useEffect(() => {
-    emitter.addListener("updateHeader", (header) => {
-      setHeader(header)
-    })
-    emitter.addListener("updateContent", (header) => {
-      setContent(header)
-    })
-  }, [])
+    React.useEffect(()=>{
+        emitter.addListener("updateHeader",(header)=>{
+            setHeader(header)
+        })
+        emitter.addListener("updateContent",(content)=>{
+            setContent(content)
+        })
+    },[])
 
   return (<>
 
       <div class="fixed h-full bg-gray-700 left-0" style={{width: "16vw"}}>
 
-        <div class="m-32"></div>
-        <div class="absolute h-40 w-full">
-          {header}
-        </div>
+                <div class="m-32"></div>
+                <div class="absolute h-40 w-full">
+                    {header}
+                    {content}
+                </div>
 
       </div>
     </>
