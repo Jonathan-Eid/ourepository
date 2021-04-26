@@ -35,11 +35,12 @@ var chunk_size = 1 * 1024 * 1024; //5MB
 // }
 //
 function get_unique_identifier(file) {
-    var relativePath = file.webkitRelativePath || file.fileName || file.name; // Some confusion in different versions of Firefox
-    var size = file.size;
+  var relativePath = file.webkitRelativePath || file.fileName || file.name; // Some confusion in different versions of Firefox
+  var size = file.size;
 
-    return(size + '-' + relativePath.replace(/[^0-9a-zA-Z_-]/img, ''));
+  return (size + '-' + relativePath.replace(/[^0-9a-zA-Z_-]/img, ''));
 }
+
 //
 //
 // function set_actions(identifier, actions) {
@@ -180,91 +181,91 @@ function get_unique_identifier(file) {
 //
 function get_md5_hash(file, on_finish) {
 
-    var blobSlice = File.prototype.slice || File.prototype.mozSlice || File.prototype.webkitSlice,
+  var blobSlice = File.prototype.slice || File.prototype.mozSlice || File.prototype.webkitSlice,
     chunkSize = 2097152,                             // Read in chunks of 2MB
     chunks = Math.ceil(file.size / chunkSize),
     currentChunk = 0,
     spark = new SparkMD5.ArrayBuffer(),
     fileReader = new FileReader();
 
-	// $('#actions-td-' + file.identifier).html("");
-	// $('#progress-bar-' + file.identifier).addClass('progress-bar-animated');
-	// set_progressbar_status(file.identifier, "hashing");
+  // $('#actions-td-' + file.identifier).html("");
+  // $('#progress-bar-' + file.identifier).addClass('progress-bar-animated');
+  // set_progressbar_status(file.identifier, "hashing");
 
-    fileReader.onload = function (e) {
-        //console.log('read chunk nr', currentChunk + 1, 'of', chunks);
-        spark.append(e.target.result);                   // Append array buffer
-        currentChunk++;
+  fileReader.onload = function (e) {
+    //console.log('read chunk nr', currentChunk + 1, 'of', chunks);
+    spark.append(e.target.result);                   // Append array buffer
+    currentChunk++;
 
-        if (currentChunk % 5 == 0) {
-            var percent = (currentChunk / chunks) * 100.0;
-            // set_progressbar_percent(file.identifier, percent);
-        }
-
-        if (currentChunk < chunks) {
-            //console.log('loaded chunk ' + currentChunk + ' of ' + chunks);
-            loadNext();
-        } else {
-            //console.log('finished loading');
-            //console.info('computed hash', spark.end());  // Compute hash
-
-            //reset progress bar for uploading
-            var percent = 0.0;
-
-            // set_progressbar_color(file.identifier, 'bg-warning');
-            // set_progressbar_percent(file.identifier, percent);
-            // set_progressbar_status(file.identifier, "uploading");
-            on_finish(spark.end());
-        }
-    };
-
-    fileReader.onerror = function () {
-        // $("#error-modal-title").html("File Upload Error");
-        // $("#error-modal-body").html("Could not upload file because of an error generating it's MD5 hash. Please reload the page and try again.");
-        // $("#error-modal").modal();
-    };
-
-    function loadNext() {
-        var start = currentChunk * chunkSize,
-        end = ((start + chunkSize) >= file.size) ? file.size : start + chunkSize;
-
-        fileReader.readAsArrayBuffer(blobSlice.call(file, start, end));
+    if (currentChunk % 5 == 0) {
+      var percent = (currentChunk / chunks) * 100.0;
+      // set_progressbar_percent(file.identifier, percent);
     }
 
-    loadNext();
+    if (currentChunk < chunks) {
+      //console.log('loaded chunk ' + currentChunk + ' of ' + chunks);
+      loadNext();
+    } else {
+      //console.log('finished loading');
+      //console.info('computed hash', spark.end());  // Compute hash
+
+      //reset progress bar for uploading
+      var percent = 0.0;
+
+      // set_progressbar_color(file.identifier, 'bg-warning');
+      // set_progressbar_percent(file.identifier, percent);
+      // set_progressbar_status(file.identifier, "uploading");
+      on_finish(spark.end());
+    }
+  };
+
+  fileReader.onerror = function () {
+    // $("#error-modal-title").html("File Upload Error");
+    // $("#error-modal-body").html("Could not upload file because of an error generating it's MD5 hash. Please reload the page and try again.");
+    // $("#error-modal").modal();
+  };
+
+  function loadNext() {
+    var start = currentChunk * chunkSize,
+      end = ((start + chunkSize) >= file.size) ? file.size : start + chunkSize;
+
+    fileReader.readAsArrayBuffer(blobSlice.call(file, start, end));
+  }
+
+  loadNext();
 }
 
 export function start_upload(name, file, proj, visible) {
-    var identifier = get_unique_identifier(file);
-    //different versions of firefox have different field names
-    var filename = file.webkitRelativePath || file.fileName || file.name;
-    file.identifier = identifier;
-	paused[identifier] = false;
+  var identifier = get_unique_identifier(file);
+  //different versions of firefox have different field names
+  var filename = file.webkitRelativePath || file.fileName || file.name;
+  file.identifier = identifier;
+  paused[identifier] = false;
 
-    var number_chunks = Math.ceil(file.size / chunk_size);
+  var number_chunks = Math.ceil(file.size / chunk_size);
 
-    var mosaic_info = {};
-    mosaic_info.identifier = identifier;
-    mosaic_info.filename = filename;
-    mosaic_info.uploaded_chunks = 0;
-    mosaic_info.number_chunks = number_chunks;
-    mosaic_info.size_bytes = file.size;
-    mosaic_info.bytes_uploaded = 0;
-    mosaic_info.status = 'HASHING';
+  var mosaic_info = {};
+  mosaic_info.identifier = identifier;
+  mosaic_info.filename = filename;
+  mosaic_info.uploaded_chunks = 0;
+  mosaic_info.number_chunks = number_chunks;
+  mosaic_info.size_bytes = file.size;
+  mosaic_info.bytes_uploaded = 0;
+  mosaic_info.status = 'HASHING';
 
-    // add_mosaic_to_table(mosaic_info);
-	// initialize_mosaic_dropdowns();
+  // add_mosaic_to_table(mosaic_info);
+  // initialize_mosaic_dropdowns();
 
-	function on_finish(md5_hash) {
-		// $('#progress-bar-' + identifier).addClass("hashed");
+  function on_finish(md5_hash) {
+    // $('#progress-bar-' + identifier).addClass("hashed");
     //
     //     set_actions(identifier, ["pause", "delete"]);
     //
-		// $('#progress-bar-' + identifier).addClass('progress-bar-animated');
-		// initialize_mosaic_dropdowns();
+    // $('#progress-bar-' + identifier).addClass('progress-bar-animated');
+    // initialize_mosaic_dropdowns();
 
-		file.md5_hash = md5_hash;
-		console.log("got md5_hash: '" + md5_hash + "'");
+    file.md5_hash = md5_hash;
+    console.log("got md5_hash: '" + md5_hash + "'");
 
     apiService.createMosaic(name, proj, visible, file, file.name, file.size, md5_hash, number_chunks).then((data) => {
       // if(data.data.code == "MOS_CREATED"){
@@ -281,7 +282,7 @@ export function start_upload(name, file, proj, visible) {
       var filename = file.webkitRelativePath || file.fileName || file.name;
 
       //check and see if there was an error in the response!
-      if(data.data.code !== "MOS_CREATED"){
+      if (data.data.code !== "MOS_CREATED") {
         // display_error_modal(response.err_title, response.err_msg + "<br>On file: '" + filename + "'");
         // $('#uploading-mosaic-row-' + identifier).remove();
 
@@ -294,121 +295,121 @@ export function start_upload(name, file, proj, visible) {
       console.log(err);
     })
 
-	// 	var xhr = new XMLHttpRequest();
-  //
-	// 	xhr.open('POST', './request.php');
-	// 	xhr.onload = function() {
-	// 		console.log("New upload response: " + xhr.responseText);
-	// 		var response = JSON.parse(xhr.responseText);
-  //
-	// 		var filename = file.webkitRelativePath || file.fileName || file.name;
-  //
-	// 		//check and see if there was an error in the response!
-	// 		if (response.err_title !== undefined) {
-	// 			display_error_modal(response.err_title, response.err_msg + "<br>On file: '" + filename + "'");
-  //               $('#uploading-mosaic-row-' + identifier).remove();
-  //
-	// 		} else {
-	// 			var mosaic_info = response.mosaic_info;
-	// 			mosaic_info.file = file; //set the file in the response mosaic_info so it can be used later
-	// 			upload_chunk(mosaic_info);
-	// 		}
-	// 	};
-  //
-	// 	var formData = new FormData();
-	// 	formData.append("id_token", id_token);
-	// 	formData.append("request", "NEW_UPLOAD");
-	// 	formData.append("filename", filename);
-	// 	formData.append("identifier", identifier);
-	// 	formData.append("number_chunks", number_chunks);
-	// 	formData.append("size_bytes", file.size);
-	// 	formData.append("md5_hash", md5_hash);
-	// 	xhr.send(formData);
-	}
+    // 	var xhr = new XMLHttpRequest();
+    //
+    // 	xhr.open('POST', './request.php');
+    // 	xhr.onload = function() {
+    // 		console.log("New upload response: " + xhr.responseText);
+    // 		var response = JSON.parse(xhr.responseText);
+    //
+    // 		var filename = file.webkitRelativePath || file.fileName || file.name;
+    //
+    // 		//check and see if there was an error in the response!
+    // 		if (response.err_title !== undefined) {
+    // 			display_error_modal(response.err_title, response.err_msg + "<br>On file: '" + filename + "'");
+    //               $('#uploading-mosaic-row-' + identifier).remove();
+    //
+    // 		} else {
+    // 			var mosaic_info = response.mosaic_info;
+    // 			mosaic_info.file = file; //set the file in the response mosaic_info so it can be used later
+    // 			upload_chunk(mosaic_info);
+    // 		}
+    // 	};
+    //
+    // 	var formData = new FormData();
+    // 	formData.append("id_token", id_token);
+    // 	formData.append("request", "NEW_UPLOAD");
+    // 	formData.append("filename", filename);
+    // 	formData.append("identifier", identifier);
+    // 	formData.append("number_chunks", number_chunks);
+    // 	formData.append("size_bytes", file.size);
+    // 	formData.append("md5_hash", md5_hash);
+    // 	xhr.send(formData);
+  }
 
-	var md5_hash = get_md5_hash(file, on_finish);
+  var md5_hash = get_md5_hash(file, on_finish);
 
 }
 
 function upload_chunk(mosaic_info) {
-    //store the mosaic info in case the upload needs to be restarted
-    mosaics[mosaic_info.identifier] = mosaic_info;
-    var file = mosaic_info.file;
+  //store the mosaic info in case the upload needs to be restarted
+  mosaics[mosaic_info.identifier] = mosaic_info;
+  var file = mosaic_info.file;
 
-    if (paused[mosaic_info.identifier] === true) return;
+  if (paused[mosaic_info.identifier] === true) return;
 
-    //console.log(response);
+  //console.log(response);
 
-    var number_chunks = parseInt(mosaic_info.number_chunks);
-    var filename = mosaic_info.filename;
+  var number_chunks = parseInt(mosaic_info.number_chunks);
+  var filename = mosaic_info.filename;
 
-    var chunk_status = mosaic_info.chunk_status;
-    var chunk_number = chunk_status.indexOf("0");
-    //console.log("chunk status: '" + chunk_status + "'");
-    console.log("next chunk: " + chunk_number + " of " + number_chunks);
+  var chunk_status = mosaic_info.chunk_status;
+  var chunk_number = chunk_status.indexOf("0");
+  //console.log("chunk status: '" + chunk_status + "'");
+  console.log("next chunk: " + chunk_number + " of " + number_chunks);
 
 //     set_progressbar_color(file.identifier, 'bg-info');
 //     set_progressbar_percent(file.identifier, 100.0 * (chunk_number / number_chunks));
 //     set_progressbar_status(file.identifier, "uploading");
 
-    var fileReader = new FileReader();
+  var fileReader = new FileReader();
 
-    var startByte = parseInt(chunk_number) * parseInt(chunk_size);
-    var endByte = Math.min(parseInt(startByte) + parseInt(chunk_size), file.size);
-    //console.log("startByte: " + startByte + ", endByte: " + endByte + ", chunk_size: " + chunk_size);
+  var startByte = parseInt(chunk_number) * parseInt(chunk_size);
+  var endByte = Math.min(parseInt(startByte) + parseInt(chunk_size), file.size);
+  //console.log("startByte: " + startByte + ", endByte: " + endByte + ", chunk_size: " + chunk_size);
 
-    var func = (file.slice ? 'slice' : (file.mozSlice ? 'mozSlice' : (file.webkitSlice ? 'webkitSlice' : 'slice')));
-    var bytes = file[func](startByte, endByte, void 0);
+  var func = (file.slice ? 'slice' : (file.mozSlice ? 'mozSlice' : (file.webkitSlice ? 'webkitSlice' : 'slice')));
+  var bytes = file[func](startByte, endByte, void 0);
 
-    //console.log(bytes);
+  //console.log(bytes);
 
-    apiService.uploadChunk(chunk_number, file.identifier, file.md5_hash, bytes).then((data) => {
-        //console.log("Upload response: " + xhr.responseText);
+  apiService.uploadChunk(chunk_number, file.identifier, file.md5_hash, bytes).then((data) => {
+    //console.log("Upload response: " + xhr.responseText);
 
-        // var response = JSON.parse(xhr.responseText);
-        if(data.data.code !== "CHUNK_UPLOADED"){
-            // display_error_modal(response.err_title, response.err_msg + "<br>On file: '" + filename + "'");
+    // var response = JSON.parse(xhr.responseText);
+    if (data.data.code !== "CHUNK_UPLOADED") {
+      // display_error_modal(response.err_title, response.err_msg + "<br>On file: '" + filename + "'");
 
-        } else {
-            var mosaic_info = data.data.mosaic_info;
-            mosaic_info.file = file; //set the fileObject so we can use it for restarts
+    } else {
+      var mosaic_info = data.data.mosaic_info;
+      mosaic_info.file = file; //set the fileObject so we can use it for restarts
 
-            var bytes_uploaded = mosaic_info.bytes_uploaded;
-            var size_bytes = mosaic_info.size_bytes;
+      var bytes_uploaded = mosaic_info.bytes_uploaded;
+      var size_bytes = mosaic_info.size_bytes;
 
-            var percent = (bytes_uploaded / size_bytes) * 100.0;
+      var percent = (bytes_uploaded / size_bytes) * 100.0;
 
-            // set_progressbar_percent(file.identifier, percent);
-            //
-            // $("#progress-bar-text-" + file.identifier).html(Number(Number(bytes_uploaded / 1024).toFixed(0)).toLocaleString() + "/" + Number((file.size / 1024).toFixed(0)).toLocaleString() + "kB (" + Number(percent).toFixed(2) + "%)");
+      // set_progressbar_percent(file.identifier, percent);
+      //
+      // $("#progress-bar-text-" + file.identifier).html(Number(Number(bytes_uploaded / 1024).toFixed(0)).toLocaleString() + "/" + Number((file.size / 1024).toFixed(0)).toLocaleString() + "kB (" + Number(percent).toFixed(2) + "%)");
 
-            var number_chunks = Math.ceil(file.size / chunk_size);
-            console.log("uploaded chunk " + chunk_number + " of " + number_chunks);
+      var number_chunks = Math.ceil(file.size / chunk_size);
+      console.log("uploaded chunk " + chunk_number + " of " + number_chunks);
 
-            var chunk_status = mosaic_info.chunk_status;
-            chunk_number = chunk_status.indexOf("0");
-            //console.log("chunk status: '" + chunk_status + "'");
-            //console.log("next chunk: " + chunk_number);
-            //chunk_number = chunk_number + 1;
+      var chunk_status = mosaic_info.chunk_status;
+      chunk_number = chunk_status.indexOf("0");
+      //console.log("chunk status: '" + chunk_status + "'");
+      //console.log("next chunk: " + chunk_number);
+      //chunk_number = chunk_number + 1;
 
-            if (chunk_number > -1) {
-                //console.log("uploading next chunk with response:");
-                //console.log(response);
+      if (chunk_number > -1) {
+        //console.log("uploading next chunk with response:");
+        //console.log(response);
 
-                upload_chunk(mosaic_info);
-            } else {
-                // set_actions(mosaic_info.identifier, ["delete"]);
-                //
-                // $('#progress-bar-' + mosaic_info.identifier).removeClass('progress-bar-animated');
-                // set_progressbar_color(mosaic_info.identifier, 'bg-success');
-                // set_progressbar_status(mosaic_info.identifier, "queued for tiling");
-                //
-                // update_tiling_progress(mosaic_info);
-            }
-        }
-    }).catch((err) => {
-        console.log(err);
-    })
+        upload_chunk(mosaic_info);
+      } else {
+        // set_actions(mosaic_info.identifier, ["delete"]);
+        //
+        // $('#progress-bar-' + mosaic_info.identifier).removeClass('progress-bar-animated');
+        // set_progressbar_color(mosaic_info.identifier, 'bg-success');
+        // set_progressbar_status(mosaic_info.identifier, "queued for tiling");
+        //
+        // update_tiling_progress(mosaic_info);
+      }
+    }
+  }).catch((err) => {
+    console.log(err);
+  })
 
 //     var xhr = new XMLHttpRequest();
 //     xhr.open('POST', './request.php');
