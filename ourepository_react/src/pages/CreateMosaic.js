@@ -5,6 +5,7 @@ import Popup from 'reactjs-popup';
 import {Link, useRouteMatch, Switch, Route,useParams} from "react-router-dom"
 import 'reactjs-popup/dist/index.css';
 import apiService from "../services/api"
+import {start_upload} from "../resumable2";
 import {  Redirect } from "react-router-dom";
 import { useState } from "react";
 
@@ -126,19 +127,23 @@ const CreateMosaicPage = (props) => {
 
       console.log(event.target.value);
       console.log(selectedFile.md5_hash);
-      apiService.createMosaic(name,proj,visible,selectedFile,selectedFile.name,selectedFile.size,555555,chunks).then((data) => {
-        if(data.data.code == "MOS_CREATED"){
-          alert(` Mosaic ' ${name} ' created `)
-          setCreated(true)
-        }
-        else{
-          alert(data.data)
-        }
 
 
-      }).catch((err) => {
-        console.log(err);
-      })
+      start_upload(name, selectedFile, proj, visible);
+
+    //   apiService.createMosaic(name,proj,visible,selectedFile,selectedFile.name,selectedFile.size,555555,chunks).then((data) => {
+    //     if(data.data.code == "MOS_CREATED"){
+    //       alert(` Mosaic ' ${name} ' created `)
+    //       setCreated(true)
+    //     }
+    //     else{
+    //       alert(data.data)
+    //     }
+    //
+    //
+    //   }).catch((err) => {
+    //     console.log(err);
+    //   })
     }
     
 
@@ -177,4 +182,4 @@ const CreateMosaicPage = (props) => {
     );
 };
 
-export default CreateMosaicPage; 
+export default CreateMosaicPage;

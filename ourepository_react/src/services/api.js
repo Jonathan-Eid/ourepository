@@ -86,7 +86,8 @@ class ApiService {
             responseType: 'text'
         });
     }
-    createMosaic(name,proj,vis,file,filename,size_bytes,md5_hash,chunks){
+
+    createMosaic(name,proj,vis,file,filename,size_bytes,md5_hash,number_chunks){
         return axios({
             method: 'post',
             url,
@@ -95,15 +96,55 @@ class ApiService {
                 name,
                 proj,
                 vis,
-                file,
                 size_bytes,
                 filename,
                 md5_hash,
-                chunks
+                number_chunks
             }),
             withCredentials: true,
             responseType: 'text'
         })
+    }
+
+    uploadChunk(chunk, identifier, md5_hash, part) {
+        const formData = new FormData();
+        formData.append('request', "UPLOAD_CHUNK");
+        formData.append('chunk', chunk);
+        formData.append('identifier', identifier);
+        formData.append('md5_hash', md5_hash);
+        formData.append('part', part);
+
+        // axios.post(`http://${REACT_APP_PHP_DOMAIN}:${REACT_APP_PHP_PORT}/`, formData,{
+        //     headers: {
+        //         'content-type': 'multipart/form-data'
+        //     }
+        // });
+
+        return axios({
+            method: 'post',
+            url,
+            data: formData,
+            headers: {
+                'content-type': 'multipart/form-data'
+            },
+            withCredentials: true,
+            responseType: 'text'
+        })
+
+
+        //     return axios({
+        //     method: 'post',
+        //     url,
+        //     data: new URLSearchParams({
+        //         request:"UPLOAD_CHUNK",
+        //         chunk,
+        //         identifier,
+        //         md5_hash,
+        //         part
+        //     }),
+        //     withCredentials: true,
+        //     responseType: 'text'
+        // })
     }
 
     getOrgs(){
@@ -138,19 +179,6 @@ class ApiService {
             params: {
                 request: "GET_PROJECTS",
                 org
-            },
-            withCredentials: true,
-            responseType: 'text'
-        })
-    }
-
-    getMosaics(proj){
-        return axios({
-            method: 'get',
-            url ,
-            params: {
-                request: "GET_MOSAICS",
-                proj
             },
             withCredentials: true,
             responseType: 'text'

@@ -13,7 +13,7 @@ class Mosaic
     protected $id;
 
     /** @ORM\Column(type="string") */
-    protected $name;
+    protected $filename;
 
     /** @ORM\Column(type="boolean") */
     protected $visible;
@@ -36,16 +36,16 @@ class Mosaic
     /** @ORM\Column(type="integer") */
     protected $uploaded_chunks;
 
-    /** @ORM\Column(type="string") */
+    /** @ORM\Column(type="string", length=8096) */
     protected $chunk_status;
 
-    /** @ORM\Column(type="integer") */
+    /** @ORM\Column(type="string") */
     protected $md5_hash;
 
-    /** @ORM\Column(type="integer") */
+    /** @ORM\Column(type="bigint") */
     protected $size_bytes;
 
-    /** @ORM\Column(type="integer") */
+    /** @ORM\Column(type="bigint") */
     protected $bytes_uploaded;
 
     /** @ORM\Column(type="integer") */
@@ -88,14 +88,14 @@ class Mosaic
         return $this->id;
     }
 
-    public function getName()
+    public function getFilename()
     {
-        return $this->name;
+        return $this->filename;
     }
     
-    public function setName($name)
+    public function setFilename($filename)
     {
-        $this->name = $name;
+        $this->filename = $filename;
     }
 
     public function getVisible()
@@ -138,8 +138,8 @@ class Mosaic
         $this->project = $project;
     }
 
-    public function setChunks($chunks){
-        $this->number_chunks = $chunks;
+    public function setNumberChunks($number_chunks){
+        $this->number_chunks = $number_chunks;
     }
 
     public function setUploadedChunks($chunks){
