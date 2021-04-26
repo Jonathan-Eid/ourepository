@@ -6,16 +6,63 @@ import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import Project from '../components/Project';
 import apiService from '../services/api';
-import button from '../logo.svg'
+import button from '../logo.svg';
+import Modal from 'react-modal';
+
+const customStyles = {
+  content : {
+    top                   : '50%',
+    left                  : '50%',
+    right                 : 'auto',
+    bottom                : 'auto',
+    marginRight           : '-50%',
+    transform             : 'translate(-50%, -50%)'
+  }
+};
 
 const ProjectPage = (props) => {
   let {project} = useParams();
   let {id} = useParams();
   let {path, url} = useRouteMatch();
+  const [strideLength, setStride] = React.useState(null)
+  const [stride_set,set_strd] = React.useState(null)
   const [organization, setOrganization] = React.useState(null)
   const [edit_enabled, enableEdit] = React.useState(null)
-
   const [organizations, setOrganizations] = React.useState(null)
+  const [modalIsOpen,setIsOpen] = React.useState(false);
+  function openModal() {
+    setIsOpen(true);
+  }
+
+  function afterOpenModal() {
+
+  }
+
+  function closeModal(){
+    setIsOpen(false);
+  }
+
+  let setStrideLength = (event) => {
+    console.log(event.target.value);
+    setStride(event.target.value);
+    set_strd(true);
+
+  }
+
+  let submitTraining = (event) => {
+    console.log(event.target.value);
+    apiService.trainMosaic(document.getElementById("dropdown").value,strideLength,0).then((data) => {
+      if (data.data.code == "TRAINING") {
+        alert(` Training  submitted `)
+      } else {
+        alert(data.data.message)
+      }
+
+
+    }).catch((err) => {
+      console.log(err);
+    })
+  }
 
   React.useEffect(() => {
     navbarService.setHeading(<>
@@ -120,6 +167,41 @@ const ProjectPage = (props) => {
           ))}
         </div>
 
+      </div>
+      <div class="text-lg ml-8">
+        <button onClick={openModal}>Train selected Mosaics</button>
+        <Modal
+          isOpen={modalIsOpen}
+          onAfterOpen={afterOpenModal}
+          onRequestClose={closeModal}
+          style={customStyles}
+          contentLabel="Example Modal"
+        >
+
+          <button onClick={closeModal}>close</button>
+          <div>Submit mosaic information</div>
+          <form>
+            <select id = "dropdown">
+            <option value = "1" selected="selected">option1</option>
+            <option value = "2">option2</option>
+            <option value = "3">option3</option>
+            <option value = "4">option4</option>
+            <option value = "5">option5</option>
+            <option value = "6">option6</option>
+            <option value = "7">option7</option>
+            </select>
+          </form>
+          <div class="mb-4 text-left">
+          <label class="text-2xl text-black text-left"> Enter Stride Length</label>
+          <input onChange={setStrideLength}
+              class="shadow  placeholder-blue-500 appearance-none border rounded w-full py-2 text-black"
+               id="stride" type="stride" placeholder="0"/>
+          
+          </div>
+          <button onClick={submitTraining} class="p-1 rounded-md bg-gradient-to-bl bg-gray-400 hover:bg-blue-900 disabled"
+                disabled={!(stride_set)||isNaN(strideLength)||(strideLength < 1)}> Submit
+        </button>
+        </Modal>
       </div>
 
 
