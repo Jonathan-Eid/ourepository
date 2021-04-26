@@ -34,41 +34,42 @@ const OrganizationPage = (props) => {
   }, [edit_enabled, organization])
 
   React.useEffect(() => {
-    console.log("NAME" + id);
 
-    apiService.getOrgByName(id).then((data) => {
-      const resp = data.data
-      if (resp.code == "ORGS_RECEIVED") {
-        let org = resp.message
-        setOrganization(org)
-        apiService.hasPermission("edit_org", org.name).then((data) => {
-          const resp = data.data
-          console.log(JSON.stringify(resp));
-          if (resp.code == "HAS_ORG_PERMISSION") {
-            enableEdit(true)
-          }
-        })
-          .catch((err) => {
+        apiService.getOrgByUUID(id).then((data) => {
+            const resp = data.data
+            if(resp.code == "ORGS_RECEIVED"){
+                let org = resp.message
+                setOrganization(org)
+                
+                apiService.hasPermission("edit_org",id).then((data)=> {
+                    const resp = data.data
+                    console.log(JSON.stringify(resp));
+                    if(resp.code=="HAS_ORG_PERMISSION"){
+                        enableEdit(true) 
+                    }
+                })
+                .catch((err)=> {
+                    console.log(err);
+                })}
+                
+        }).catch((err) => console.log(err))
+
+        apiService.getProjects(id)
+        .then((data) => {
+            console.log("PROJECT DATA: " + JSON.stringify(data.data))
+            const resp = data.data
+            if (resp.code == "PROJS_RECEIVED_FAILED") {
+
+            } else if (data.data) {
+                setProjects(resp.message)
+            }
+        }).catch((err) => {
             console.log(err);
-          })
-
-      }
-    }).catch((err) => console.log(err))
-
-    apiService.getProjects(id).then((data) => {
-      console.log("PROJECT DATA: " + JSON.stringify(data.data))
-      const resp = data.data
-      if (resp.code == "PROJS_RECEIVED_FAILED") {
-
-      } else if (data.data) {
-        setProjects(resp.message)
-      }
-    }).catch((err) => {
-      console.log(err);
-    })
+        })
 
     navbarService.setToolbar([<Link to={`/createproject/${id}`}>Create Project</Link>, <Link to="/">Home</Link>,
       <Link to={`/add-user/${id}`}>Add User</Link>])
+
     sidebarService.setHeader(<div class="relative text-left">
       <h2 class="text-2xl underline"> Recent Projects</h2>
       {/* {data.projects.map((project) => {
@@ -86,7 +87,8 @@ const OrganizationPage = (props) => {
           to={'/organization/' + id + '/project/' + proj.name}>{proj.name}</Link></h3>
       ))}
     </div>)
-  }, [])
+
+    }, [])
 
   return (
     <div class="bg-grey-900 shadow-md rounded px-8 pt-6 pb-8 absolute left-0 top-0 pt-32 h-full"

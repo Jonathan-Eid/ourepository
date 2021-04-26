@@ -4,47 +4,47 @@ import emitter from "../services/emitter"
 import apiService from "../services/api"
 
 let permissions = [
-  {
-    "title": "Administrator",
-    "description": "Grants all permissions",
-    "value": "all"
-  }, {
-    "title": "Add Members",
-    "description": "Invite users to the organization",
-    "value": "add_members"
-  }, {
-    "title": "Delete Members",
-    "description": "Delete users from the organization",
-    "value": "delete_members"
-  }, {
-    "title": "View Projects",
-    "description": "View projects",
-    "value": "view_projects"
-  }, {
-    "title": "Create Projects",
-    "description": "Create new projects",
-    "value": "create_projects"
-  }, {
-    "title": "Share Projects",
-    "description": "Create new projects",
-    "value": "share_projects"
-  }, {
-    "title": "Delete Projects",
-    "description": "Delete projects",
-    "value": "delete_projects"
-  }, {
-    "title": "Share Mosaics",
-    "description": "Share Mosaics",
-    "value": "share_mosaics"
-  }, {
-    "title": "Share Annotations",
-    "description": "Can share annotations in the org",
-    "value": "share_annotations"
-  }, {
-    "title": "Share Models",
-    "description": "Can share models in the org",
-    "value": "share_models"
-  }
+    {
+        "title":"Administrator",
+        "description": "Grants all permissions",
+        "value":"all"
+    },{
+        "title":"Add Members",
+        "description": "Invite users to the organization",
+        "value":"add_members"
+    },{
+        "title":"Delete Members",
+        "description": "Delete users from the organization",
+        "value":"delete_members"
+    },{
+        "title":"Add Roles",
+        "description": "Add roles to the organization",
+        "value":"add_roles"
+    },{
+        "title":"Delete Roles",
+        "description": "Delete roles from the organization",
+        "value":"delete_roles"
+    },{
+        "title":"View Projects",
+        "description": "View projects",
+        "value":"view_projects"
+    },{
+        "title":"Create Projects",
+        "description": "Create new projects",
+        "value":"create_projects"
+    },{
+        "title":"Share Projects",
+        "description": "Create new projects",
+        "value":"share_projects"
+    },{
+        "title":"Delete Projects",
+        "description": "Delete projects",
+        "value":"delete_projects"
+    },{
+        "title":"Share Mosaics",
+        "description": "Share Mosaics",
+        "value":"share_mosaics"
+    }
 ]
 
 const ManageRoles = (props) => {
