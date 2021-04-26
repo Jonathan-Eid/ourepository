@@ -26,7 +26,7 @@ class Project implements JsonSerializable
     protected $proj_Acls;
     
     /**
-     * Many features have one product. This is the owning side.
+     * Many projects have one Organization. This is the owning side.
      * @ORM\ManyToOne(targetEntity="Organization")
      */
     protected $organization;

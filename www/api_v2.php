@@ -8,6 +8,7 @@ if(!isset($_SESSION["count"])){
 }
 
 use \Firebase\JWT\JWT;
+use phpseclib3\Net\SSH2;
 
 
 $secret_key = "test_secret";
@@ -19,7 +20,10 @@ header("Access-Control-Allow-Headers: alg, X-Requested-With, Content-Type, Origi
 header("Access-Control-Allow-Methods: PUT, POST, GET, OPTIONS, DELETE");
 
 require_once "bootstrap.php";
+require_once "upload_2.php";
 require_once "permissions.php";
+
+global $entityManager;
 
 foreach ($_FILES as $file) {
     error_log("file: " . json_encode($file));
@@ -45,9 +49,6 @@ if (isset($_POST['request'])) {
 
     return;
 }
-
-
-
 
 if($request_type == "CREATE_USER"){
     //TODO: Check if User is already created
@@ -234,7 +235,7 @@ if($request_type == "CREATE_USER"){
     try{
         $query = $entityManager->createQuery('SELECT o FROM Organization o JOIN o.memberRoles m WHERE m.member = '.$uid);
         $orgs = $query->getResult();
-        if(!isset($orgs)){
+        if(count($orgs) == 0){
             echo rsp_msg("ORGS_RECEIVED_FAILED","no orgs were returned in the query");
             return;
         }
@@ -653,15 +654,129 @@ if($request_type == "CREATE_USER"){
     catch (Exception $e){
         echo 'Caught exception: ',  $e->getMessage(), "\n";
 
+    }  
+
+
+} else if($request_type == "CREATE_MOSAIC"){
+
+    if($_SESSION["id"] != session_id()){
+        echo json_encode("USER NOT AUTHENTICATED");
+        return;
     }
 
+    // TODO wrap with $our_db->real_escape_string()
+    $uid = $_SESSION['uid'];
+//    $name = $_POST['name'];
+//    $proj_name = $_POST['proj'];
+//    $visible = $_POST['vis'];
+//    $file = $_POST['file'];
+//    $filename = $_POST['filename'];
+//    $md5_hash = $_POST['md5_hash'];
+//    $number_chunks = $_POST['number_chunks'];
+//    $size_bytes = $_POST['size_bytes'];
+//
+//    $existingProj=$entityManager->getRepository('Project')
+//    ->findOneBy(array('name' => $proj_name));
 
-
+//    $newMosaic = new Mosaic();
+//    $newMosaic->setIdentifier($name);
+//    $newMosaic->setName($filename);
+//    $newMosaic->setVisible(true);
+//    $newMosaic->setMembers($visible);
+//    $newMosaic->setRoles(true);
+//    $newMosaic->setProject($existingProj);
+//    $newMosaic->setOwner($uid);
+//    $newMosaic->setNumberChunks($number_chunks);
+//    $newMosaic->setUploadedChunks(0);
+//    $newMosaic->setChunkStatus(0);
+//    $newMosaic->setSizeBytes($size_bytes);
+//    $newMosaic->setUploadedBytes(0);
+//    $newMosaic->setHash($md5_hash);
+//    $newMosaic->setTilingProgress(0);
+//    $newMosaic->setStatus("UPLOADING");
+//    $newMosaic->setHeight(0);
+//    $newMosaic->setWidth(0);
+//    $newMosaic->setChannels(0);
+//    $newMosaic->setGeotiff(0);
+//    $newMosaic->setCoordinateSystem("");
+//    $newMosaic->setMetadata("");
+//    $newMosaic->setImageMetadata("");
+//    $newMosaic->setBands("");
+//
+//    $entityManager->persist($newMosaic);
+    try{
     
-}else if($request_type == "CROP_MOSAIC"){
+//        $entityManager->flush();
+//        initiate_upload($uid,$filename,$name,$number_chunks,$size_bytes,$md5_hash);
+        initiate_upload($uid, $entityManager);
+//        echo rsp_msg("MOS_CREATED","mosaic created");
+
+    }
+    catch (Exception $e) {
+        echo json_encode("error in creating mosaic");
+        echo 'Caught exception: ',  $e->getMessage(), "\n";
+    }
+
+} else if ($request_type == "UPLOAD_CHUNK") {
+
+    if($_SESSION["id"] != session_id()){
+        echo json_encode("USER NOT AUTHENTICATED");
+        return;
+    }
+
+    $uid = $_SESSION['uid'];
+    process_chunk($uid);
+} else if($request_type == "CROP_MOSAIC"){
     echo rsp_msg("PLACEHOLDER","lorem ipsum");
 
 } else if($request_type == "INTERFACE_MOSAIC"){
+    echo rsp_msg("PLACEHOLDER","lorem ipsum");
+
+} else if($request_type == "TRAIN_MOSAIC"){
+
+    if($_SESSION["id"] != session_id()){
+        echo json_encode("USER NOT AUTHENTICATED");
+        return;
+    }
+
+    // Get the organization, project, and mosaic IDs
+    // These are used for organizing the shared drive filesystem.
+    $organizationId = $entityManager->getRepository('Organization')
+        ->findOneBy(array('name' => $_POST['organizationId']))->getId();
+//    $projectId = $entityManager->getRepository('Project')
+//        ->findOneBy(array('name' => $_POST['projectName']))->getId();
+    $mosaicId = $_POST['mosaicId'];
+
+
+    // produce the commands with all the fields
+
+    $organizationIdCommand = "--organization_id $organizationId";
+//    $projectIdCommand = "--project_id $projectId";
+    $mosaicIdCommand = "--mosaic_id $mosaicId";
+
+    // crop phase
+    $dataDirCommand = "--data_dir {$_POST['dataDir']}";
+    $modelWidthCommand = "--model_width {$_POST['modelWidth']}";
+    $modelHeightCommand = "--model_height {$_POST['modelHeight']}";
+    $strideLengthCommand = "--stride_length {$_POST['strideLength']}";
+    $ratioCommand = "--ratio {$_POST['ratio']}";
+    // train phase
+    $modelNameCommand = "--model_name {$_POST['modelName']}";
+    $continueFromCheckpointCommand = "--continue_from_checkpoint {$_POST['continueFromCheckpoint']}";
+
+    $allCommnds = implode(" ", array(
+        $organizationIdCommand, $mosaicIdCommand,
+        $dataDirCommand, $modelWidthCommand, $modelWidthCommand, $modelHeightCommand, $strideLengthCommand, $ratioCommand,
+        $modelNameCommand, $continueFromCheckpointCommand));
+    $command = "sbatch ourepository/AI/our_prototype.sh {$allCommnds}";
+
+    $ssh = new SSH2($our_cluster_server);
+    if (!$ssh->login($our_cluster_username, $our_cluster_password)) {
+        exit('Login Failed');
+    }
+
+    echo $ssh->exec($command);
+
     echo rsp_msg("PLACEHOLDER","lorem ipsum");
 }
 

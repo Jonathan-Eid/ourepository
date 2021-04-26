@@ -19,6 +19,7 @@ import OrgSettingsPage from './pages/OrgSettings';
 import MosaicPage from './pages/Mosaic';
 import ProjectPage from './pages/Project';
 import CreateProjectPage from './pages/CreateProject'
+import CreateMosaicPage from './pages/CreateMosaic'
 
 
 function App() {
@@ -28,39 +29,40 @@ function App() {
     {path: "/organization/:id" ,page: OrganizationPage},
     {path: "/org-settings/:id" ,page: OrgSettingsPage},
     {path: "/add-user/:id", page:AddUserPage},
-    {path: "/UserStatus", page:UserStatusPage},
     {path: "/create-org", page:CreateOrgPage},
+    {path: "/UserStatus", page:UserStatusPage},
     {path: "/mosaic", page:MosaicPage},
     {path: "/organization/:org/project/:id", page:ProjectPage},
     {path: "/createProject/:id", page:CreateProjectPage}
+    {path: "/create-mosaic/:org/:proj", page: CreateMosaicPage}
   ]
 
   const [protectedRoutes, setProtectedRoutes] = React.useState([])
   const [authStatus,setAuthStatus] = React.useState(false)
 
-  React.useEffect(()=>{
+  React.useEffect(() => {
 
     let revealRoutes = async () => {
 
-        let res = await apiService.isAuth()
-        
-        console.log(res);
+      let res = await apiService.isAuth()
 
-        if( res.data == "true"){
+      console.log(res);
 
           localStorage.setItem("user",true)
           setAuthStatus(true)
           setProtectedRoutes(protected_routes)
 
-        }else{
+        setProtectedRoutes(protected_routes)
 
           localStorage.removeItem("user")
           setAuthStatus(false)
 
-          setProtectedRoutes([])
+        localStorage.removeItem("user")
 
-        }
-  
+        setProtectedRoutes([])
+
+      }
+
       emitter.addListener("storage", async () => {
           let res = await apiService.isAuth()
           console.log(res);
@@ -75,16 +77,21 @@ function App() {
             setProtectedRoutes([])
           }
 
+          setProtectedRoutes(protected_routes)
+        } else {
+          setProtectedRoutes([])
+        }
+
       });
 
     }
-    
+
     revealRoutes()
 
-    },[])
+  }, [])
 
   return (
-      <div className="App">
+    <div className="App">
 
       <BrowserRouter forceRefresh={true}>
         <header className="App-header">
@@ -92,7 +99,14 @@ function App() {
           {authStatus ? <Sidebar></Sidebar> : <></>}
 
 
+          <Switch>
+            <Route exact path="/">
+              {localStorage.getItem("user") ? <Redirect to="/landing"/> : <HomePage></HomePage>}
+            </Route>
+            <Route path="/login" component={LoginPage}></Route>
+            {protectedRoutes.map((route) => {
 
+              return <Route path={route.path} component={route.page}></Route>
 
         <Switch>
         <Route exact path="/" component={HomePage} >
@@ -101,15 +115,11 @@ function App() {
         <Route path="/login" component={LoginPage}></Route>
         {protectedRoutes.map((route)=>{
 
-          return <Route path={route.path} component={route.page}></Route>
-
-        })}
-
-        </Switch>
+          </Switch>
 
         </header>
 
-        </BrowserRouter>
+      </BrowserRouter>
 
     </div>
 

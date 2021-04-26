@@ -3,15 +3,14 @@ import navbarService from "../services/navbar"
 import sidebarService from "../services/sidebar"
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
-import {Link, Redirect ,useRouteMatch, Switch, Route,useParams} from "react-router-dom"
+import {Link, Redirect, useRouteMatch, Switch, Route, useParams} from "react-router-dom"
 import ManageRoles from '../components/ManageRoles';
 import AddUser from '../components/AddUser';
 
 
-
 const OrgSettingsPage = (props) => {
 
-    let { id } = useParams();
+  let {id} = useParams();
 
     let tabs = [ 
         {
@@ -23,11 +22,19 @@ const OrgSettingsPage = (props) => {
             "component": <AddUser id={id}></AddUser>
         }
 
-    ]
+  ]
 
-    const [active_tab, setTab] = React.useState(tabs[0])
+  const [active_tab, setTab] = React.useState(tabs[0])
 
 
+  React.useEffect(() => {
+    sidebarService.setHeader("Options")
+    sidebarService.setContent(<>
+      {tabs.map((tab => (
+        <div class="bg-gray-800 border-white border shadow-md rounded px-4 pt-3 pb-4"> {tab['header']}</div>
+      )))}
+    </>)
+  }, [])
 
     React.useEffect(()=>{
         navbarService.setHeading(<>

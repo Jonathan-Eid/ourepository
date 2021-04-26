@@ -1,5 +1,3 @@
-
-
 import React from 'react';
 import {Link, Route, Redirect} from "react-router-dom";
 import emitter from "../services/emitter"
@@ -7,8 +5,8 @@ import emitter from "../services/emitter"
 
 const Sidebar = (props) => {
 
-    const [header, setHeader] = React.useState(<></>);
-    const [content, setContent] = React.useState(<></>);
+  const [header, setHeader] = React.useState(<></>);
+  const [content, setContent] = React.useState(<></>);
 
     React.useEffect(()=>{
         emitter.addListener("updateHeader",(header)=>{
@@ -19,9 +17,9 @@ const Sidebar = (props) => {
         })
     },[])
 
-      return (<>
+  return (<>
 
-            <div class="fixed h-full bg-gray-700 left-0" style={{width: "16vw"}}>
+      <div class="fixed h-full bg-gray-700 left-0" style={{width: "16vw"}}>
 
                 <div class="m-32"></div>
                 <div class="absolute h-40 w-full">
@@ -29,9 +27,9 @@ const Sidebar = (props) => {
                     {content}
                 </div>
 
-            </div>
-              </>
-      );
+      </div>
+    </>
+  );
 };
 
 export default Sidebar;
