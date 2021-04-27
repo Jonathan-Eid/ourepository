@@ -27,7 +27,7 @@ class MemberRole
     protected $organization;
 
 
-    /** @ORM\OneToOne(targetEntity="Role") */
+    /** @ORM\ManyToOne(targetEntity="Role") */
     protected $role;
 
 

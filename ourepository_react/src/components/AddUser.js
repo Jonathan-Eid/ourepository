@@ -11,13 +11,14 @@ const AddUser = (props) => {
     let { id } = useParams();
     let {path, url} = useRouteMatch();
     const [name, setName] = React.useState(null)
-    const [role, setRole] = React.useState(null)
     const [created, setCreated] = React.useState(false)
     const [roles, setRoles] = React.useState(null)
     const [selected_role, setSelectedRole] = React.useState(null)
 
 
     React.useEffect(()=>{
+
+
         apiService.getOrgRoles(props.id)
         .then((data) => {
             const resp = data.data
@@ -33,7 +34,7 @@ const AddUser = (props) => {
 
     
     if(created){
-      return <Redirect exact to='/organization/${id}'></Redirect>
+      return <Redirect exact to={`/organization/${id}`}></Redirect>
     }
 
     let setTitle = (event) => {
@@ -61,7 +62,7 @@ const AddUser = (props) => {
 
     function selectRole(event){
         console.log(event.target.value)
-        setSelectedRole(event.target.role)
+        setSelectedRole(event.target.value)
     }
 
 
