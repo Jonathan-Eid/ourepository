@@ -6,6 +6,7 @@ import 'reactjs-popup/dist/index.css';
 import {Link, Redirect, useRouteMatch, Switch, Route, useParams} from "react-router-dom"
 import ManageRoles from '../components/ManageRoles';
 import AddUser from '../components/AddUser';
+import apiService from '../services/api';
 
 
 const OrgSettingsPage = (props) => {
@@ -25,9 +26,20 @@ const OrgSettingsPage = (props) => {
   ]
 
   const [active_tab, setTab] = React.useState(tabs[0])
+  const [organization, setOrganization] = React.useState(null)
 
 
   React.useEffect(() => {
+
+
+    apiService.getOrgByUUID(id).then((data) => {
+      const resp = data.data
+      if(resp.code == "ORGS_RECEIVED"){
+          let org = resp.message
+          setOrganization(org)
+      }
+    }).catch((err) => console.log(err))
+    
     sidebarService.setHeader("Options")
     sidebarService.setContent(<>
       {tabs.map((tab => (
@@ -38,7 +50,7 @@ const OrgSettingsPage = (props) => {
 
     React.useEffect(()=>{
         navbarService.setHeading(<>
-            <Link class="p-3" to={`/organization/${id}`}>{id ? id :"PlaceHolder" }</Link>
+            <Link class="p-3" to={`/organization/${id}`}>{organization ? organization.name : "PlaceHolder"}</Link>
             </>
         )
         sidebarService.setHeader(<u>Options</u>)
