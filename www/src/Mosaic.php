@@ -5,7 +5,7 @@ use Ramsey\Uuid\Uuid;
 
 /**
  * @ORM\Entity 
- * @ORM\Table(name="Mosaics")
+ * @ORM\Table(name="mosaics")
  */
 class Mosaic implements JsonSerializable
 {

@@ -44,15 +44,15 @@ const AddUser = (props) => {
 
     let submitAddUser = (event) => {
       console.log(event.target.value);
-      apiService.addUser(name,id,role).then((data) => {
+      apiService.addUser(name,id,selected_role).then((data) => {
         if(data.data.code == "USER_ADDED"){
           alert(` user: ' ${name} ' added to organization `)
           setCreated(true)
         }
         else{
-          alert(data.data.code)
+          alert(data.data)
         }
-
+ 
 
       }).catch((err) => {
         console.log(err);

@@ -14,6 +14,6 @@ export REACT_APP_PHP_DOMAIN=$PHP_DOMAIN
 cd www; composer install; cd ..
 cd ourepository_react; npm i; cd ..
 php ./db/create_tables.php
-php -S localhost:$PHP_PORT -t www/ &
 php ./scripts/tile_daemon.php &
+php -S localhost:$PHP_PORT -t www/ &
 npm start --prefix ourepository_react/
