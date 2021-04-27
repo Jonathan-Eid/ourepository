@@ -21,6 +21,7 @@ header("Access-Control-Allow-Methods: PUT, POST, GET, OPTIONS, DELETE");
 
 require_once "bootstrap.php";
 require_once "upload_2.php";
+require_once "mosaics_2.php";
 require_once "permissions.php";
 
 global $entityManager;
@@ -664,53 +665,9 @@ if($request_type == "CREATE_USER"){
         return;
     }
 
-    // TODO wrap with $our_db->real_escape_string()
     $uid = $_SESSION['uid'];
-//    $name = $_POST['name'];
-//    $proj_name = $_POST['proj'];
-//    $visible = $_POST['vis'];
-//    $file = $_POST['file'];
-//    $filename = $_POST['filename'];
-//    $md5_hash = $_POST['md5_hash'];
-//    $number_chunks = $_POST['number_chunks'];
-//    $size_bytes = $_POST['size_bytes'];
-//
-//    $existingProj=$entityManager->getRepository('Project')
-//    ->findOneBy(array('name' => $proj_name));
-
-//    $newMosaic = new Mosaic();
-//    $newMosaic->setIdentifier($name);
-//    $newMosaic->setName($filename);
-//    $newMosaic->setVisible(true);
-//    $newMosaic->setMembers($visible);
-//    $newMosaic->setRoles(true);
-//    $newMosaic->setProject($existingProj);
-//    $newMosaic->setOwner($uid);
-//    $newMosaic->setNumberChunks($number_chunks);
-//    $newMosaic->setUploadedChunks(0);
-//    $newMosaic->setChunkStatus(0);
-//    $newMosaic->setSizeBytes($size_bytes);
-//    $newMosaic->setUploadedBytes(0);
-//    $newMosaic->setHash($md5_hash);
-//    $newMosaic->setTilingProgress(0);
-//    $newMosaic->setStatus("UPLOADING");
-//    $newMosaic->setHeight(0);
-//    $newMosaic->setWidth(0);
-//    $newMosaic->setChannels(0);
-//    $newMosaic->setGeotiff(0);
-//    $newMosaic->setCoordinateSystem("");
-//    $newMosaic->setMetadata("");
-//    $newMosaic->setImageMetadata("");
-//    $newMosaic->setBands("");
-//
-//    $entityManager->persist($newMosaic);
     try{
-    
-//        $entityManager->flush();
-//        initiate_upload($uid,$filename,$name,$number_chunks,$size_bytes,$md5_hash);
         initiate_upload($uid, $entityManager);
-//        echo rsp_msg("MOS_CREATED","mosaic created");
-
     }
     catch (Exception $e) {
         echo json_encode("error in creating mosaic");
@@ -726,6 +683,35 @@ if($request_type == "CREATE_USER"){
 
     $uid = $_SESSION['uid'];
     process_chunk($uid);
+} else if ($request_type == "GET_MOSAICS"){
+
+    if($_SESSION["id"] != session_id()){
+        echo json_encode("USER NOT AUTHENTICATED");
+        return;
+    }
+
+    try {
+        $mosaic_uuids = display_index($entityManager);
+        echo rsp_msg("MOSAIC_UUIDS_RECEIVED", $mosaic_uuids);
+    } catch (Exception $e) {
+        echo rsp_msg("MOSAIC_UUIDS_RECEIVED_FAILED", "failed to retreive mosaic UUIDs for project");
+        echo 'Caught exception: ',  $e->getMessage(), "\n";
+    }
+} else if($request_type == "GET_MOSAIC_CARD") {
+
+    if($_SESSION["id"] != session_id()){
+        echo json_encode("USER NOT AUTHENTICATED");
+        return;
+    }
+
+    try {
+        $mosaic_info = get_mosaic_card($entityManager);
+        echo rsp_msg("MOSAIC_CARD_RECEIVED", $mosaic_info);
+    } catch (Exception $e) {
+        echo rsp_msg("MOSAIC_CARD_RECEIVED_FAILED", "failed to retreive mosaic UUIDs for project");
+        echo 'Caught exception: ',  $e->getMessage(), "\n";
+    }
+
 } else if($request_type == "CROP_MOSAIC"){
     echo rsp_msg("PLACEHOLDER","lorem ipsum");
 

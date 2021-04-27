@@ -8,6 +8,9 @@ import Project from '../components/Project';
 import apiService from '../services/api';
 import button from '../logo.svg';
 import Modal from 'react-modal';
+import Mosaic from "../components/Mosaic";
+
+import {Row} from "reactstrap";
 
 const customStyles = {
   content : {
@@ -24,6 +27,7 @@ const ProjectPage = (props) => {
   let {project} = useParams();
   let {id} = useParams();
   let {path, url} = useRouteMatch();
+  const [mosaicArray, updateMosaicArray] = React.useState([]);
   const [strideLength, setStride] = React.useState(null)
   const [stride_set,set_strd] = React.useState(null)
   const [organization, setOrganization] = React.useState(null)
@@ -63,6 +67,32 @@ const ProjectPage = (props) => {
       console.log(err);
     })
   }
+
+  // get the mosaics
+  React.useEffect(() => {
+    apiService.getMosaics(project).then((data) => {
+      const resp = data.data
+      if (resp.code === "MOSAIC_UUIDS_RECEIVED") {
+        var mosaicUuids = resp.message;
+
+        mosaicUuids.forEach(mosaicUuid => {
+          apiService.getMosaicCard(mosaicUuid).then((data1) => {
+            const resp1 = data1.data
+            if (resp1.code === "MOSAIC_CARD_RECEIVED") {
+              updateMosaicArray(mosaicArray => [...mosaicArray, resp1.message]);
+            } else {
+              console.log(resp.message)
+            }
+          });
+        });
+
+      } else {
+        console.log(resp.message)
+      }
+    }).catch((err) => {
+      console.log(err);
+    })
+  }, [])
 
   React.useEffect(() => {
     navbarService.setHeading(<>
@@ -145,27 +175,39 @@ const ProjectPage = (props) => {
       <div class="bg-gray-700 shadow-md rounded px-8 pt-6 pb-8"> Project's Mosaics
         <div class=" p-1"></div>
 
-        <div class="row">
-          {organizations && organizations.map((mos) => (
-            <div class="bg-gray-800  shadow-md rounded px-4 pt-3 pb-4">
-
-              <img src={button} alt="Thumbnail Image" width="175" height="175"></img>
-              <Link to={`/organization/${mos.name}`}>{mos.name} </Link>
-              <Popup arrow={true} contentStyle={{padding: '0px', border: 'none'}}
-                     trigger={<button class="w-6 bg-blue-300 rounded-full shadow-outline"><img
-                       src="/images/arrow-button-circle-down-1.png"/></button>}>
-                <ul>
-                  <li>
-                    <div>view Mosaic</div>
-                  </li>
-                  <li>
-                    <div>delete Mosaic</div>
-                  </li>
-                </ul>
-              </Popup></div>
-
+        <Row>
+          {mosaicArray.map((mosaicInfo) => (
+            <Mosaic
+              thumbnail={mosaicInfo.thumbnail}
+              preview={mosaicInfo.preview}
+            />
           ))}
-        </div>
+        </Row>
+
+        {/*<div class="row">*/}
+        {/*  {organizations && organizations.map((mos) => (*/}
+        {/*    <div class="bg-gray-800  shadow-md rounded px-4 pt-3 pb-4">*/}
+
+        {/*      <img src={button} alt="Thumbnail Image" width="175" height="175"></img>*/}
+        {/*      <Link to={`/organization/${mos.name}`}>{mos.name} </Link>*/}
+        {/*      <Popup arrow={true} contentStyle={{padding: '0px', border: 'none'}}*/}
+        {/*             trigger={<button class="w-6 bg-blue-300 rounded-full shadow-outline"><img*/}
+        {/*               src="/images/arrow-button-circle-down-1.png"/></button>}>*/}
+        {/*        <ul>*/}
+        {/*          <li>*/}
+        {/*            <div>view Mosaic</div>*/}
+        {/*          </li>*/}
+        {/*          <li>*/}
+        {/*            <div>delete Mosaic</div>*/}
+        {/*          </li>*/}
+        {/*        </ul>*/}
+        {/*      </Popup></div>*/}
+
+        {/*  ))}*/}
+        {/*  {mosaicArray.map((mosaicInfo) => (*/}
+        {/*    <p>mosaicInfo</p>*/}
+        {/*  ))}*/}
+        {/*</div>*/}
 
       </div>
       <div class="text-lg ml-8">

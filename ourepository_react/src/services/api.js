@@ -182,6 +182,19 @@ getOrgByUUID(uuid){
     })
   }
 
+  getMosaicCard(mosaicUuid) {
+    return axios({
+      method: 'get',
+      url,
+      params: {
+        request: "GET_MOSAIC_CARD",
+        mosaicUuid
+      },
+      withCredentials: true,
+      responseType: 'text'
+    })
+  }
+
   getProjects(org) {
     return axios({
       method: 'get',

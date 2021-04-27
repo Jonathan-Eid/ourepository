@@ -18,7 +18,9 @@ class Project implements JsonSerializable
     /** @ORM\Column(type="string") */
     protected $name;
 
-    /** @ORM\Column(type="string") */
+    /**
+     * @ORM\OneToMany(targetEntity="Mosaic", mappedBy="project")
+     */
     protected $mosaics;
 
     /**
@@ -46,10 +48,7 @@ class Project implements JsonSerializable
     public function __construct() {
         $this->proj_Acls = new ArrayCollection();
         $this->uuid = Uuid::uuid4()->toString();
-
-
-        
-
+        $this->mosaics = new ArrayCollection();
     }
 
     public function getId()
@@ -96,7 +95,8 @@ class Project implements JsonSerializable
         return array(
             'id' => $this->id,
             'name' => $this->name,
-            'mosaics' => $this->mosaics
+            'mosaics' => $this->mosaics,
+            'uuid' => $this->uuid
         );
     }
 }

@@ -84,7 +84,7 @@ const OrganizationPage = (props) => {
       <h2 class="text-2xl underline"> All Projects</h2>
       {projects && projects.map((proj) => (
         <h3 class="text-lg ml-8" key={proj.id}><Link
-          to={'/organization/' + id + '/project/' + proj.name}>{proj.name}</Link></h3>
+          to={'/organization/' + id + '/project/' + proj.uuid}>{proj.name}</Link></h3>
       ))}
     </div>)
 
@@ -105,7 +105,7 @@ const OrganizationPage = (props) => {
         Select A Project
       </Route>
       {projects && projects.map((proj) => (
-        <h3 class="text-lg ml-8"><Link to={'/organization/' + id + '/project/' + proj.name}>{proj.name}</Link></h3>
+        <h3 class="text-lg ml-8"><Link to={'/organization/' + id + '/project/' + proj.uuid}>{proj.name}</Link></h3>
       ))}
     </div>
 

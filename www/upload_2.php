@@ -60,7 +60,7 @@ function initiate_upload($uid, $entityManager) {
     error_log(json_encode($our_db));
 
     $name = $_POST['name'];
-    $proj_name = $our_db->real_escape_string($_POST['proj']);
+    $proj_uuid = $our_db->real_escape_string($_POST['proj']);
     $visible = $our_db->real_escape_string($_POST['vis']);
 //    $file = $our_db->real_escape_string($_POST['file']);
     $filename = $our_db->real_escape_string($_POST['filename']);
@@ -68,7 +68,7 @@ function initiate_upload($uid, $entityManager) {
     $number_chunks = $our_db->real_escape_string($_POST['number_chunks']);
     $size_bytes = $our_db->real_escape_string($_POST['size_bytes']);
     $existingProj=$entityManager->getRepository('Project')
-        ->findOneBy(array('name' => $proj_name));
+        ->findOneBy(array('uuid' => $proj_uuid));
 
 //    $filename = $our_db->real_escape_string($_POST['filename']);
 //    $identifier = $our_db->real_escape_string($_POST['identifier']);
@@ -136,7 +136,6 @@ function initiate_upload($uid, $entityManager) {
 //        $query = "INSERT INTO mosaics SET owner_id = 'uid', name = '$filename', identifier = '$identifier', size_bytes = '$size_bytes', number_chunks = '$number_chunks', md5_hash='$md5_hash', uploaded_chunks = 0, chunk_status = '$chunk_status', status = 'UPLOADING'";
 //        error_log($query);
 //        query_our_db($query);
-
         $response['mosaic_info'] = get_mosaic_info($uid, $md5_hash);
         $response['code'] = "MOS_CREATED";
         $response['message'] = "mosaic created";

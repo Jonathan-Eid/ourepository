@@ -1,11 +1,13 @@
   
 <?php
 use Doctrine\ORM\Mapping as ORM;
+use Ramsey\Uuid\Uuid;
+
 /**
  * @ORM\Entity 
  * @ORM\Table(name="Mosaics")
  */
-class Mosaic
+class Mosaic implements JsonSerializable
 {
     /** @ORM\Id
      * @ORM\Column(type="integer")
@@ -146,6 +148,16 @@ class Mosaic
      * @ORM\ManyToOne(targetEntity="Project")
      */
     protected $project;
+
+    /**
+     * @var \Ramsey\Uuid\UuidInterface
+     * @ORM\Column(type="uuid", unique=true)
+     */
+    protected $uuid;
+
+    public function __construct() {
+        $this->uuid = Uuid::uuid4()->toString();
+    }
 
     public function getId()
     {
@@ -597,5 +609,20 @@ class Mosaic
         $this->project = $project;
     }
 
+    public function getUuid()
+    {
+        return $this->uuid;
+    }
 
+    public function setUuid($uuid)
+    {
+        $this->uuid = $uuid;
+    }
+
+    public function jsonSerialize()
+    {
+        return array(
+            'uuid'=> $this->uuid
+        );
+    }
 }
