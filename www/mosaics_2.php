@@ -325,12 +325,15 @@ function get_mosaic_card($entityManager) {
 
     // TODO make sure user has access
 
+    $mosaic_uuid = $_GET['mosaicUuid'];
+    $mosaic = $entityManager->getRepository('Mosaic')
+        ->findOneBy(array('uuid' => $mosaic_uuid));
+    $mosaic_owner_id = $mosaic->getOwnerId();
+
     // return information about the mosaic to display a card
     $mosaic_info = array();
 
-    $mosaic = $entityManager->getRepository('Mosaic')
-        ->findOneBy(array('uuid' => $_GET['mosaicUuid']));
-    $mosaic_owner_id = $mosaic->getOwnerId();
+    $mosaic_info['uuid'] = $mosaic_uuid;
 
     // filenames
     $filename = $mosaic->getFilename();

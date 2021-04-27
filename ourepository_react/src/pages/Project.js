@@ -8,7 +8,7 @@ import Project from '../components/Project';
 import apiService from '../services/api';
 import button from '../logo.svg';
 import Modal from 'react-modal';
-import Mosaic from "../components/Mosaic";
+import Mosaic from "../components/MosaicCard";
 
 import {Row} from "reactstrap";
 
@@ -177,10 +177,13 @@ const ProjectPage = (props) => {
 
         <Row>
           {mosaicArray.map((mosaicInfo) => (
-            <Mosaic
-              thumbnail={mosaicInfo.thumbnail}
-              preview={mosaicInfo.preview}
-            />
+            <Link to={`/mosaic/${mosaicInfo.uuid}`}>
+              <Mosaic
+                uuid={mosaicInfo.uuid}
+                thumbnail={mosaicInfo.thumbnail}
+                preview={mosaicInfo.preview}
+              />
+            </Link>
           ))}
         </Row>
 

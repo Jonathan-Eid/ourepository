@@ -7,6 +7,8 @@ import 'reactjs-popup/dist/index.css';
 import apiService from "../services/api"
 import {Redirect} from "react-router-dom";
 import AddUserPage from './AddUserToOrg';
+import {OpenSeaDragonViewer} from "../components/OpenSeadragonViewer";
+import {CardBody} from "reactstrap";
 
 const MosaicPage = (props) => {
   React.useEffect(() => {
@@ -35,7 +37,11 @@ const MosaicPage = (props) => {
   return (
 
     <div class="bg-blue-100 shadow-md rounded px-8 pt-6 pb-8 mb-4 flex flex-col w-1/2">
+      <div>
+        {/*<img src={"http://localhost:5000/mosaics/1/england-london-bridge_preview.png"} alt="preview" height="75%" width="75%"/>*/}
 
+        <OpenSeaDragonViewer image="mosaics/1/england-london-bridge_files" />
+      </div>
     </div>
   );
 

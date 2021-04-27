@@ -710,6 +710,44 @@ if($request_type == "CREATE_USER"){
         echo 'Caught exception: ',  $e->getMessage(), "\n";
     }
 
+} else if ($request_type == "TILE") {
+    // open the file in a binary mode
+    // tiles come as GETs not POSTs
+
+    $name = $_GET['file'];
+//    $mosaic_id = $_GET['mosaic_id'];
+//
+//    //check and see if user has access to this mosaic
+//    $query = "SELECT owner_id FROM mosaics WHERE id = $mosaic_id";
+//    $result = query_our_db($query);
+//    $row = $result->fetch_assoc();
+//    $owner_id = $row['owner_id'];
+//    if ($owner_id != $user_id) {
+//        $query = "SELECT user_id FROM mosaic_access WHERE mosaic_id = $mosaic_id AND user_id = $user_id";
+//        $result = query_our_db($query);
+//        $row = $result->fetch_assoc();
+//        if ($row == NULL) {
+//            exit;
+//        }
+//    }
+
+    error_log("got a request for a tile: '$name'");
+    $fp = fopen($name, 'rb');
+    if ( !$fp ) {
+        error_log('fopen failed. reason: ', $php_errormsg);
+    } else {
+        error_log("success!");
+        error_log("filesize:" . filesize($name));
+    }
+
+    // send the right headers
+    header("Content-Type: image/png");
+    header("Content-Length: " . filesize($name));
+
+    // dump the picture and stop the script
+    fpassthru($fp);
+    exit;
+
 } else if($request_type == "CROP_MOSAIC"){
     echo rsp_msg("PLACEHOLDER","lorem ipsum");
 
