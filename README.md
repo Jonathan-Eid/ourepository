@@ -4,10 +4,13 @@
 - Install Node.js
 - Install [libvips](https://libvips.github.io/libvips/install.html)
     - Check installation with `vipsthumbnail -h`
+    - Ubuntu Install : ```sudo apt-get install libvips-tools```
+
 - Install GDAL
     - [Instructions for Windows](https://sandbox.idre.ucla.edu/sandbox/tutorials/installing-gdal-for-windows)
         - May be able to skip the Python bindings part
     - Check installation with `gdalinfo --version`
+    - [Instructions for Ubuntu](https://mothergeo-py.readthedocs.io/en/latest/development/how-to/gdal-ubuntu-pkg.html)
 
 ### Make sure mysqli is enabled for PHP
 
