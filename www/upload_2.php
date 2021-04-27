@@ -173,12 +173,14 @@ function initiate_upload($uid, $entityManager) {
 
             $response['mosaic_info'] = get_mosaic_info($uid, $md5_hash);
             $response['html'] = "success!";
+            error_log(json_encode($response));
             echo json_encode($response);
         }
     }
 }
 
 function process_chunk($uid) {
+    connect_our_db();
     global $our_db, $UPLOAD_DIRECTORY;
 
     if (count($_FILES) == 0) {
@@ -231,7 +233,9 @@ function process_chunk($uid) {
 
         //overwrite chunk if it already exists due to some issue
         $target = "$UPLOAD_DIRECTORY/$uid/$identifier";
-        mkdir($target, 0777, true); //make the parent directory if it does not exist
+        if (!file_exists($target)) {
+            mkdir($target, 0777, true); //make the parent directory if it does not exist
+        }
         $target .= "/$chunk.part";
 
         error_log("moving '" . $file['tmp_name'] . "' to '$target'");

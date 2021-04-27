@@ -364,12 +364,12 @@ function upload_chunk(mosaic_info) {
   //console.log(bytes);
 
   apiService.uploadChunk(chunk_number, file.identifier, file.md5_hash, bytes).then((data) => {
-    //console.log("Upload response: " + xhr.responseText);
+    console.log("Upload response: " + data.data);
 
     // var response = JSON.parse(xhr.responseText);
     if (data.data.code !== "CHUNK_UPLOADED") {
       // display_error_modal(response.err_title, response.err_msg + "<br>On file: '" + filename + "'");
-
+      //alert(data.data);
     } else {
       var mosaic_info = data.data.mosaic_info;
       mosaic_info.file = file; //set the fileObject so we can use it for restarts
@@ -388,8 +388,8 @@ function upload_chunk(mosaic_info) {
 
       var chunk_status = mosaic_info.chunk_status;
       chunk_number = chunk_status.indexOf("0");
-      //console.log("chunk status: '" + chunk_status + "'");
-      //console.log("next chunk: " + chunk_number);
+      console.log("chunk status: '" + chunk_status + "'");
+      console.log("next chunk: " + chunk_number);
       //chunk_number = chunk_number + 1;
 
       if (chunk_number > -1) {
