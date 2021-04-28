@@ -10,7 +10,27 @@ import AddUserPage from './AddUserToOrg';
 import {OpenSeaDragonViewer} from "../components/OpenSeadragonViewer";
 import {CardBody} from "reactstrap";
 
+import {useState} from "react";
+
+
+
 const MosaicPage = (props) => {
+
+  const [selectedFile, setSelectedFile] = useState();
+  const [isSelected, setIsSelected] = useState(false);
+  let choices = [
+    {text: 'Yes', value: true},
+    {text: 'No', value: false}
+  ]
+
+  const changeHandler = (event) => {
+    setSelectedFile(event.target.files[0]);
+    setIsSelected(true);
+  };
+  let radioChange = (event) => {
+    
+  }
+
   React.useEffect(() => {
     navbarService.setHeading(<>
         <form class="form-inline">
@@ -28,7 +48,13 @@ const MosaicPage = (props) => {
       </>
     )
     navbarService.setToolbar([])
-    sidebarService.setHeader()
+    sidebarService.setHeader(
+      <div class="mb-6 items-right text-right">
+        <div class="pb-4"></div>
+        <div class="p-1 rounded-md bg-gradient-to-bl bg-blue-900"> upload annotations</div>
+        <input type="file" name="file" onChange={changeHandler}/>
+      </div>
+    )
   }, [])
 
 
