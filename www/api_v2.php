@@ -706,47 +706,39 @@ if($request_type == "CREATE_USER"){
         $mosaic_info = get_mosaic_card($entityManager);
         echo rsp_msg("MOSAIC_CARD_RECEIVED", $mosaic_info);
     } catch (Exception $e) {
-        echo rsp_msg("MOSAIC_CARD_RECEIVED_FAILED", "failed to retreive mosaic UUIDs for project");
+        echo rsp_msg("MOSAIC_CARD_RECEIVED_FAILED", "failed to retrieve mosaic data for cards");
         echo 'Caught exception: ',  $e->getMessage(), "\n";
     }
 
-} else if ($request_type == "TILE") {
-    // open the file in a binary mode
-    // tiles come as GETs not POSTs
+} else if($request_type == "GET_MOSAIC_DATA") {
 
-    $name = $_GET['file'];
-//    $mosaic_id = $_GET['mosaic_id'];
-//
-//    //check and see if user has access to this mosaic
-//    $query = "SELECT owner_id FROM mosaics WHERE id = $mosaic_id";
-//    $result = query_our_db($query);
-//    $row = $result->fetch_assoc();
-//    $owner_id = $row['owner_id'];
-//    if ($owner_id != $user_id) {
-//        $query = "SELECT user_id FROM mosaic_access WHERE mosaic_id = $mosaic_id AND user_id = $user_id";
-//        $result = query_our_db($query);
-//        $row = $result->fetch_assoc();
-//        if ($row == NULL) {
-//            exit;
-//        }
-//    }
-
-    error_log("got a request for a tile: '$name'");
-    $fp = fopen($name, 'rb');
-    if ( !$fp ) {
-        error_log('fopen failed. reason: ', $php_errormsg);
-    } else {
-        error_log("success!");
-        error_log("filesize:" . filesize($name));
+    if($_SESSION["id"] != session_id()){
+        echo json_encode("USER NOT AUTHENTICATED");
+        return;
     }
 
-    // send the right headers
-    header("Content-Type: image/png");
-    header("Content-Length: " . filesize($name));
+    try {
+        $mosaic_info = get_mosaic_data($entityManager);
+        echo rsp_msg("MOSAIC_DATA_RECEIVED", $mosaic_info);
+    } catch (Exception $e) {
+        echo rsp_msg("MOSAIC_DATA_RECEIVED_FAILED", "failed to retrieve mosaic data");
+        echo 'Caught exception: ',  $e->getMessage(), "\n";
+    }
 
-    // dump the picture and stop the script
-    fpassthru($fp);
-    exit;
+} else if($request_type == "UPLOAD_ANNOTATION_CSV") {
+
+    if($_SESSION["id"] != session_id()){
+        echo json_encode("USER NOT AUTHENTICATED");
+        return;
+    }
+
+//    try {
+//        $mosaic_info = get_mosaic_data($entityManager);
+//        echo rsp_msg("ANNOTATION_CSV_UPLOADED", $mosaic_info);
+//    } catch (Exception $e) {
+//        echo rsp_msg("ANNOTATION_CSV_UPLOADED_FAILED", "failed to upload CSV with annotations");
+//        echo 'Caught exception: ',  $e->getMessage(), "\n";
+//    }
 
 } else if($request_type == "CROP_MOSAIC"){
     echo rsp_msg("PLACEHOLDER","lorem ipsum");

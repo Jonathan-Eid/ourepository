@@ -16,6 +16,9 @@ import {useState} from "react";
 
 const MosaicPage = (props) => {
 
+  let {mosaicUuid} = useParams();
+
+  const [mosaicData, setMosaicData] = React.useState(null)
   const [selectedFile, setSelectedFile] = useState();
   const [isSelected, setIsSelected] = useState(false);
   let choices = [
@@ -30,6 +33,20 @@ const MosaicPage = (props) => {
   let radioChange = (event) => {
     
   }
+
+  // get the mosaic data
+  React.useEffect(() => {
+    apiService.getMosaicData(mosaicUuid).then((data) => {
+      const resp = data.data
+      if (resp.code === "MOSAIC_DATA_RECEIVED") {
+        setMosaicData(resp.message);
+      } else {
+        console.log(resp.message)
+      }
+    }).catch((err) => {
+      console.log(err);
+    })
+  }, [])
 
   React.useEffect(() => {
     navbarService.setHeading(<>
@@ -58,7 +75,7 @@ const MosaicPage = (props) => {
   }, [])
 
 
-  sidebarService.setHeader()
+  sidebarService.setHeader();
 
   return (
 
@@ -66,13 +83,12 @@ const MosaicPage = (props) => {
     style={
       {marginTop: "130px"}}>
       <div>
-        {/*<img src={"http://localhost:5000/mosaics/1/england-london-bridge_preview.png"} alt="preview" height="75%" width="75%"/>*/}
-
-        <OpenSeaDragonViewer image="mosaics/1/england-london-bridge_files" />
+        {/* load the OpenSeaDragonViewer once the mosaicData is loaded */}
+        {mosaicData && <OpenSeaDragonViewer tilingDir={mosaicData.tiling_dir}/>}
       </div>
     </div>
   );
 
-}
+};
 
 export default MosaicPage;

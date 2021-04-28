@@ -346,6 +346,30 @@ function get_mosaic_card($entityManager) {
     return $mosaic_info;
 }
 
+function get_mosaic_data($entityManager) {
+    global $ARCHIVE_DIRECTORY;
+
+    // TODO make sure user has access
+
+    $mosaic_uuid = $_GET['mosaicUuid'];
+    $mosaic = $entityManager->getRepository('Mosaic')
+        ->findOneBy(array('uuid' => $mosaic_uuid));
+    $mosaic_owner_id = $mosaic->getOwnerId();
+
+    // return information about the mosaic
+    $mosaic_info = array();
+
+    $mosaic_info['uuid'] = $mosaic_uuid;
+
+    // filenames
+    $filename = $mosaic->getFilename();
+    $filename_base = substr($filename, 0, strrpos($filename, "."));
+    $tiling_dir = "mosaics/{$mosaic_owner_id}/{$filename_base}_files";
+    $mosaic_info['tiling_dir'] = $tiling_dir;
+
+    return $mosaic_info;
+}
+
 //function display_mosaic($user_id, $mosaic_id) {
 //    global $cwd, $ARCHIVE_DIRECTORY;
 //

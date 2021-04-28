@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 const {REACT_APP_PHP_DOMAIN, REACT_APP_PHP_PORT} = process.env;
 const baseURL = `http://${REACT_APP_PHP_DOMAIN}:${REACT_APP_PHP_PORT}/`;
 
-const OpenSeaDragonViewer = ({ image }) => {
+const OpenSeaDragonViewer = ({ tilingDir }) => {
   const [viewer, setViewer] = useState( null);
 
   const InitOpenseadragon = () => {
@@ -24,16 +24,12 @@ const OpenSeaDragonViewer = ({ image }) => {
         navigatorPosition:   "BOTTOM_LEFT",
         tileSources: {
           // type: 'image',
-          // url: baseURL + "mosaics/1/england-london-bridge_files"
-          // url: baseURL + "?request=TILE&file=mosaics/1/england-london-bridge_files"
-          // url: baseURL + "mosaics/1/england-london-bridge.png"
-          // buildPyramid: true,
           height: 1200,
           width:  1600,
           tileSize: 256,
           minLevel: 8,
           getTileUrl: function( level, x, y ){
-            return baseURL + "mosaics/1/england-london-bridge_files/" +
+            return baseURL + tilingDir + "/" +
               level + "/" + x + "_" + y + ".png";
           }
         },
@@ -42,11 +38,11 @@ const OpenSeaDragonViewer = ({ image }) => {
   };
 
   useEffect(() => {
-    if (image && viewer) {
-      viewer.open(image.source);
-      viewer.open(image.source);
+    if (tilingDir && viewer) {
+      viewer.open(tilingDir.source);
+      viewer.open(tilingDir.source);
     }
-  }, [image]);
+  }, [tilingDir]);
 
   useEffect(() => {
     InitOpenseadragon();

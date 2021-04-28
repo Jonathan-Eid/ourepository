@@ -342,4 +342,10 @@ function process_chunk($uid) {
     echo json_encode($response);
 }
 
+function upload_annotation_csv($entityManager, $csv) {
+    $mosaic_uuid = $_GET['mosaicUuid'];
+    $mosaic = $entityManager->getRepository('Mosaic')
+        ->findOneBy(array('uuid' => $mosaic_uuid));
+}
+
 ?>

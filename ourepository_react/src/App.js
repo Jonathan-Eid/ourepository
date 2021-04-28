@@ -31,7 +31,7 @@ function App() {
     {path: "/add-user/:id", page:AddUserPage},
     {path: "/create-org", page:CreateOrgPage},
     {path: "/UserStatus", page:UserStatusPage},
-    {path: "/mosaic/:uuid", page:MosaicPage},
+    {path: "/mosaic/:mosaicUuid", page:MosaicPage},
     {path: "/organization/:org/project/:id", page:ProjectPage},
     {path: "/createProject/:id", page:CreateProjectPage},
     {path: "/create-mosaic/:org/:proj", page: CreateMosaicPage}

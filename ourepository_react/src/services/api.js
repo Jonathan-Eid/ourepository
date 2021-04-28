@@ -195,6 +195,37 @@ getOrgByUUID(uuid){
     })
   }
 
+  getMosaicData(mosaicUuid) {
+    return axios({
+      method: 'get',
+      url,
+      params: {
+        request: "GET_MOSAIC_DATA",
+        mosaicUuid
+      },
+      withCredentials: true,
+      responseType: 'text'
+    })
+  }
+
+  uploadAnnotationCSV(mosaicUuid, csv) {
+    const formData = new FormData();
+    formData.append('request', "UPLOAD_ANNOTATION_CSV");
+    formData.append('mosaicUuid', mosaicUuid);
+    formData.append('csv', csv);
+
+    return axios({
+      method: 'post',
+      url,
+      data: formData,
+      headers: {
+        'content-type': 'multipart/form-data'
+      },
+      withCredentials: true,
+      responseType: 'text'
+    })
+  }
+
   getProjects(org) {
     return axios({
       method: 'get',
