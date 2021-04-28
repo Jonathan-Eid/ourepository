@@ -16,7 +16,6 @@ const CreateMosaicPage = (props) => {
   const [visible, setVisible] = React.useState(null)
   const [vis_set, setVis] = React.useState(null)
   const [name, setName] = React.useState(null)
-  const [chunks, setChunks] = React.useState(null)
   const [created, setCreated] = React.useState(false)
   const [selectedFile, setSelectedFile] = useState();
   const [isSelected, setIsSelected] = useState(false);
@@ -110,9 +109,6 @@ const CreateMosaicPage = (props) => {
         loadNext();
     }
   */
-  let setChunk = (event) => {
-    setChunks(event.target.value)
-  }
 
   let radioChange = (event) => {
     console.log(event.target.value);
@@ -169,12 +165,6 @@ const CreateMosaicPage = (props) => {
         <div class="pb-4"></div>
         <button class="p-1 rounded-md bg-gradient-to-bl bg-gray-400 hover:bg-blue-900 disabled"> upload image</button>
         <input type="file" name="file" onChange={changeHandler}/>
-      </div>
-      <div class="mb-4 text-left">
-        <label class="text-2xl text-black text-left"> Enter number of chunks</label>
-        <input onChange={setChunk}
-               class="shadow  placeholder-blue-500 appearance-none border rounded w-full py-2 px-3  text-black"
-               id="chunks" type="chunks" placeholder="1"/>
       </div>
       <div class="mb-6 items-left text-left">
         <label class="text-2xl text-black text-left"> </label>
