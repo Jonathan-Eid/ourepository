@@ -188,51 +188,6 @@ const ProjectPage = (props) => {
   return (
     <div class="bg-gray-600 shadow-md rounded px-8 pt-6 pb-8 mb-4 flex ">
       <h3 class="text-lg ml-8"><Link to={'/create-mosaic/' + id + '/' + project}>create mosaic</Link></h3>
-      <div class="bg-gray-700 shadow-md rounded px-8 pt-6 pb-8"> Project's Mosaics
-        <div class=" p-1"></div>
-
-        <Row>
-          {mosaicArray.map((mosaicInfo) => (
-            <div class="bg-gray-600 shadow-md rounded px-8 pt-6 pb-8">
-            <Link to={`/mosaic/${mosaicInfo.uuid}`}>
-              <Mosaic
-                uuid={mosaicInfo.uuid}
-                thumbnail={mosaicInfo.thumbnail}
-                preview={mosaicInfo.preview}
-              />
-            </Link>
-            <input type="checkbox" id={mosaicInfo.uuid} name="mosaicCheck" value="selected"></input>
-            <label for="vehicle1"> select for training</label><br></br>
-            </div>
-          ))}
-        </Row>
-
-        {/*<div class="row">*/}
-        {/*  {organizations && organizations.map((mos) => (*/}
-        {/*    <div class="bg-gray-800  shadow-md rounded px-4 pt-3 pb-4">*/}
-
-        {/*      <img src={button} alt="Thumbnail Image" width="175" height="175"></img>*/}
-        {/*      <Link to={`/organization/${mos.name}`}>{mos.name} </Link>*/}
-        {/*      <Popup arrow={true} contentStyle={{padding: '0px', border: 'none'}}*/}
-        {/*             trigger={<button class="w-6 bg-blue-300 rounded-full shadow-outline"><img*/}
-        {/*               src="/images/arrow-button-circle-down-1.png"/></button>}>*/}
-        {/*        <ul>*/}
-        {/*          <li>*/}
-        {/*            <div>view Mosaic</div>*/}
-        {/*          </li>*/}
-        {/*          <li>*/}
-        {/*            <div>delete Mosaic</div>*/}
-        {/*          </li>*/}
-        {/*        </ul>*/}
-        {/*      </Popup></div>*/}
-
-        {/*  ))}*/}
-        {/*  {mosaicArray.map((mosaicInfo) => (*/}
-        {/*    <p>mosaicInfo</p>*/}
-        {/*  ))}*/}
-        {/*</div>*/}
-
-      </div>
       <div class="text-lg ml-8">
         <button onClick={openModal}>Train selected Mosaics</button>
         <Modal
@@ -268,6 +223,53 @@ const ProjectPage = (props) => {
         </button>
         </Modal>
       </div>
+      
+      <div class="bg-gray-700 shadow-md rounded px-8 pt-6 pb-8"> Project's Mosaics
+        <div class=" p-1"></div>
+
+        <Row>
+          {mosaicArray.map((mosaicInfo) => (
+            <div class="bg-gray-600 shadow-md rounded px-8 pt-6 pb-8">
+            <Link to={`/mosaic/${mosaicInfo.uuid}`}>
+              <Mosaic
+                uuid={mosaicInfo.uuid}
+                thumbnail={mosaicInfo.thumbnail}
+                preview={mosaicInfo.preview}
+              />
+            </Link>
+            <input type="checkbox" id={mosaicInfo.uuid} name="mosaicCheck" value="selected"></input>
+            <label for="vehicle1"> select </label><br></br>
+            </div>
+          ))}
+        </Row>
+
+        {/*<div class="row">*/}
+        {/*  {organizations && organizations.map((mos) => (*/}
+        {/*    <div class="bg-gray-800  shadow-md rounded px-4 pt-3 pb-4">*/}
+
+        {/*      <img src={button} alt="Thumbnail Image" width="175" height="175"></img>*/}
+        {/*      <Link to={`/organization/${mos.name}`}>{mos.name} </Link>*/}
+        {/*      <Popup arrow={true} contentStyle={{padding: '0px', border: 'none'}}*/}
+        {/*             trigger={<button class="w-6 bg-blue-300 rounded-full shadow-outline"><img*/}
+        {/*               src="/images/arrow-button-circle-down-1.png"/></button>}>*/}
+        {/*        <ul>*/}
+        {/*          <li>*/}
+        {/*            <div>view Mosaic</div>*/}
+        {/*          </li>*/}
+        {/*          <li>*/}
+        {/*            <div>delete Mosaic</div>*/}
+        {/*          </li>*/}
+        {/*        </ul>*/}
+        {/*      </Popup></div>*/}
+
+        {/*  ))}*/}
+        {/*  {mosaicArray.map((mosaicInfo) => (*/}
+        {/*    <p>mosaicInfo</p>*/}
+        {/*  ))}*/}
+        {/*</div>*/}
+
+      </div>
+      
 
 
     </div>
