@@ -1,5 +1,7 @@
   
 <?php
+
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 
@@ -14,6 +16,9 @@ class Mosaic implements JsonSerializable
      * @ORM\GeneratedValue
      */
     protected $id;
+
+    /** @ORM\OneToMany(targetEntity="Rectangle", mappedBy="mosaic") */
+    private $rectangles;
 
     /** @ORM\Column(type="string") */
     protected $filename;
@@ -155,10 +160,6 @@ class Mosaic implements JsonSerializable
      */
     protected $uuid;
 
-    public function __construct() {
-        $this->uuid = Uuid::uuid4()->toString();
-    }
-
     public function getId()
     {
         return $this->id;
@@ -167,6 +168,22 @@ class Mosaic implements JsonSerializable
     public function setId($id)
     {
         $this->id = $id;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getRectangles()
+    {
+        return $this->rectangles;
+    }
+
+    /**
+     * @param mixed $rectangles
+     */
+    public function setRectangles($rectangles)
+    {
+        $this->rectangles = $rectangles;
     }
 
     public function getFilename()
@@ -617,6 +634,11 @@ class Mosaic implements JsonSerializable
     public function setUuid($uuid)
     {
         $this->uuid = $uuid;
+    }
+
+    public function __construct() {
+        $this->uuid = Uuid::uuid4()->toString();
+        $this->rectangles = new ArrayCollection();
     }
 
     public function jsonSerialize()

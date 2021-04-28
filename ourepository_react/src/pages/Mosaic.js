@@ -30,20 +30,16 @@ const MosaicPage = (props) => {
   const changeHandler = (event) => {
     setSelectedFile(event.target.files[0]);
     setIsSelected(true);
-    if (selectedFile && selectedFile.type) {
-      if (selectedFile.type != 'text/csv') {
-          alert('unsupported format: '+selectedFile.type);
-      }
-      else {
-        apiService.uploadAnnotationCSV(mosaicUuid,File).then((data) => {
-               if(data.data.code == "ANNOTATION_CSV_UPLOADED"){
-                 alert(` annotation uploaded `);
-               }
-               else{
-                 alert(data.data);
-               }
-        })
-      }
+    const file = event.target.files[0];
+    if (file && file.type) {
+      apiService.uploadAnnotationCSV(mosaicUuid, file).then((data) => {
+        if(data.data.code === "ANNOTATION_CSV_UPLOADED"){
+         alert(` annotation uploaded `);
+        }
+        else{
+         alert(data.data);
+        }
+      });
     }
   };
   let radioChange = (event) => {
@@ -85,7 +81,7 @@ const MosaicPage = (props) => {
       <div class="mb-6 items-right text-right">
         <div class="pb-4"></div>
         <div class="p-1 rounded-md bg-gradient-to-bl bg-blue-900"> upload annotations</div>
-        <input type="file" name="file" onChange={changeHandler}/>
+        <input type="file" name="file" accept=".csv" onChange={changeHandler}/>
         
       </div>
     )

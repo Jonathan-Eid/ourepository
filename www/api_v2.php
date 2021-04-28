@@ -732,13 +732,13 @@ if($request_type == "CREATE_USER"){
         return;
     }
 
-//    try {
-//        $mosaic_info = get_mosaic_data($entityManager);
-//        echo rsp_msg("ANNOTATION_CSV_UPLOADED", $mosaic_info);
-//    } catch (Exception $e) {
-//        echo rsp_msg("ANNOTATION_CSV_UPLOADED_FAILED", "failed to upload CSV with annotations");
-//        echo 'Caught exception: ',  $e->getMessage(), "\n";
-//    }
+    try {
+        upload_annotation_csv($entityManager);
+        echo rsp_msg("ANNOTATION_CSV_UPLOADED", "CSV containing annotations successfully uploaded");
+    } catch (Exception $e) {
+        echo rsp_msg("ANNOTATION_CSV_UPLOADED_FAILED", "failed to upload CSV with annotations");
+        echo 'Caught exception: ',  $e->getMessage(), "\n";
+    }
 
 } else if($request_type == "CROP_MOSAIC"){
     echo rsp_msg("PLACEHOLDER","lorem ipsum");

@@ -45,12 +45,15 @@ class Organization implements JsonSerializable
     // /** @ORM\Column(type="boolean") */
     // protected $projects;
 
+    /** @ORM\OneToMany(targetEntity="Label", mappedBy="organization") */
+    private $labels;
+
     public function __construct() {
         $this->orgAcls = new ArrayCollection();
         $this->memberRoles = new ArrayCollection();
         $this->roles = new ArrayCollection();
         $this->uuid = Uuid::uuid4()->toString();
-    
+        $this->labels = new ArrayCollection();
     }
 
 
@@ -99,6 +102,22 @@ class Organization implements JsonSerializable
             'visible'=> $this->visible,
             'uuid'=> $this->uuid
         );
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLabels()
+    {
+        return $this->labels;
+    }
+
+    /**
+     * @param mixed $labels
+     */
+    public function setLabels($labels)
+    {
+        $this->labels = $labels;
     }
 
 }

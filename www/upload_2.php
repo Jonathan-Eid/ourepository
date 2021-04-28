@@ -342,10 +342,49 @@ function process_chunk($uid) {
     echo json_encode($response);
 }
 
-function upload_annotation_csv($entityManager, $csv) {
-    $mosaic_uuid = $_GET['mosaicUuid'];
+function upload_annotation_csv($entityManager) {
+
+    // gather all the annotations in the CSV
+
+    $annotations_to_add = array();
+    $i = 0;
+    $header = array("x1", "y1", "x2", "y2");
+    $found_header = false;
+    if (($handle = fopen($_FILES["csv"]["tmp_name"], "r")) !== FALSE) {
+        while (($row = fgetcsv($handle, 1000, ",")) !== FALSE) {
+            // skip until the header is found
+            if (!$found_header) {
+                if ($header === $row) {
+                    $found_header = true;
+                }
+            } else {
+                foreach ($row as $k=>$value) {
+                    $annotations_to_add[$i][$header[$k]] = $value;
+                }
+                $i++;
+            }
+        }
+        fclose($handle);
+    }
+
+    // get the mosaic that these annotations are for
+    $mosaic_uuid = $_POST['mosaicUuid'];
     $mosaic = $entityManager->getRepository('Mosaic')
         ->findOneBy(array('uuid' => $mosaic_uuid));
+//    $mosaic_id = $mosaic->getId();
+
+    // iterate over the annotations
+    foreach ($annotations_to_add as $annotation_to_add) {
+        $newRectangle = new Rectangle();
+        $newRectangle->setMosaic($mosaic);
+        $newRectangle->setX1($annotation_to_add["x1"]);
+        $newRectangle->setY1($annotation_to_add["y1"]);
+        $newRectangle->setX2($annotation_to_add["x2"]);
+        $newRectangle->setY2($annotation_to_add["y2"]);
+
+        $entityManager->persist($newRectangle);
+    }
+    $entityManager->flush();
 }
 
 ?>
