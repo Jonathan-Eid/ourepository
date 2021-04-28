@@ -62,7 +62,9 @@ const MosaicPage = (props) => {
 
   return (
 
-    <div class="bg-blue-100 shadow-md rounded px-8 pt-6 pb-8 mb-4 flex flex-col w-1/2">
+    <div class="bg-gray-850 rounded px-8 pt-6 pb-8 mb-400 flex flex-col w-3/5"
+    style={
+      {marginTop: "130px"}}>
       <div>
         {/*<img src={"http://localhost:5000/mosaics/1/england-london-bridge_preview.png"} alt="preview" height="75%" width="75%"/>*/}
 
