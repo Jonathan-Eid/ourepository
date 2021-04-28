@@ -38,6 +38,20 @@ const ProjectPage = (props) => {
     setIsOpen(true);
   }
 
+  function getCheckedBoxes() {
+    var checkboxes = document.getElementsByName("mosaicCheck");
+    var checkboxesChecked = [];
+    // loop over them all
+    for (var i=0; i<checkboxes.length; i++) {
+       // And stick the checked ones onto an array...
+       if (checkboxes[i].checked) {
+          checkboxesChecked.push(checkboxes[i].id);
+       }
+    }
+    // Return the array if it is non-empty, or null
+    return checkboxesChecked.length > 0 ? checkboxesChecked : null;
+  }
+
   function afterOpenModal() {
 
   }
@@ -55,7 +69,9 @@ const ProjectPage = (props) => {
 
   let submitTraining = (event) => {
     console.log(event.target.value);
-    apiService.trainMosaic(document.getElementById("dropdown").value,strideLength,0).then((data) => {
+    var selectedMosaics = getCheckedBoxes().toString();
+    console.log(selectedMosaics);
+    apiService.trainMosaic(selectedMosaics,document.getElementById("dropdown").value,1,1,strideLength,0).then((data) => {
       if (data.data.code == "TRAINING") {
         alert(` Training  submitted `)
       } else {
@@ -177,6 +193,7 @@ const ProjectPage = (props) => {
 
         <Row>
           {mosaicArray.map((mosaicInfo) => (
+            <div class="bg-gray-600 shadow-md rounded px-8 pt-6 pb-8">
             <Link to={`/mosaic/${mosaicInfo.uuid}`}>
               <Mosaic
                 uuid={mosaicInfo.uuid}
@@ -184,6 +201,9 @@ const ProjectPage = (props) => {
                 preview={mosaicInfo.preview}
               />
             </Link>
+            <input type="checkbox" id={mosaicInfo.uuid} name="mosaicCheck" value="selected"></input>
+            <label for="vehicle1"> select for training</label><br></br>
+            </div>
           ))}
         </Row>
 
