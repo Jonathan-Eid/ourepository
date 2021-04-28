@@ -15,7 +15,7 @@ class Rectangle implements JsonSerializable
     /** @ORM\Column(type="integer") */
     protected $owner_id;
 
-    /** @ORM\Column(type="integer") */
+    /**@ORM\ManyToOne(targetEntity="Mosaic")**/
     protected $mosaic_id;
 
     /** @ORM\Column(type="integer") */
