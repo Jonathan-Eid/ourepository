@@ -21,7 +21,8 @@ header("Access-Control-Allow-Methods: PUT, POST, GET, OPTIONS, DELETE");
 
 require_once "bootstrap.php";
 require_once "upload_2.php";
-require_once "mosaics_2.php";
+require_once "mosaics_v2.php";
+require_once "export_labels_v2.php";
 require_once "permissions.php";
 
 global $entityManager;
@@ -737,6 +738,44 @@ if($request_type == "CREATE_USER"){
         echo rsp_msg("ANNOTATION_CSV_UPLOADED", "CSV containing annotations successfully uploaded");
     } catch (Exception $e) {
         echo rsp_msg("ANNOTATION_CSV_UPLOADED_FAILED", "failed to upload CSV with annotations");
+        echo 'Caught exception: ',  $e->getMessage(), "\n";
+    }
+
+} else if ($request_type == "EXPORT_LABEL_CSV") {
+
+    if($_SESSION["id"] != session_id()){
+        echo json_encode("USER NOT AUTHENTICATED");
+        return;
+    }
+
+//    $label_id = $our_db->real_escape_string($_GET['label_id']);
+//    $mosaic_id = $our_db->real_escape_string($_GET['mosaic_id']);
+//    $export_type = $our_db->real_escape_string($_GET['export_type']);
+//    $coord_type = $our_db->real_escape_string($_GET['coord_type']);
+
+    $label_id = 1;
+    $export_type = "RECTANGLES";
+    $coord_type = "PIXEL";
+
+    error_log("exporting label csv!");
+
+    try {
+        $csv_contents = array();
+        if ($export_type == "POLYGONS") {
+            export_polygons($label_id, $mosaic_id, $coord_type);
+        } else if ($export_type == "RECTANGLES") {
+            $csv_contents = export_rectangles($entityManager, $label_id, $coord_type);
+        } else if ($export_type == "LINES") {
+            export_lines($label_id, $mosaic_id, $coord_type);
+        } else if ($export_type == "POINTS") {
+            export_points($label_id, $mosaic_id, $coord_type);
+        }
+
+        $response = array();
+        $response["csv_contents"] = $csv_contents;
+        echo rsp_msg("EXPORT_RECTANGLES_SUCCESS", $response);
+    } catch (Exception $e) {
+        echo rsp_msg("EXPORT_RECTANGLES_FAILURE", "failed to upload CSV with annotations");
         echo 'Caught exception: ',  $e->getMessage(), "\n";
     }
 

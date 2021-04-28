@@ -8,7 +8,7 @@ import apiService from "../services/api"
 import {Redirect} from "react-router-dom";
 import AddUserPage from './AddUserToOrg';
 import {OpenSeaDragonViewer} from "../components/OpenSeadragonViewer";
-import {CardBody} from "reactstrap";
+import {Button} from "reactstrap";
 
 import {useState} from "react";
 
@@ -44,6 +44,20 @@ const MosaicPage = (props) => {
   };
   let radioChange = (event) => {
     
+  }
+
+  // show annotations in a new window in CSV format
+  const exportLabelCsv = (event) => {
+    apiService.exportLabelCsv(mosaicUuid).then((data) => {
+      const resp = data.data
+      if (resp.code === "EXPORT_RECTANGLES_SUCCESS") {
+        alert(resp.message.csv_contents)
+      } else {
+        console.log(resp.message)
+      }
+    }).catch((err) => {
+      console.log(err);
+    })
   }
 
   // get the mosaic data
@@ -82,7 +96,7 @@ const MosaicPage = (props) => {
         <div class="pb-4"></div>
         <div class="p-1 rounded-md bg-gradient-to-bl bg-blue-900"> upload annotations</div>
         <input type="file" name="file" accept=".csv" onChange={changeHandler}/>
-        
+        <Button color="primary" onClick={exportLabelCsv}>Export Rectangles</Button>
       </div>
     )
   }, [])

@@ -5,7 +5,7 @@ import Popup from 'reactjs-popup';
 import {Link, useRouteMatch, Switch, Route, useParams} from "react-router-dom"
 import 'reactjs-popup/dist/index.css';
 import apiService from "../services/api"
-import {start_upload} from "../resumable2";
+import {start_upload} from "../resumable2_v2";
 import {Redirect} from "react-router-dom";
 import {useState} from "react";
 

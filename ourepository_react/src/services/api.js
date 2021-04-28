@@ -226,6 +226,19 @@ getOrgByUUID(uuid){
     })
   }
 
+  exportLabelCsv(mosaicUuid) {
+    return axios({
+      method: 'get',
+      url,
+      params: {
+        request: "EXPORT_LABEL_CSV",
+        mosaicUuid
+      },
+      withCredentials: true,
+      responseType: 'text'
+    })
+  }
+
   getProjects(org) {
     return axios({
       method: 'get',
