@@ -12,109 +12,112 @@ class Rectangle implements JsonSerializable
      * @ORM\GeneratedValue */
     protected $id;
 
-    /** @ORM\Column(type="integer") */
-    protected $owner_id;
+//    /** @ORM\Column(type="integer") */
+//    protected $owner_id;
 
-    /**@ORM\ManyToOne(targetEntity="Mosaic")**/
-    protected $mosaic_id;
+    /** @ORM\ManyToOne(targetEntity="Label") */
+    protected $label;
 
-    /** @ORM\Column(type="integer") */
-    protected $annotation_id;
+    /** @ORM\ManyToOne(targetEntity="Mosaic", inversedBy="rectangles") */
+    protected $mosaic;
 
-    /** @ORM\Column(type="integer") */
-    protected $point1X;
-
-    /** @ORM\Column(type="integer") */
-    protected $point2X;
+//    /** @ORM\Column(type="integer") */
+//    protected $annotation_id;
 
     /** @ORM\Column(type="integer") */
-    protected $point1Y;
+    protected $x1;
 
     /** @ORM\Column(type="integer") */
-    protected $point2Y;
+    protected $x2;
+
+    /** @ORM\Column(type="integer") */
+    protected $y1;
+
+    /** @ORM\Column(type="integer") */
+    protected $y2;
 
     public function getId()
     {
         return $this->id;
     }
 
-    public function getOWner()
-    {
-        return $this->owner_id;
-    }
-
-    public function setOwner($owner_id)
-    {
-        $this->owner_id = $owner_id;
-    }
+//    public function getOwner()
+//    {
+//        return $this->owner_id;
+//    }
+//
+//    public function setOwner($owner_id)
+//    {
+//        $this->owner_id = $owner_id;
+//    }
 
     public function getMosaic()
     {
-        return $this->mosaic_id;
+        return $this->mosaic;
     }
 
-    public function setMosaic($mosaic_id)
+    public function setMosaic($mosaic)
     {
-        $this->mosaic_id = $mosaic_id;
+        $this->mosaic = $mosaic;
     }
 
-    public function getAnnotation()
-    {
-        return $this->annotation_id;
-    }
+//    public function getAnnotation()
+//    {
+//        return $this->annotation_id;
+//    }
+//
+//    public function setAnnotation($annotation_id)
+//    {
+//        $this->annotation_id = $annotation_id;
+//    }
 
-    public function setAnnotation($annotation_id)
-    {
-        $this->annotation_id = $annotation_id;
-    }
-
-    public function getPoint1X()
+    public function getX1()
      {
-         return $this->point1X;
+         return $this->x1;
      }
 
-     public function setPoint1X($point1X)
+     public function setX1($x1)
      {
-         $this->point1X = $point1X;
+         $this->x1 = $x1;
      }
 
-     public function getPoint1Y()
+     public function getY1()
      {
-         return $this->point1Y;
+         return $this->y1;
      }
 
-     public function setPoint1Y($point1Y)
+     public function setY1($y1)
      {
-         $this->point1Y = $point1Y;
+         $this->y1 = $y1;
      }
 
-     public function getPoint2X()
+     public function getX2()
      {
-         return $this->point2X;
+         return $this->x2;
      }
 
-     public function setPoint2X($point2X)
+     public function setX2($x2)
      {
-         $this->point2X = $point2X;
+         $this->x2 = $x2;
      }
 
-     public function getPoint2Y()
+     public function getY2()
      {
-         return $this->point2Y;
+         return $this->y2;
      }
 
-     public function setPoint2Y($point2Y)
+     public function setY2($y2)
      {
-         $this->point2Y = $point2Y;
+         $this->y2 = $y2;
      }
 
      public function jsonSerialize()
     {
         return array(
-            'point1x' => $this->point1X,
-            'point1y'=> $this->point1y,
-            'point2x' => $this->point2x,
-            'point2y' => $this->point2y
+            'point1x' => $this->x1,
+            'point1y'=> $this->y1,
+            'point2x' => $this->x2,
+            'point2y' => $this->y2
         );
     }
 
