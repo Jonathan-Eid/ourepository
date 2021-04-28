@@ -69,7 +69,7 @@ const ProjectPage = (props) => {
 
   let submitTraining = (event) => {
     console.log(event.target.value);
-    var selectedMosaics = getCheckedBoxes().toString();
+    var selectedMosaics = getCheckedBoxes();
     console.log(selectedMosaics);
     apiService.trainMosaic(selectedMosaics,document.getElementById("dropdown").value,1,1,strideLength,0).then((data) => {
       if (data.data.code == "TRAINING") {
