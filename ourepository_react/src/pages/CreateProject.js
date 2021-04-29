@@ -14,12 +14,12 @@ let permissions = [
     "value": "add_mosaics"
   }, {
     "title": "Delete Mosaics",
-    "description": "Allow users to delete mosaics to the project",
+    "description": "Allow users to delete mosaics from this project",
     "value": "delete_mosaics"
   }, {
     "title": "View Mosaics",
     "description": "Allow users to view mosaics in the project",
-    "value": "delete_mosaics"
+    "value": "view_mosaics"
   }
 ]
 
@@ -48,6 +48,60 @@ const CreateProjectPage = (props) => {
   const [name, setName] = React.useState(null)
   const [activeTab, setActiveTab] = React.useState(permissionTabs[0])
   const [created, setCreated] = React.useState(false)
+  const [roles, setRoles] = React.useState(null)
+  const [users, setUsers] = React.useState(null)
+  const [activeEntity, setEntity] = React.useState("roles")
+  const [selectedEntity, setSelectedEntity] = React.useState(null)
+
+  const [changes, setChanges] = React.useState({
+    default: {},
+    whitelist:{},
+    blacklist:{}
+  })
+
+
+  React.useEffect(()=>{
+    if(roles){
+      setSelectedEntity(roles[0].id)
+    }
+  },[roles])
+
+
+  React.useEffect(()=>{
+
+    apiService.getOrgRoles(id)
+    .then((data) => {
+        const resp = data.data
+        console.log(JSON.stringify(resp));
+        if(resp.code == "ORG_ROLES_RECEIVED"){
+            setRoles(resp.message)
+          
+        }
+    })
+    .catch((err)=>{})
+
+    apiService.getOrgUsers(id)
+    .then((data) => {
+        const resp = data.data
+        console.log(JSON.stringify(resp));
+        if(resp.code == "ORG_USERS_RECEIVED"){
+          let memberRoles = resp.message
+          let users  = {}
+
+          for (let memberRole of memberRoles){
+            let member = memberRole.member
+            if(!users[member.email]){
+              users[member.email] = 1
+            }
+          }
+
+          setUsers(Object.keys(users))
+            
+        }
+    })
+    .catch((err)=>{})
+
+  },[])
 
   React.useEffect(() => {
     navbarService.setHeading(<>
@@ -96,53 +150,118 @@ const CreateProjectPage = (props) => {
     
     }
 
+    let changeEntityType = (event) => {
+      setEntity(event.target.value)
+      setSelectedEntity(event.target.value == "roles" ? roles[0].id : users[0])
+
+    }
+
+    let selectEntity = (event) => {
+      setSelectedEntity(event.target.value)
+    }
+
+    let checkPermission = (event) => {
+      let target = event.target
+  
+      const newChanges = Object.assign({}, changes);
+
+      if(activeTab.value != "default" && !newChanges[activeTab.value][selectedEntity]){
+        newChanges[activeTab.value][selectedEntity] = {}
+      }
+      let targetPermissionMap = activeTab.value == "default" ? newChanges[activeTab.value] : newChanges[activeTab.value][selectedEntity]
+  
+      if (targetPermissionMap[target.id]) {
+        delete targetPermissionMap[target.id]
+        if(Object.keys(targetPermissionMap).length == 0){
+          delete newChanges[activeTab.value][selectedEntity]
+        }
+      } else {
+        targetPermissionMap[target.id] = activeTab.value == "default" ? target.checked : activeEntity
+      }
+
+  
+      setChanges(newChanges)
+    }
+
+
 
 
       return (
-<div class="bg-blue-100 shadow-md rounded px-8 pt-6 pb-8 mb-4 flex flex-col w-1/2">
-        <h2 class="text text-black pb-10"> Create A Project </h2>
-        <div class="mb-4 text-left">
-          <label class="text-2xl text-black text-left"> Enter Project Title</label> 
-          <input onChange={setTitle} class="shadow  placeholder-blue-500 appearance-none border rounded w-full py-2 px-3  text-black" id="email" type="email" placeholder="Project Title"/>
-        </div>
-        <div class="pb-4"></div>
-        <div class="mb-6 items-left text-left"> 
-          
-        <label class="text-2xl text-black text-left"> </label> 
+      <div class="bg-blue-100 shadow-md rounded px-8 pt-6 pb-8 mb-4 flex flex-col w-1/2">
+            <h2 class="text text-black pb-10"> Create A Project </h2>
+            <div class="mb-4 text-left">
+              <label class="text-2xl text-black text-left"> Enter Project Title</label> 
+              <input onChange={setTitle} class="shadow placeholder-blue-500 appearance-none border rounded w-full py-2 px-3 text-black" id="email" type="email" placeholder="Project Title"/>
+            </div>
+            <div class="pb-4"></div>
+            <div class="mb-6 items-left text-left"> 
+              
+            <label class="text-2xl text-black text-left"> </label> 
 
-        <label class="text-2xl text-black text-left"> </label>
+            <label class="text-2xl text-black text-left"> </label>
 
 
-        {permissionTabs.map((tab) => (
-          <>
-          <button onClick={() => {changeTab(tab)}} class={"p-2 border-gray-900 border-2 " + ((tab.value == activeTab.value) ? "bg-gray-400" : "bg-gray-800")}>{tab.title}</button>
-          </>
+            {permissionTabs.map((tab) => (
+              <>
+                <button onClick={() => {changeTab(tab)}} class={"p-2 border-gray-900 border-2 " + ((tab.value == activeTab.value) ? "bg-gray-400" : "bg-gray-800")}>{tab.title}</button>
+              </>
 
-        ))}
+            ))}
 
-        {/* <div class="pb-10"/>  */}
+            {
+              (activeTab.value == 'whitelist' || activeTab.value == 'blacklist') &&
+              <>
+              <span class="pr-3"></span>
+             { ["roles","users"].map((entity) => (
+               <span onChange={changeEntityType}>
+                <input checked={activeEntity==entity} type="radio" value={entity} name="entity" /> <span  class="text-black">{entity[0].toUpperCase()+entity.substr(1,)}</span>
+                <span class="pr-3"></span>
+                </span>
+             ))}
+              <span class="pr-3"></span>
 
-        <ul class="bg-gray-700">
-          {permissions.map((permission) => (
-            <li>
-              <input type="checkbox" id={permission.value} name="permission"/>
-              <label class="pl-4" for={permission.value}>
-                <span class="text-lg">{permission.title}</span> <br/>
-                <span class="text-sm">{permission.description}</span>
+              <label class="text-2xl text-black text-left"> 
+
+              <select onChange={selectEntity}>
+              {(activeEntity=='roles') && roles.map((role) => (
+                 <option value={role.id} >{role.name}</option>
+             ))}
+             {(activeEntity=='users') && users.map((user) => (
+                 <option value={user} >{user}</option>
+             ))}
+              </select> 
               </label>
-            </li>
-          ))}
+              </> 
+              
+            }
 
-        </ul>
+            {/* <div class="pb-10"/>  */}
 
-        <div class="pb-10"/>
+            <ul class="bg-gray-700">
+              {permissions.map((permission) => (
+                <li>
+                  <input checked={(activeTab.value == "default") ? 
+                                  changes[activeTab.value][permission.value] 
+                                  : changes[activeTab.value][selectedEntity] ? changes[activeTab.value][selectedEntity][permission.value] : false}
+                                  onChange={checkPermission} 
+                                  type="checkbox" id={permission.value} name="permission"/>
+                  <label class="pl-4" for={permission.value}>
+                    <span class="text-lg">{permission.title}</span> <br/>
+                    <span class="text-sm">{permission.description}</span>
+                  </label>
+                </li>
+              ))}
 
-        <button onClick={submitProj} class="p-1 rounded-md bg-gradient-to-bl bg-gray-400 hover:bg-blue-900 disabled"
-                disabled={!(name)}> Create
-        </button>
+            </ul>
 
-      </div>
-    </div>
+            <div class="pb-10"/>
+
+            <button onClick={submitProj} class="p-1 rounded-md bg-gradient-to-bl bg-gray-400 hover:bg-blue-900 disabled"
+                    disabled={!(name)}> Create
+            </button>
+
+          </div>
+        </div>
   );
 };
 

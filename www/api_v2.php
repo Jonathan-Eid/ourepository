@@ -345,6 +345,35 @@ if($request_type == "CREATE_USER"){
     }
 
     return;
+}else if($request_type == "GET_ORG_USERS"){
+    if($_SESSION["id"] != session_id()){
+        echo json_encode("USER NOT AUTHENTICATED");
+        return;
+    }
+
+    $uid = $_SESSION['uid'];
+    $organization = $_GET['organization'];
+
+
+    try{
+
+        $query = $entityManager->createQuery('SELECT m FROM MemberRole m JOIN m.organization g WITH g.uuid = :org JOIN m.member r');
+        $query->setParameter('org', $organization);
+
+
+        $users = $query->getResult();
+        if(!isset($users)){
+            echo rsp_msg("NO_ORG_USER","Failed to retrieves users from organization");
+            return;
+        }
+        echo rsp_msg("ORG_USERS_RECEIVED",$users);
+    }
+    catch (Exception $e){
+        echo 'Caught exception: ',  $e->getMessage(), "\n";
+
+    }
+
+    return;
 }else if($request_type == "GET_ROLE_PERMISSIONS"){
     if($_SESSION["id"] != session_id()){
         echo json_encode("USER NOT AUTHENTICATED");
@@ -463,6 +492,7 @@ if($request_type == "CREATE_USER"){
     $uid = $_SESSION['uid'];
     $roleName = $_POST['role_name'];
     $changes = $_POST['changes'];
+    $organization = $_POST['organization'];
 
     //The change object contains keys and values that represent permissions 
     //and a boolean representing whether to add(true) or remove(false) a permission
@@ -482,7 +512,10 @@ if($request_type == "CREATE_USER"){
         
 
 
-        $query = $entityManager->createQuery('SELECT o FROM Organization o JOIN o.memberRoles m WHERE m.member = '.$uid);
+        $query = $entityManager->createQuery('SELECT o FROM Organization o JOIN o.memberRoles m WITH m.member = :uid WHERE o.uuid = :organization');
+        $query->setParameter('organization', $organization);
+        $query->setParameter('uid', $uid);
+        
         $org = $query->getResult()[0];
         error_log(json_encode($org));
         $role= new Role();

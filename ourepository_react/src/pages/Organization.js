@@ -17,15 +17,12 @@ const OrganizationPage = (props) => {
 
   React.useEffect(() => {
     navbarService.setHeading(<>
-        <Link class="p-3" to={`/organization/${id}`}>{organization ? organization.name : "PlaceHolder"}</Link>
+        <Link class="p-3" to={`/organization/${id}`}>{organization ? organization.name : ""}</Link>
         <Popup arrow={true} contentStyle={{padding: '0px', border: 'none'}}
                trigger={<button class="w-6 bg-blue-300 rounded-full shadow-outline"><img
                  src="/images/arrow-button-circle-down-1.png"/></button>}>
           <ul>
             {edit_enabled && <li><Link to={`/org-settings/${id}`}>Edit Organization</Link></li>}
-            <li>
-              <div>Popup content here !!</div>
-            </li>
           </ul>
 
         </Popup>

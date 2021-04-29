@@ -50,7 +50,7 @@ const OrgSettingsPage = (props) => {
 
     React.useEffect(()=>{
         navbarService.setHeading(<>
-            <Link class="p-3" to={`/organization/${id}`}>{organization ? organization.name : "PlaceHolder"}</Link>
+            <Link class="p-3" to={`/organization/${id}`}>{organization ? organization.name : ""}</Link>
             </>
         )
         sidebarService.setHeader(<u>Options</u>)
@@ -60,7 +60,7 @@ const OrgSettingsPage = (props) => {
                 <div onClick={()=>{changeTab(tab)}} class="border-white border shadow-md rounded px-4 pt-3 pb-4 hover:bg-gray-200 "> {tab['header']}</div>
             )))}
         </>)
-    },[])
+    },[organization])
 
     function changeTab(tab){
         setTab(tab)

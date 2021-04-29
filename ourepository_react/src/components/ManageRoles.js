@@ -141,7 +141,7 @@ const ManageRoles = (props) => {
   }
 
   function addRole() {
-    apiService.addRole(role_name, JSON.stringify(changes))
+    apiService.addRole(role_name, JSON.stringify(changes), props.id)
       .then((data) => {
         const resp = data.data
         console.log("PERMISSIONS" + JSON.stringify(resp));

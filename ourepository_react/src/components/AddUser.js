@@ -17,8 +17,6 @@ const AddUser = (props) => {
 
 
     React.useEffect(()=>{
-
-
         apiService.getOrgRoles(props.id)
         .then((data) => {
             const resp = data.data

@@ -347,6 +347,19 @@ getOrgByUUID(uuid){
     });
   }
 
+  getOrgUsers(organization) {
+    return axios({
+      method: 'get',
+      url,
+      params: {
+        request: "GET_ORG_USERS",
+        organization
+      },
+      withCredentials: true,
+      responseType: 'text'
+    });
+  }
+
   getRolePermissions(role) {
     return axios({
       method: 'get',
@@ -374,14 +387,15 @@ getOrgByUUID(uuid){
     });
   }
 
-  addRole(role_name, changes) {
+  addRole(role_name, changes,organization) {
     return axios({
       method: 'post',
       url,
       data: new URLSearchParams({
         request: "ADD_ROLE",
         role_name,
-        changes
+        changes,
+        organization
       }),
       withCredentials: true,
       responseType: 'text'
