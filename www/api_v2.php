@@ -8,7 +8,6 @@ if(!isset($_SESSION["count"])){
 }
 
 use \Firebase\JWT\JWT;
-use phpseclib3\Net\SSH2;
 
 
 $secret_key = "test_secret";
@@ -23,6 +22,7 @@ require_once "bootstrap.php";
 require_once "upload_2.php";
 require_once "mosaics_v2.php";
 require_once "export_labels_v2.php";
+require_once "predictions.php";
 require_once "permissions.php";
 
 global $entityManager;
@@ -759,12 +759,15 @@ if($request_type == "CREATE_USER"){
 
     error_log("exporting label csv!");
 
+    // get the mosaic that these annotations are for
+    $mosaic_uuid = $_GET['mosaicUuid'];
+
     try {
         $csv_contents = array();
         if ($export_type == "POLYGONS") {
             export_polygons($label_id, $mosaic_id, $coord_type);
         } else if ($export_type == "RECTANGLES") {
-            $csv_contents = export_rectangles($entityManager, $label_id, $coord_type);
+            $csv_contents = export_rectangles($entityManager, $label_id, $coord_type, $mosaic_uuid);
         } else if ($export_type == "LINES") {
             export_lines($label_id, $mosaic_id, $coord_type);
         } else if ($export_type == "POINTS") {
@@ -785,50 +788,20 @@ if($request_type == "CREATE_USER"){
 } else if($request_type == "INTERFACE_MOSAIC"){
     echo rsp_msg("PLACEHOLDER","lorem ipsum");
 
-} else if($request_type == "TRAIN_MOSAIC"){
+} else if($request_type == "SUBMIT_TRAINING_JOB"){
 
     if($_SESSION["id"] != session_id()){
         echo json_encode("USER NOT AUTHENTICATED");
         return;
     }
 
-    // Get the organization, project, and mosaic IDs
-    // These are used for organizing the shared drive filesystem.
-    $organizationId = $entityManager->getRepository('Organization')
-        ->findOneBy(array('uuid' => $_POST['organizationId']))->getId();
-//    $projectId = $entityManager->getRepository('Project')
-//        ->findOneBy(array('name' => $_POST['projectName']))->getId();
-    $mosaicId = $_POST['mosaicId'];
-
-
-    // produce the commands with all the fields
-
-    $organizationIdCommand = "--organization_id $organizationId";
-//    $projectIdCommand = "--project_id $projectId";
-    $mosaicIdCommand = "--mosaic_id $mosaicId";
-
-    // crop phase
-    $dataDirCommand = "--data_dir {$_POST['dataDir']}";
-    $modelWidthCommand = "--model_width {$_POST['modelWidth']}";
-    $modelHeightCommand = "--model_height {$_POST['modelHeight']}";
-    $strideLengthCommand = "--stride_length {$_POST['strideLength']}";
-    $ratioCommand = "--ratio {$_POST['ratio']}";
-    // train phase
-    $modelNameCommand = "--model_name {$_POST['modelName']}";
-    $continueFromCheckpointCommand = "--continue_from_checkpoint {$_POST['continueFromCheckpoint']}";
-
-    $allCommnds = implode(" ", array(
-        $organizationIdCommand, $mosaicIdCommand,
-        $dataDirCommand, $modelWidthCommand, $modelWidthCommand, $modelHeightCommand, $strideLengthCommand, $ratioCommand,
-        $modelNameCommand, $continueFromCheckpointCommand));
-    $command = "sbatch ourepository/AI/our_prototype.sh {$allCommnds}";
-
-    $ssh = new SSH2($our_cluster_server);
-    if (!$ssh->login($our_cluster_username, $our_cluster_password)) {
-        exit('Login Failed');
+    try {
+        submit_training_job($entityManager);
+        echo rsp_msg("SUBMIT_TRAINING_JOB_SUCCESS", "successfully submitted training job");
+    } catch (Exception $e) {
+        echo rsp_msg("SUBMIT_TRAINING_JOB_FAILURE", "failed to submit training job");
+        echo 'Caught exception: ',  $e->getMessage(), "\n";
     }
-
-    echo $ssh->exec($command);
 
     echo rsp_msg("PLACEHOLDER","lorem ipsum");
 }

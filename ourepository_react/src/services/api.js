@@ -239,6 +239,46 @@ getOrgByUUID(uuid){
     })
   }
 
+  submitTrainingJob(mosaicUuids, modelWidth, modelHeight, strideLength, ratio,
+              modelName, continueFromCheckpoint) {
+    return axios({
+      method: 'post',
+      url,
+      data: new URLSearchParams({
+        request: "SUBMIT_TRAINING_JOB",
+        mosaicUuids,
+        // crop phase
+        modelWidth,
+        modelHeight,
+        strideLength,
+        ratio,
+        // train phase
+        modelName,
+        continueFromCheckpoint,
+      }),
+      withCredentials: true,
+      responseType: 'text'
+    })
+  }
+
+  inferenceMosaic(name, imagePath, model, width, height, strideLength) {
+    return axios({
+      method: 'post',
+      url,
+      data: new URLSearchParams({
+        request: "INTERFACE_MOSAIC",
+        name,
+        imagePath,
+        model,
+        width,
+        height,
+        strideLength
+      }),
+      withCredentials: true,
+      responseType: 'text'
+    })
+  }
+
   getProjects(org) {
     return axios({
       method: 'get',
@@ -318,47 +358,6 @@ getOrgByUUID(uuid){
       withCredentials: true,
       responseType: 'text'
     });
-  }
-
-  trainMosaic(name, dataDir, modelWidth, modelHeight, strideLength, ratio,
-              modelName, continueFromCheckpoint) {
-    return axios({
-      method: 'post',
-      url,
-      data: new URLSearchParams({
-        request: "CROP_MOSAIC",
-        name,
-        // crop phase
-        dataDir,
-        modelWidth,
-        modelHeight,
-        strideLength,
-        ratio,
-        // train phase
-        modelName,
-        continueFromCheckpoint,
-      }),
-      withCredentials: true,
-      responseType: 'text'
-    })
-  }
-
-  inferenceMosaic(name, imagePath, model, width, height, strideLength) {
-    return axios({
-      method: 'post',
-      url,
-      data: new URLSearchParams({
-        request: "INTERFACE_MOSAIC",
-        name,
-        imagePath,
-        model,
-        width,
-        height,
-        strideLength
-      }),
-      withCredentials: true,
-      responseType: 'text'
-    })
   }
 
   changeRolePermissions(role, changes) {
