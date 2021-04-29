@@ -24,16 +24,16 @@ class Rectangle implements JsonSerializable
 //    /** @ORM\Column(type="integer") */
 //    protected $annotation_id;
 
-    /** @ORM\Column(type="integer") */
+    /** @ORM\Column(type="float") */
     protected $x1;
 
-    /** @ORM\Column(type="integer") */
+    /** @ORM\Column(type="float") */
     protected $x2;
 
-    /** @ORM\Column(type="integer") */
+    /** @ORM\Column(type="float") */
     protected $y1;
 
-    /** @ORM\Column(type="integer") */
+    /** @ORM\Column(type="float") */
     protected $y2;
 
     public function getId()

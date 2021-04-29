@@ -72,14 +72,12 @@ const ProjectPage = (props) => {
     console.log(event.target.value);
     var selectedMosaics = getCheckedBoxes();
     console.log(selectedMosaics);
-    apiService.trainMosaic(selectedMosaics,document.getElementById("dropdown").value,1,1,strideLength,0).then((data) => {
-      if (data.data.code == "TRAINING") {
-        alert(` Training  submitted `)
+    apiService.submitTrainingJob(selectedMosaics, document.getElementById("dropdown").value, 1, 1, strideLength, 0).then((data) => {
+      if (data.data.code === "SUBMIT_TRAINING_JOB_SUCCESS") {
+        alert("Training job submitted");
       } else {
-        alert(data.data.message)
+        alert(data.data.message);
       }
-
-
     }).catch((err) => {
       console.log(err);
     })

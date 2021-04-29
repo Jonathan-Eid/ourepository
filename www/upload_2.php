@@ -343,9 +343,14 @@ function process_chunk($uid) {
 }
 
 function upload_annotation_csv($entityManager) {
+    // get the mosaic that these annotations are for
+    $mosaic_uuid = $_POST['mosaicUuid'];
+    $mosaic = $entityManager->getRepository('Mosaic')
+        ->findOneBy(array('uuid' => $mosaic_uuid));
+    $width = $mosaic->getWidth();
+    $height = $mosaic->getHeight();
 
     // gather all the annotations in the CSV
-
     $annotations_to_add = array();
     $i = 0;
     $header = array("x1", "y1", "x2", "y2");
@@ -359,19 +364,17 @@ function upload_annotation_csv($entityManager) {
                 }
             } else {
                 foreach ($row as $k=>$value) {
-                    $annotations_to_add[$i][$header[$k]] = $value;
+                    if ($header[$k] == 'x1' || $header[$k] == 'x2') {
+                        $annotations_to_add[$i][$header[$k]] = $value / $width;
+                    } else {
+                        $annotations_to_add[$i][$header[$k]] = $value / $height;
+                    }
                 }
                 $i++;
             }
         }
         fclose($handle);
     }
-
-    // get the mosaic that these annotations are for
-    $mosaic_uuid = $_POST['mosaicUuid'];
-    $mosaic = $entityManager->getRepository('Mosaic')
-        ->findOneBy(array('uuid' => $mosaic_uuid));
-//    $mosaic_id = $mosaic->getId();
 
     // iterate over the annotations
     foreach ($annotations_to_add as $annotation_to_add) {
