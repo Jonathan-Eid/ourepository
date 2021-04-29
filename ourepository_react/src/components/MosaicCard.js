@@ -73,7 +73,7 @@ class MosaicCard extends React.Component {
             {/*  </Row>*/}
             {/*</CardHeader>*/}
 
-            <img src={baseURL + this.state.thumbnail} alt="thumbnail" height="75%" width="75%"/>
+            <img src={baseURL + this.state.thumbnail} alt="tiling in progress" height="75%" width="75%"/>
             {/*<CardText>{this.state.desc}</CardText>*/}
 
             {/*<CardFooter>*/}

@@ -7,6 +7,7 @@ import 'reactjs-popup/dist/index.css';
 import Project from '../components/Project';
 import apiService from '../services/api';
 import button from '../logo.svg';
+import {Redirect} from "react-router-dom";
 import Modal from 'react-modal';
 import Mosaic from "../components/MosaicCard";
 
@@ -228,7 +229,9 @@ const ProjectPage = (props) => {
         <div class=" p-1"></div>
 
         <Row>
+        <div className="grid grid-cols-3 gap-4">
           {mosaicArray.map((mosaicInfo) => (
+            <div>
             <div class="bg-gray-600 shadow-md rounded px-8 pt-6 pb-8">
             <Link to={`/mosaic/${mosaicInfo.uuid}`}>
               <Mosaic
@@ -240,7 +243,9 @@ const ProjectPage = (props) => {
             <input type="checkbox" id={mosaicInfo.uuid} name="mosaicCheck" value="selected"></input>
             <label for="vehicle1"> select </label><br></br>
             </div>
+            </div>
           ))}
+          </div>
         </Row>
 
         {/*<div class="row">*/}
