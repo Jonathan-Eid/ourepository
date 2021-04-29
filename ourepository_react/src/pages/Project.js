@@ -9,7 +9,7 @@ import apiService from '../services/api';
 import button from '../logo.svg';
 import {Redirect} from "react-router-dom";
 import Modal from 'react-modal';
-import Mosaic from "../components/MosaicCard";
+import MosaicCard from "../components/MosaicCard";
 
 import {Row} from "reactstrap";
 
@@ -231,15 +231,15 @@ const ProjectPage = (props) => {
           {mosaicArray.map((mosaicInfo) => (
             <div>
             <div class="bg-gray-600 shadow-md rounded px-8 pt-6 pb-8">
-            <Link to={`/mosaic/${mosaicInfo.uuid}`}>
-              <Mosaic
-                uuid={mosaicInfo.uuid}
-                thumbnail={mosaicInfo.thumbnail}
-                preview={mosaicInfo.preview}
-              />
-            </Link>
-            <input type="checkbox" id={mosaicInfo.uuid} name="mosaicCheck" value="selected"></input>
-            <label for="vehicle1"> select </label><br></br>
+              <Link to={`/mosaic/${mosaicInfo.uuid}`}>
+                <MosaicCard
+                  uuid={mosaicInfo.uuid}
+                  thumbnail={mosaicInfo.thumbnail}
+                  preview={mosaicInfo.preview}
+                />
+              </Link>
+              <input type="checkbox" id={mosaicInfo.uuid} name="mosaicCheck" value="selected"></input>
+              <label for="vehicle1"> select </label><br></br>
             </div>
             </div>
           ))}
