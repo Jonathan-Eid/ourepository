@@ -80,19 +80,19 @@ function submit_training_job($entityManager) {
     $model = new Model();
     $model_uuid = $model->getUuid();
 
-    // make the directory in the shared drive where this model will be stored
-    $model_dir = "$SHARED_DRIVE_DIRECTORY/$model_uuid";
-    if (is_dir($model_dir)) {
-        rmdir($model_dir);
-    }
-    mkdir($model_dir);
-
-    // make the directory where the input to train this model will be stored
-    $model_input_dir = "$model_dir/training_images";
+    // make the directory in the shared drive where this model's training images will be stored
+    $model_input_dir = "$SHARED_DRIVE_DIRECTORY/training_images/$model_uuid";
     if (is_dir($model_input_dir)) {
         rmdir($model_input_dir);
     }
-    mkdir($model_input_dir);
+    mkdir($model_input_dir, 0777, true);
+
+    //// make the directory where the input to train this model will be stored
+    //$model_input_dir = "$model_dir/training_images";
+    //if (is_dir($model_input_dir)) {
+    //    rmdir($model_input_dir);
+    //}
+    //mkdir($model_input_dir);
 
     // get the mosaic_uuids to train on
     $mosaic_uuids = explode(",", $_POST["mosaicUuids"]);
