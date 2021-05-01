@@ -10,18 +10,16 @@ const {REACT_APP_PHP_DOMAIN, REACT_APP_PHP_PORT} = process.env;
 
 const LoginPage = (props) => {
 
-    const [cookies, setCookie, removeCookie] = useCookies(['session_id']);
-    const [signUp, setSignUp] = React.useState(false)
-    const [email, setEmail] = React.useState('')
-    const [password, setPassword] = React.useState('')
-    const [given_name, setGivenName] = React.useState('')
-    const [family_name, setFamilyName] = React.useState('')
-    const [authStatus, setAuthStatus] = React.useState(false)
+  const [cookies, setCookie, removeCookie] = useCookies(['session_id']);
+  const [signUp, setSignUp] = React.useState(false)
+  const [email, setEmail] = React.useState('')
+  const [password, setPassword] = React.useState('')
+  const [given_name, setGivenName] = React.useState('')
+  const [family_name, setFamilyName] = React.useState('')
+  const [authStatus, setAuthStatus] = React.useState(false)
 
 
   const {x, y} = useMousePosition();
-
-  let button;
 
   function handleBackClick() {
     setSignUp(false)
@@ -53,63 +51,66 @@ const LoginPage = (props) => {
 
 
   async function handleSignInClick() {
-    try{
+    try {
       console.log(REACT_APP_PHP_DOMAIN, REACT_APP_PHP_PORT)
-      const res = await apiService.loginUser(email,password)
-    
+      const res = await apiService.loginUser(email, password)
+
       console.log(res);
 
 
-      if(res.data.code=="hash_matches"){
-        localStorage.setItem("user","true")     
-        setCookie("session_id",res.data.message);
+      if (res.data.code == "hash_matches") {
+        localStorage.setItem("user", "true")
+        setCookie("session_id", res.data.message);
         alert("Successfully logged in")
         setAuthStatus(true)
-        emitter.emit("storage")    
+        emitter.emit("storage")
         setSignUp(true)
 
       }
 
-    }
-    catch(err){
+    } catch (err) {
       console.log(err);
     }
 
   }
 
-  if(authStatus){
+  if (authStatus) {
     return <Redirect exact to="/"></Redirect>
   }
 
-
-  if (!signUp) {
-    button = <>
-      <button onClick={handleSignInClick}
-              class="bg-blue hover:bg-blue-dark text-black border-2 border-blue-300 font-bold py-2 px-4 rounded"
-              type="button">
-        Sign In
-      </button>
-      <button onClick={handleSignUpClick}
-              class="bg-blue hover:bg-blue-dark text-black border-2 border-blue-300 font-bold py-2 px-4 rounded"
-              type="button">
-        Sign Up
-      </button>
-    </>
-  } else {
-    button = <>
-
-      <button onClick={handleSubmitClick}
-              class="bg-blue hover:bg-blue-dark text-black border-2 border-blue-300 font-bold py-2 px-4 rounded"
-              type="button">
-        Submit
-      </button>
-      <button onClick={handleBackClick}
-              class="bg-blue hover:bg-blue-dark text-black border-2 border-blue-300 font-bold py-2 px-4 rounded"
-              type="button">
-        Back
-      </button>
-    </>
+  const renderButton = (signUp) => {
+    if (!signUp) {
+      return (
+        <>
+          <button onClick={handleSignInClick}
+                  class="bg-blue hover:bg-blue-dark text-black border-2 border-blue-300 font-bold py-2 px-4 rounded"
+                  type="button">
+            Sign In
+          </button>
+          <button onClick={handleSignUpClick}
+                  class="bg-blue hover:bg-blue-dark text-black border-2 border-blue-300 font-bold py-2 px-4 rounded"
+                  type="button">
+            Sign Up
+          </button>
+        </>)
+    } else {
+      return (
+        <>
+          <button onClick={handleSubmitClick}
+                  class="bg-blue hover:bg-blue-dark text-black border-2 border-blue-300 font-bold py-2 px-4 rounded"
+                  type="button">
+            Submit
+          </button>
+          <button onClick={handleBackClick}
+                  class="bg-blue hover:bg-blue-dark text-black border-2 border-blue-300 font-bold py-2 px-4 rounded"
+                  type="button">
+            Back
+          </button>
+        </>
+      )
+    }
   }
+
   const signupWasClickedCallback = (data) => {
     console.log(data);
     alert('Signup callback, see log on the console to see the data.');
@@ -149,7 +150,7 @@ const LoginPage = (props) => {
       </>
       }
       <div class="flex items-center justify-between">
-        {button}
+        {renderButton(signUp)}
         <a class="inline-block align-baseline font-bold text-sm text-black hover:text-blue-darker " href="#">
           Forgot Password?
         </a>

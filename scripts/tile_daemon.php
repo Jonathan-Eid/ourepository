@@ -24,7 +24,7 @@ while (true) {
         process_uploaded_mosaic($owner_id, $mosaic_id);
     }
 
-    sleep(10);
+    sleep(60);
 }
 
 ?>
