@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import {Link as RouterLink, useNavigate} from 'react-router-dom';
 import PropTypes from 'prop-types';
 import {
   AppBar,
@@ -12,8 +12,12 @@ import {
 import MenuIcon from '@material-ui/icons/Menu';
 import NotificationsIcon from '@material-ui/icons/NotificationsOutlined';
 import Logo from './Logo';
+import apiService from "../services/api";
 
 const DashboardNavbar = ({ onMobileNavOpen, ...rest }) => {
+
+  const navigate = useNavigate();
+
   const [notifications] = useState([]);
 
   return (
@@ -36,7 +40,10 @@ const DashboardNavbar = ({ onMobileNavOpen, ...rest }) => {
               <NotificationsIcon />
             </Badge>
           </IconButton>
-          <Button color="inherit">
+          <Button onClick={() => {
+            apiService.logout();
+            navigate('/login');
+          }} color="inherit">
             Logout
           </Button>
         </Hidden>
