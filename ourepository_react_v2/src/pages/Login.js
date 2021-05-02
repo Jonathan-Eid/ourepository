@@ -32,7 +32,7 @@ const LoginPage = (props) => {
   React.useEffect(() => {
     apiService.isAuth().then((data) => {
       if (data.data === "true") {
-        navigate('/');
+        navigate('/app');
       }
     }).catch((err) => {
       console.log(err);
@@ -66,7 +66,6 @@ const LoginPage = (props) => {
       }
       if (res.data.code === "created_user") {
         localStorage.setItem("user", "true");
-        // setCookie("session_id", res.data.message);
         emitter.emit("storage");
         submitSignIn(event);
       } else {

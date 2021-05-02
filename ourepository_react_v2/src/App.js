@@ -11,57 +11,31 @@ import DashboardLayout from "./components/DashboardLayout";
 import {ThemeProvider} from "@material-ui/core";
 import GlobalStyles from "./components/GlobalStyles";
 import theme from "./theme";
-
+import MainLayout from "./components/MainLayout";
+import NotFound from "./pages/NotFound";
 
 function App() {
-  const protected_routes = [
-    // {path: "/organization/:id", page: HomePage},
+  const protectedRoutes = [
     {
-      // path: 'app',
+      path: 'app',
       element: <DashboardLayout />,
       children: [
         { path: '/', element: <HomePage /> },
-        { path: '404', element: <HomePage /> }
       ]
     }
   ]
 
-  const [protectedRoutes, setProtectedRoutes] = React.useState([])
-  const [authStatus, setAuthStatus] = React.useState(false)
-
-
-  React.useEffect(() => {
-
-    let revealRoutes = async () => {
-      let res = await apiService.isAuth()
-
-      if (res.data === "true") {
-        localStorage.setItem("user", true)
-        setAuthStatus(true)
-        setProtectedRoutes(protected_routes)
-      } else {
-        localStorage.removeItem("user")
-        setAuthStatus(false)
-        setProtectedRoutes([])
-      }
-
-      emitter.addListener("storage", async () => {
-        let res = await apiService.isAuth()
-
-        if (res.data === "true") {
-          localStorage.setItem("user", true)
-          setAuthStatus(true)
-          setProtectedRoutes(protected_routes)
-        } else {
-          setAuthStatus(false)
-          setProtectedRoutes([])
-        }
-      });
-
+  const unprotectedRoutes = [
+    {
+      element: <MainLayout />,
+      children: [
+        { path: '/login', element: <LoginPage /> },
+        { path: '/', element: <Navigate to="/login" /> },
+        { path: '*', element: <Navigate to="/404" /> },
+        { path: '/404', element: <NotFound /> }
+      ]
     }
-
-    revealRoutes()
-  }, [])
+  ]
 
   return (
     <ThemeProvider theme={theme}>
@@ -69,23 +43,27 @@ function App() {
       <BrowserRouter forceRefresh={true}>
         <Routes>
 
-        {/*<PrivateRoute exact path="/" component={HomePage}/>*/}
-          <Route path="/login" element={<LoginPage/>}/>
-          {protected_routes.map((parentRoute) => {
+          {protectedRoutes.map((parentRoute) => {
             return (
-              <Route element={parentRoute.element}>
+              <Route path={parentRoute.path} element={parentRoute.element}>
                 {parentRoute.children.map((route) => {
                   return <PrivateRoute path={route.path} element={route.element}/>
                 })}
               </Route>
             );
           })}
-            {/*{protectedRoutes.map((route) => {*/}
-            {/*  return <PrivateRoute path={route.path} component={route.page}/>*/}
-            {/*})}*/}
+          {unprotectedRoutes.map((parentRoute) => {
+            return (
+              <Route element={parentRoute.element}>
+                {parentRoute.children.map((route) => {
+                  return <Route path={route.path} element={route.element}/>
+                })}
+              </Route>
+            );
+          })}
+
         </Routes>
       </BrowserRouter>
-
     </ThemeProvider>
 
   );
