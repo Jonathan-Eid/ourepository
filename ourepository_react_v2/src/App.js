@@ -1,16 +1,30 @@
 import React from 'react';
 import './App.css';
 import LoginPage from './pages/Login';
-import {BrowserRouter, Route, Switch} from "react-router-dom";
+import {BrowserRouter, Navigate, Route, Routes} from "react-router-dom";
 import PrivateRoute from './PrivateRoute';
-import HomePage from './pages/Home';
 import emitter from "./services/emitter"
 
 import apiService from "./services/api";
+import HomePage from "./pages/Home";
+import DashboardLayout from "./components/DashboardLayout";
+import {ThemeProvider} from "@material-ui/core";
+import GlobalStyles from "./components/GlobalStyles";
+import theme from "./theme";
 
 
 function App() {
-  const protected_routes = []
+  const protected_routes = [
+    // {path: "/organization/:id", page: HomePage},
+    {
+      // path: 'app',
+      element: <DashboardLayout />,
+      children: [
+        { path: '/', element: <HomePage /> },
+        { path: '404', element: <HomePage /> }
+      ]
+    }
+  ]
 
   const [protectedRoutes, setProtectedRoutes] = React.useState([])
   const [authStatus, setAuthStatus] = React.useState(false)
@@ -50,18 +64,29 @@ function App() {
   }, [])
 
   return (
-    <div className="App">
+    <ThemeProvider theme={theme}>
+      <GlobalStyles />
       <BrowserRouter forceRefresh={true}>
-        <Switch>
-          <PrivateRoute exact path="/" component={HomePage}/>
-          <Route path="/login" component={LoginPage}/>
-          {protectedRoutes.map((route) => {
-            return <PrivateRoute path={route.path} component={route.page}/>
+        <Routes>
+
+        {/*<PrivateRoute exact path="/" component={HomePage}/>*/}
+          <Route path="/login" element={<LoginPage/>}/>
+          {protected_routes.map((parentRoute) => {
+            return (
+              <Route element={parentRoute.element}>
+                {parentRoute.children.map((route) => {
+                  return <PrivateRoute path={route.path} element={route.element}/>
+                })}
+              </Route>
+            );
           })}
-        </Switch>
+            {/*{protectedRoutes.map((route) => {*/}
+            {/*  return <PrivateRoute path={route.path} component={route.page}/>*/}
+            {/*})}*/}
+        </Routes>
       </BrowserRouter>
 
-    </div>
+    </ThemeProvider>
 
   );
 }

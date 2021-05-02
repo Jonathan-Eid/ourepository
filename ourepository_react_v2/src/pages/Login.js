@@ -15,8 +15,11 @@ import Container from '@material-ui/core/Container';
 import apiService from "../services/api"
 import emitter from "../services/emitter"
 import useMousePosition from "../hooks/useMousePosition";
+import {useNavigate} from "react-router-dom";
 
 const LoginPage = (props) => {
+
+  const navigate = useNavigate();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -29,7 +32,7 @@ const LoginPage = (props) => {
   React.useEffect(() => {
     apiService.isAuth().then((data) => {
       if (data.data === "true") {
-        props.history.push('/');
+        navigate('/');
       }
     }).catch((err) => {
       console.log(err);
@@ -44,7 +47,7 @@ const LoginPage = (props) => {
       if (response.data.code === "hash_matches") {
         localStorage.setItem("user", "true")
         emitter.emit("storage")
-        props.history.push('/');
+        navigate('/');
       } else {
         alert("Incorrect password");
       }

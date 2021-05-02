@@ -1,9 +1,12 @@
 import React from "react";
-import {Redirect, Route} from "react-router-dom";
+import {Route, useNavigate} from "react-router-dom";
 import apiService from "./services/api";
 import emitter from "./services/emitter"
 
-const PrivateRoute = ({component: Component, ...rest}) => {
+
+const PrivateRoute = ({element: Component, path, ...rest}) => {
+
+  const navigate = useNavigate();
 
   const [authStatus, setAuthStatus] = React.useState(false)
   const [loading, setLoading] = React.useState(true)
@@ -38,18 +41,21 @@ const PrivateRoute = ({component: Component, ...rest}) => {
     if (loading) {
       return (<div/>);
     } else {
-      return (
-        <Route
-          {...rest}
-          render={props =>
-            authStatus ? (
-              <Component {...props} />
-            ) : (
-              <Redirect to={{pathname: '/login', state: {from: props.location}}}/>
-            )
-          }
-        />
-      );
+      if (authStatus) {
+        return (<Route path={path} element={Component} />);
+        // return (
+        //   <Route
+        //     {...rest}
+        //     render={props => (
+        //         <Component {...props} />
+        //       )
+        //     }
+        //   />
+        // );
+      } else {
+        navigate('/login');
+      }
+
     }
   }
 
