@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import {
@@ -22,6 +22,7 @@ import {
   Users as UsersIcon
 } from 'react-feather';
 import NavItem from './NavItem';
+import apiService from "../services/api";
 
 const user = {
   avatar: '/static/images/avatars/avatar_6.png',
@@ -29,9 +30,15 @@ const user = {
   name: 'Katarina Smith'
 };
 
+const organizationsItem = {
+  href: '/app/organizations',
+  icon: BarChartIcon,
+  title: 'Organizations'
+}
+
 const items = [
   {
-    href: '/app/dashboard',
+    href: '/app/organizations',
     icon: BarChartIcon,
     title: 'Dashboard',
     items: [
@@ -82,6 +89,49 @@ const items = [
 const DashboardSidebar = ({ onMobileClose, openMobile }) => {
   const location = useLocation();
 
+  const [organizationItems, setOrganizationItems] = React.useState(null)
+
+  // get the organizations, projects, and mosaics for the current user
+  React.useEffect(() => {
+    apiService.getOrgs().then((response) => {
+      const data = response.data;
+      if (data.code === "ORGS_RECEIVED") {
+        const organizationItems = [];
+        data.message.organizations.forEach(organization => {
+          const organizationItem = {};
+          organizationItem['title'] = organization.name;
+
+          const projectItems = [];
+          organization.projects.forEach(project => {
+            const projectItem = {};
+            projectItem['title'] = project.name;
+
+            const mosaicItems = [];
+            project.mosaics.forEach(mosaic => {
+              const mosaicItem = {};
+              mosaicItem['title'] = mosaic.name;
+
+              mosaicItems.push(mosaicItem);
+            })
+
+            projectItem["items"] = mosaicItems;
+            projectItems.push(projectItem);
+          })
+
+          organizationItem["items"] = projectItems;
+          organizationItems.push(organizationItem);
+        })
+
+        setOrganizationItems(organizationItems);
+      } else {
+        alert("Something went wrong");
+        // setOrganizations(resp.message);
+      }
+    }).catch((err) => {
+      console.log(err);
+    });
+  }, []);
+
   useEffect(() => {
     if (openMobile && onMobileClose) {
       onMobileClose();
@@ -130,15 +180,21 @@ const DashboardSidebar = ({ onMobileClose, openMobile }) => {
       <Divider />
       <Box sx={{ p: 2 }}>
         <List>
-          {items.map((item) => (
-            <NavItem
-              href={item.href}
-              key={item.title}
-              title={item.title}
-              icon={item.icon}
-              items={item.items}
-            />
-          ))}
+          <NavItem
+            key={organizationsItem.title}
+            title="Organizations"
+            icon={BarChartIcon}
+            items={organizationItems}
+          />
+          {/*{items.map((item) => (*/}
+          {/*  <NavItem*/}
+          {/*    href={item.href}*/}
+          {/*    key={item.title}*/}
+          {/*    title={item.title}*/}
+          {/*    icon={item.icon}*/}
+          {/*    items={item.items}*/}
+          {/*  />*/}
+          {/*))}*/}
         </List>
       </Box>
       <Box sx={{ flexGrow: 1 }} />
@@ -149,35 +205,6 @@ const DashboardSidebar = ({ onMobileClose, openMobile }) => {
           p: 2
         }}
       >
-        <Typography
-          align="center"
-          gutterBottom
-          variant="h4"
-        >
-          Need more?
-        </Typography>
-        <Typography
-          align="center"
-          variant="body2"
-        >
-          Upgrade to PRO version and access 20 more screens
-        </Typography>
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            pt: 2
-          }}
-        >
-          <Button
-            color="primary"
-            component="a"
-            href="https://react-material-kit.devias.io"
-            variant="contained"
-          >
-            See PRO version
-          </Button>
-        </Box>
       </Box>
     </Box>
   );

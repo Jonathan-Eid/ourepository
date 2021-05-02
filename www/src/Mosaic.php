@@ -644,7 +644,8 @@ class Mosaic implements JsonSerializable
     public function jsonSerialize()
     {
         return array(
-            'uuid'=> $this->uuid
+            'uuid'=> $this->uuid,
+            'name' => $this->identifier,
         );
     }
 }

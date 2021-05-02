@@ -30,8 +30,8 @@ function App() {
       element: <MainLayout />,
       children: [
         { path: '/login', element: <LoginPage /> },
-        { path: '/', element: <Navigate to="/login" /> },
-        { path: '*', element: <Navigate to="/404" /> },
+        { path: '/', element: <Navigate to="/app" /> },
+        { path: '*', element: <Navigate to="/404" replace={true} /> },
         { path: '/404', element: <NotFound /> }
       ]
     }

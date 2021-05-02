@@ -241,10 +241,31 @@ if($request_type == "CREATE_USER"){
             echo rsp_msg("ORGS_RECEIVED_FAILED","no orgs were returned in the query");
             return;
         }
-    
-        error_log($orgs[0]->getName());
-    
-        echo rsp_msg("ORGS_RECEIVED",$orgs);
+
+        $response = array();
+
+        $response["organizations"] = array();
+        $i = 0;
+        foreach ($orgs as $org) {
+            array_push($response["organizations"], $org->jsonSerialize());
+            $projects = $org->getProjects();
+
+            $response["organizations"][$i]["projects"] = array();
+            $j = 0;
+            foreach ($projects as $project) {
+                array_push($response["organizations"][$i]["projects"], $project->jsonSerialize());
+                $mosaics = $project->getMosaics();
+
+                $response["organizations"][$i]["projects"][$j]["mosaics"] = array();
+                foreach ($mosaics as $mosaic) {
+                    array_push($response["organizations"][$i]["projects"][$j]["mosaics"], $mosaic->jsonSerialize());
+                }
+                $j++;
+            }
+            $i++;
+        }
+
+        echo rsp_msg("ORGS_RECEIVED", $response);
     }
 
     catch (Exception $e){

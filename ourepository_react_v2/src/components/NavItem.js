@@ -1,30 +1,31 @@
-import {
-  NavLink as RouterLink,
-  matchPath,
-  useLocation
-} from 'react-router-dom';
+import {matchPath, NavLink as RouterLink, useLocation} from 'react-router-dom';
 import PropTypes from 'prop-types';
-import {Button, Collapse, List, ListItem, ListItemIcon, ListItemText} from '@material-ui/core';
-import {StarBorder} from "@material-ui/icons";
+import {Button, Collapse, List, ListItem} from '@material-ui/core';
 import {makeStyles} from "@material-ui/core/styles";
+import React from "react";
+import {ExpandLess, ExpandMore} from "@material-ui/icons";
+import OrganizationNavItem from "./OrganizationNavItem";
 
 const NavItem = ({
-  href,
-  icon: Icon,
-  title,
-  items,
-  ...rest
-}) => {
+                   href = "/app/organization",
+                   icon: Icon,
+                   title,
+                   items = null,
+                   spacing = 2,
+                   ...rest
+                 }) => {
   const location = useLocation();
 
+  const [open, setOpen] = React.useState(false);
+
+  const handleOpenClick = (event) => {
+    event.stopPropagation();
+    setOpen(!open);
+  }
+
   const useStyles = makeStyles((theme) => ({
-    root: {
-      width: '100%',
-      maxWidth: 360,
-      backgroundColor: theme.palette.background.paper,
-    },
     nested: {
-      paddingLeft: theme.spacing(4),
+      paddingLeft: theme.spacing(spacing),
     },
   }));
 
@@ -34,6 +35,18 @@ const NavItem = ({
     path: href,
     end: false
   }, location.pathname) : false;
+
+  const renderExpand = () => {
+    if (items) {
+      if (open) {
+        return <ExpandLess onClick={handleOpenClick}/>
+      } else {
+        return <ExpandMore onClick={handleOpenClick}/>
+      }
+    } else {
+      return <div/>
+    }
+  }
 
   return (
     <div>
@@ -46,7 +59,8 @@ const NavItem = ({
         {...rest}
       >
         <Button
-          component={RouterLink}
+          // component={RouterLink}
+          onClick={(() => alert("helllo"))}
           sx={{
             color: 'text.secondary',
             fontWeight: 'medium',
@@ -62,26 +76,33 @@ const NavItem = ({
               mr: 1
             }
           }}
-          to={href}
+          // to={href}
         >
           {Icon && (
-            <Icon size="20" />
+            <Icon size="20"/>
           )}
           <span>
             {title}
           </span>
+          {renderExpand()}
         </Button>
       </ListItem>
-      <Collapse in={true} timeout="auto" unmountOnExit>
-        <List component="div" disablePadding>
-          <ListItem button className={classes.nested}>
-            <ListItemIcon>
-              <StarBorder />
-            </ListItemIcon>
-            <ListItemText primary="Starred" />
-          </ListItem>
-        </List>
-      </Collapse>
+      {items && items.map((item) => (
+        <Collapse in={open} timeout="auto" unmountOnExit>
+          <List component="div" disablePadding>
+            <NavItem
+              className={classes.nested}
+              // href={organizationsItem.href}
+              key={item.title}
+              title={item.title}
+              icon={Icon}
+              items={item.items}
+              spacing={spacing + 2}
+              // organization={element}
+            />
+          </List>
+        </Collapse>
+      ))}
     </div>
   );
 };

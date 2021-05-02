@@ -93,10 +93,8 @@ class Project implements JsonSerializable
     public function jsonSerialize()
     {
         return array(
-            'id' => $this->id,
-            'name' => $this->name,
-            'mosaics' => $this->mosaics,
-            'uuid' => $this->uuid
+            'uuid' => $this->uuid,
+            'name' => $this->name
         );
     }
 }
