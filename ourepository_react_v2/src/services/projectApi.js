@@ -5,7 +5,20 @@ const url = "api_v2.php"
 
 class ProjectApiService {
 
-  createMosaic(name, proj, vis, file, filename, size_bytes, md5_hash, number_chunks) {
+  getMosaics(projectUuid) {
+    return axios({
+      method: 'get',
+      url,
+      params: {
+        request: "GET_MOSAICS",
+        projectUuid
+      },
+      withCredentials: true,
+      responseType: 'text'
+    })
+  }
+
+  createMosaic(name, proj, vis, file, filename, sizeBytes, md5Hash, numberChunks) {
     return axios({
       method: 'post',
       url,
@@ -14,22 +27,22 @@ class ProjectApiService {
         name,
         proj,
         vis,
-        size_bytes,
+        sizeBytes,
         filename,
-        md5_hash,
-        number_chunks
+        md5Hash,
+        numberChunks
       }),
       withCredentials: true,
       responseType: 'text'
     })
   }
 
-  uploadChunk(chunk, identifier, md5_hash, part) {
+  uploadChunk(chunk, identifier, md5Hash, part) {
     const formData = new FormData();
     formData.append('request', "UPLOAD_CHUNK");
     formData.append('chunk', chunk);
     formData.append('identifier', identifier);
-    formData.append('md5_hash', md5_hash);
+    formData.append('md5Hash', md5Hash);
     formData.append('part', part);
 
 
@@ -45,6 +58,7 @@ class ProjectApiService {
     })
 
   }
+
 }
 
 const projectApiService = new ProjectApiService()

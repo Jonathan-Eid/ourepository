@@ -13,12 +13,14 @@ import MenuIcon from '@material-ui/icons/Menu';
 import NotificationsIcon from '@material-ui/icons/NotificationsOutlined';
 import Logo from './Logo';
 import userApiService from "../services/userApi";
+import {useCookies} from "react-cookie";
 
 const DashboardNavbar = ({ onMobileNavOpen, ...rest }) => {
 
   const navigate = useNavigate();
 
   const [notifications] = useState([]);
+  const [cookies, setCookie, removeCookie] = useCookies(['session_id']);
 
   return (
     <AppBar
@@ -42,6 +44,8 @@ const DashboardNavbar = ({ onMobileNavOpen, ...rest }) => {
           </IconButton>
           <Button onClick={() => {
             userApiService.logout();
+            removeCookie("PHPSESSID");
+            removeCookie("session_id");
             navigate('/login');
           }} color="inherit">
             Logout

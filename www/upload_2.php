@@ -60,15 +60,15 @@ function initiate_upload($uid, $entityManager) {
     error_log(json_encode($our_db));
 
     $name = $_POST['name'];
-    $proj_uuid = $our_db->real_escape_string($_POST['proj']);
+    $projUuid = $our_db->real_escape_string($_POST['proj']);
     $visible = $our_db->real_escape_string($_POST['vis']);
 //    $file = $our_db->real_escape_string($_POST['file']);
     $filename = $our_db->real_escape_string($_POST['filename']);
-    $md5_hash = $our_db->real_escape_string($_POST['md5_hash']);
-    $number_chunks = $our_db->real_escape_string($_POST['number_chunks']);
-    $size_bytes = $our_db->real_escape_string($_POST['size_bytes']);
+    $md5_hash = $our_db->real_escape_string($_POST['md5Hash']);
+    $number_chunks = $our_db->real_escape_string($_POST['numberChunks']);
+    $size_bytes = $our_db->real_escape_string($_POST['sizeBytes']);
     $existingProj=$entityManager->getRepository('Project')
-        ->findOneBy(array('uuid' => $proj_uuid));
+        ->findOneBy(array('uuid' => $projUuid));
 
 //    $filename = $our_db->real_escape_string($_POST['filename']);
 //    $identifier = $our_db->real_escape_string($_POST['identifier']);
@@ -207,7 +207,7 @@ function process_chunk($uid) {
         exit(1);
     }
 
-    if (!isset($_POST['md5_hash'])) {
+    if (!isset($_POST['md5Hash'])) {
         error_log("ERROR! Missing upload md5_hash");
         $response['err_title'] = "File Chunk Upload Failure";
         $response['err_msg'] = "File md5_hash was missing.";
@@ -224,7 +224,7 @@ function process_chunk($uid) {
     }
 
     $identifier = $_POST['identifier'];
-    $md5_hash = $_POST['md5_hash'];
+    $md5_hash = $_POST['md5Hash'];
     $chunk = $_POST['chunk'];
     $chunk_size = 0;
 
@@ -344,9 +344,9 @@ function process_chunk($uid) {
 
 function upload_annotation_csv($entityManager) {
     // get the mosaic that these annotations are for
-    $mosaic_uuid = $_POST['mosaicUuid'];
+    $mosaicUuid = $_POST['mosaicUuid'];
     $mosaic = $entityManager->getRepository('Mosaic')
-        ->findOneBy(array('uuid' => $mosaic_uuid));
+        ->findOneBy(array('uuid' => $mosaicUuid));
     $width = $mosaic->getWidth();
     $height = $mosaic->getHeight();
 

@@ -45,8 +45,8 @@ const LoginPage = (props) => {
 
       const response = await userApiService.loginUser(email, password);
       if (response.data.code === "hash_matches") {
-        localStorage.setItem("user", "true")
-        emitter.emit("storage")
+        // localStorage.setItem("user", "true")
+        // emitter.emit("storage")
         navigate('/');
       } else {
         alert("Incorrect password");

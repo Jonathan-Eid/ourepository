@@ -15,7 +15,7 @@ const NavItem = ({
                  }) => {
   const location = useLocation();
 
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(true);
 
   const handleOpenClick = (event) => {
     event.stopPropagation();

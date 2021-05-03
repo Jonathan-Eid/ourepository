@@ -78,10 +78,10 @@ function submit_training_job($entityManager) {
 
     // make a new model
     $model = new Model();
-    $model_uuid = $model->getUuid();
+    $modelUuid = $model->getUuid();
 
     // make the directory in the shared drive where this model's training images will be stored
-    $model_input_dir = "$SHARED_DRIVE_DIRECTORY/training_images/$model_uuid";
+    $model_input_dir = "$SHARED_DRIVE_DIRECTORY/training_images/$modelUuid";
     if (is_dir($model_input_dir)) {
         rmdir($model_input_dir);
     }
@@ -94,12 +94,12 @@ function submit_training_job($entityManager) {
     //}
     //mkdir($model_input_dir);
 
-    // get the mosaic_uuids to train on
-    $mosaic_uuids = explode(",", $_POST["mosaicUuids"]);
+    // get the mosaicUuids to train on
+    $mosaicUuids = explode(",", $_POST["mosaicUuids"]);
 
-    foreach ($mosaic_uuids as $mosaic_uuid) {
+    foreach ($mosaicUuids as $mosaicUuid) {
         $mosaic = $entityManager->getRepository('Mosaic')
-            ->findOneBy(array('uuid' => $mosaic_uuid));
+            ->findOneBy(array('uuid' => $mosaicUuid));
         $mosaic_id = $mosaic->getId();
 
         $mosaic_label_ids = array();
@@ -126,7 +126,7 @@ function submit_training_job($entityManager) {
 
         foreach ($mosaic_label_ids as $label_id) {
             // create the file for this label for this mosaic
-            $csv_contents = export_rectangles($entityManager, $label_id, "PIXEL", $mosaic_uuid);
+            $csv_contents = export_rectangles($entityManager, $label_id, "PIXEL", $mosaicUuid);
             $label_csv_path = "$model_input_mosaic_dir/$label_id.csv";
             $csv_file = fopen($label_csv_path, "w");
             fwrite($csv_file, $csv_contents);
@@ -148,7 +148,7 @@ function submit_training_job($entityManager) {
 
 //    $organizationIdCommand = "--organization_id $organizationId";
 ////    $projectIdCommand = "--project_id $projectId";
-    $modelUuidCommand = "--model_uuid $model_uuid";
+    $modelUuidCommand = "--modelUuid $modelUuid";
 
     // crop phase
     $dataDirCommand = "--data_dir \"{$model_input_dir}\"";

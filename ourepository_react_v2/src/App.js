@@ -11,7 +11,9 @@ import theme from "./theme";
 import MainLayout from "./components/MainLayout";
 import NotFound from "./pages/NotFound";
 import OrganizationList from "./pages/OrganizationList";
-import ProjectList from "./pages/ProjectList";
+import Organization from "./pages/Organization";
+import Project from "./pages/Project";
+import Mosaic from "./pages/Mosaic";
 
 function App() {
   const protectedRoutes = [
@@ -21,7 +23,9 @@ function App() {
       children: [
         { path: '/', element: <Navigate to="/app/organizations" /> },
         { path: '/organizations', element: <OrganizationList /> },
-        { path: '/organization', element: <ProjectList /> },
+        { path: '/organization', element: <Organization /> },
+        { path: '/project', element: <Project /> },
+        { path: '/mosaic', element: <Mosaic /> },
       ]
     }
   ]

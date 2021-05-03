@@ -5,12 +5,12 @@ const url = "api_v2.php"
 
 class MosaicApiService {
 
-  uploadChunk(chunk, identifier, md5_hash, part) {
+  uploadChunk(chunk, identifier, md5Hash, part) {
     const formData = new FormData();
     formData.append('request', "UPLOAD_CHUNK");
     formData.append('chunk', chunk);
     formData.append('identifier', identifier);
-    formData.append('md5_hash', md5_hash);
+    formData.append('md5Hash', md5Hash);
     formData.append('part', part);
 
 
@@ -27,12 +27,12 @@ class MosaicApiService {
 
   }
 
-  getMosaicCard(mosaicUuid) {
+  getMosaic(mosaicUuid) {
     return axios({
       method: 'get',
       url,
       params: {
-        request: "GET_MOSAIC_CARD",
+        request: "GET_MOSAIC",
         mosaicUuid
       },
       withCredentials: true,

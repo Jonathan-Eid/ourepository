@@ -19,7 +19,7 @@ class OrganizationApiService {
     });
   }
 
-  createMosaic(name, proj, vis, file, filename, size_bytes, md5_hash, number_chunks) {
+  createMosaic(name, proj, vis, file, filename, sizeBytes, md5Hash, numberChunks) {
     return axios({
       method: 'post',
       url,
@@ -28,10 +28,10 @@ class OrganizationApiService {
         name,
         proj,
         vis,
-        size_bytes,
+        sizeBytes,
         filename,
-        md5_hash,
-        number_chunks
+        md5Hash,
+        numberChunks
       }),
       withCredentials: true,
       responseType: 'text'
@@ -66,29 +66,14 @@ class OrganizationApiService {
       });
 }
 
-  getProjects(org) {
+  getProjects(organizationUuid) {
     return axios({
       method: 'get',
       url,
       params: {
         request: "GET_PROJECTS",
-        org
+        organizationUuid
       },
-      withCredentials: true,
-      responseType: 'text'
-    })
-  }
-
-  addUser(email, org, role) {
-    return axios({
-      method: 'post',
-      url,
-      data: new URLSearchParams({
-        request: "ADD_USER",
-        email,
-        org,
-        role
-      }),
       withCredentials: true,
       responseType: 'text'
     })
@@ -153,7 +138,7 @@ class OrganizationApiService {
       url,
       params: {
         request: "GET_ROLE_PERMISSIONS",
-        role_id: role['id']
+        roleId: role['id']
       },
       withCredentials: true,
       responseType: 'text'
@@ -166,7 +151,7 @@ class OrganizationApiService {
       url,
       data: new URLSearchParams({
         request: "CHANGE_ROLE_PERMISSIONS",
-        role_id: role['id'],
+        roleId: role['id'],
         changes
       }),
       withCredentials: true,
@@ -174,13 +159,13 @@ class OrganizationApiService {
     });
   }
 
-  addRole(role_name, changes,organization) {
+  addRole(roleName, changes,organization) {
     return axios({
       method: 'post',
       url,
       data: new URLSearchParams({
         request: "ADD_ROLE",
-        role_name,
+        roleName,
         changes,
         organization
       }),
@@ -195,7 +180,7 @@ class OrganizationApiService {
       url,
       data: new URLSearchParams({
         request: "DELETE_ROLE",
-        role_id: role['id']
+        roleId: role['id']
       }),
       withCredentials: true,
       responseType: 'text'

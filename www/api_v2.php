@@ -57,8 +57,8 @@ if($request_type == "CREATE_USER"){
 
     $email = $_POST['email'];
     $username = $_POST['username'];
-    $given_name = $_POST['given_name'];
-    $family_name = $_POST['family_name'];
+    $given_name = $_POST['givenName'];
+    $family_name = $_POST['familyName'];
 
 
     $existingUser=$entityManager->getRepository('User')
@@ -247,9 +247,9 @@ if($request_type == "CREATE_USER"){
         // get organizations that contain projects that contain mosaics
         $response["organizations"] = array();
         $i = 0;
-        foreach ($orgs as $org) {
-            array_push($response["organizations"], $org->jsonSerialize());
-            $projects = $org->getProjects();
+        foreach ($orgs as $organizationUuid) {
+            array_push($response["organizations"], $organizationUuid->jsonSerialize());
+            $projects = $organizationUuid->getProjects();
 
             $response["organizations"][$i]["projects"] = array();
             $j = 0;
@@ -290,8 +290,8 @@ if($request_type == "CREATE_USER"){
 
         // get organizations
         $response["organizations"] = array();
-        foreach ($orgs as $org) {
-            array_push($response["organizations"], $org->jsonSerialize());
+        foreach ($orgs as $organizationUuid) {
+            array_push($response["organizations"], $organizationUuid->jsonSerialize());
         }
 
         echo rsp_msg("ORGS_RECEIVED", $response);
@@ -424,7 +424,7 @@ if($request_type == "CREATE_USER"){
     }
 
     $uid = $_SESSION['uid'];
-    $roleId = $_GET['role_id'];
+    $roleId = $_GET['roleId'];
 
 
     try{
@@ -453,7 +453,7 @@ if($request_type == "CREATE_USER"){
     }
 
     $uid = $_SESSION['uid'];
-    $roleId = $_POST['role_id'];
+    $roleId = $_POST['roleId'];
     $changes = $_POST['changes'];
 
     //The change object contains keys and values that represent permissions 
@@ -475,8 +475,8 @@ if($request_type == "CREATE_USER"){
 
 
         $query = $entityManager->createQuery('SELECT o FROM Organization o JOIN o.memberRoles m WHERE m.member = '.$uid.' AND  m.role = \''.$roleId.'\'');
-        $org = $query->getResult()[0];
-        error_log(json_encode($org));
+        $organizationUuid = $query->getResult()[0];
+        error_log(json_encode($organizationUuid));
         $role=$entityManager->getRepository('Role')
                             ->findOneBy(array('id' => $roleId));
 
@@ -488,7 +488,7 @@ if($request_type == "CREATE_USER"){
 
                 $newOrgACL = new OrgACL();
 
-                $newOrgACL->setOrganization($org);
+                $newOrgACL->setOrganization($organizationUuid);
 
                 $newOrgACL->setRole($role);
 
@@ -533,7 +533,7 @@ if($request_type == "CREATE_USER"){
     }
 
     $uid = $_SESSION['uid'];
-    $roleName = $_POST['role_name'];
+    $roleName = $_POST['roleName'];
     $changes = $_POST['changes'];
     $organization = $_POST['organization'];
 
@@ -559,11 +559,11 @@ if($request_type == "CREATE_USER"){
         $query->setParameter('organization', $organization);
         $query->setParameter('uid', $uid);
         
-        $org = $query->getResult()[0];
-        error_log(json_encode($org));
+        $organizationUuid = $query->getResult()[0];
+        error_log(json_encode($organizationUuid));
         $role= new Role();
         $role->setName($roleName);
-        $role->setOrganization($org);
+        $role->setOrganization($organizationUuid);
 
         $entityManager->persist($role);
 
@@ -575,7 +575,7 @@ if($request_type == "CREATE_USER"){
 
                 $newOrgACL = new OrgACL();
 
-                $newOrgACL->setOrganization($org);
+                $newOrgACL->setOrganization($organizationUuid);
 
                 $newOrgACL->setRole($role);
 
@@ -605,15 +605,15 @@ if($request_type == "CREATE_USER"){
     }
 
     $uid = $_SESSION['uid'];
-    $roleId = $_POST['role_id'];
+    $roleId = $_POST['roleId'];
 
     try{
         
 
 
         $query = $entityManager->createQuery('SELECT o FROM Organization o JOIN o.memberRoles m WHERE m.member = '.$uid.' AND  m.role = \''.$roleId.'\'');
-        $org = $query->getResult()[0];
-        error_log(json_encode($org));
+        $organizationUuid = $query->getResult()[0];
+        error_log(json_encode($organizationUuid));
         $role=$entityManager->getRepository('Role')
                             ->findOneBy(array('id' => $roleId));
         if(!isset($role)){
@@ -680,10 +680,10 @@ if($request_type == "CREATE_USER"){
 
     $uid = $_SESSION['uid'];
     $name = $_POST['name'];
-    $org = $_POST['org'];
+    $organizationUuid = $_POST['org'];
 
     $existingOrg=$entityManager->getRepository('Organization')
-    ->findOneBy(array('uuid' => $org));
+    ->findOneBy(array('uuid' => $organizationUuid));
 
     $newProject = new Project();
     $newProject ->setName($name);
@@ -711,28 +711,47 @@ if($request_type == "CREATE_USER"){
     }
 
     $uid = $_SESSION['uid'];
-    $org = $_GET['org'];
+    $organizationUuid = $_GET['organizationUuid'];
 
-    try{
-        $existingOrg=$entityManager->getRepository('Organization')->findOneBy(array('uuid' => $org));
-        $query = $entityManager->createQuery('SELECT p FROM Project p');
-        $projs = $query->getResult();
-        if(!isset($projs)){
-            echo rsp_msg("PROJS_RECEIVED_FAILED","no projects were returned in the query");
-            return;
+    try {
+        $organization = $entityManager->getRepository('Organization')->findOneBy(array('uuid' => $organizationUuid));
+
+        $response = array();
+
+        // get projects
+        $response["projects"] = array();
+        foreach ($organization->getProjects() as $project) {
+            array_push($response["projects"], $project->jsonSerialize());
         }
-    
-        error_log($projs[0]->getName());
-    
-        echo rsp_msg("PROJS_RECEIVED",$projs);
+
+        echo rsp_msg("PROJECTS_RECEIVED", $response);
+    } catch (Exception $e){
+        echo 'Caught exception: ',  $e->getMessage(), "\n";
+    }
+}else if($request_type == "GET_MOSAICS"){
+    if($_SESSION["id"] != session_id()){
+        echo json_encode("USER NOT AUTHENTICATED");
+        return;
     }
 
-    catch (Exception $e){
+    $uid = $_SESSION['uid'];
+    $projectUuid = $_GET['projectUuid'];
+
+    try {
+        $project = $entityManager->getRepository('Project')->findOneBy(array('uuid' => $projectUuid));
+
+        $response = array();
+
+        // get mosaics
+        $response["mosaics"] = array();
+        foreach ($project->getMosaics() as $mosaic) {
+            array_push($response["mosaics"], $mosaic->jsonSerialize());
+        }
+
+        echo rsp_msg("MOSAICS_RECEIVED", $response);
+    } catch (Exception $e){
         echo 'Caught exception: ',  $e->getMessage(), "\n";
-
-    }  
-
-
+    }
 } else if($request_type == "CREATE_MOSAIC"){
 
     if($_SESSION["id"] != session_id()){
@@ -766,8 +785,8 @@ if($request_type == "CREATE_USER"){
     }
 
     try {
-        $mosaic_uuids = display_index($entityManager);
-        echo rsp_msg("MOSAIC_UUIDS_RECEIVED", $mosaic_uuids);
+        $mosaicUuids = display_index($entityManager);
+        echo rsp_msg("MOSAIC_UUIDS_RECEIVED", $mosaicUuids);
     } catch (Exception $e) {
         echo rsp_msg("MOSAIC_UUIDS_RECEIVED_FAILED", "failed to retreive mosaic UUIDs for project");
         echo 'Caught exception: ',  $e->getMessage(), "\n";
@@ -836,14 +855,14 @@ if($request_type == "CREATE_USER"){
     error_log("exporting label csv!");
 
     // get the mosaic that these annotations are for
-    $mosaic_uuid = $_GET['mosaicUuid'];
+    $mosaicUuid = $_GET['mosaicUuid'];
 
     try {
         $csv_contents = array();
         if ($export_type == "POLYGONS") {
             export_polygons($label_id, $mosaic_id, $coord_type);
         } else if ($export_type == "RECTANGLES") {
-            $csv_contents = export_rectangles($entityManager, $label_id, $coord_type, $mosaic_uuid);
+            $csv_contents = export_rectangles($entityManager, $label_id, $coord_type, $mosaicUuid);
         } else if ($export_type == "LINES") {
             export_lines($label_id, $mosaic_id, $coord_type);
         } else if ($export_type == "POINTS") {

@@ -150,10 +150,10 @@ function export_polygons($label_id, $mosaic_id, $coord_type) {
 
 }
 
-function export_rectangles($entityManager, $label_id, $coord_type, $mosaic_uuid) {
+function export_rectangles($entityManager, $label_id, $coord_type, $mosaicUuid) {
 
     $mosaic = $entityManager->getRepository('Mosaic')
-        ->findOneBy(array('uuid' => $mosaic_uuid));
+        ->findOneBy(array('uuid' => $mosaicUuid));
     $mosaic_id = $mosaic->getId();
 
     $query = "SELECT name FROM labels WHERE id = $label_id";

@@ -30,7 +30,7 @@ const OrganizationList = () => {
   return (
     <>
       <Helmet>
-        <title>Organizations | Material Kit</title>
+        <title>Organizations | OURepository</title>
       </Helmet>
       <Box
         sx={{

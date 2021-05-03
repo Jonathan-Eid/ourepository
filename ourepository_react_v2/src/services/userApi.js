@@ -5,7 +5,7 @@ const url = "api_v2.php"
 
 class UserApiService {
 
-  createUser(email, given_name, family_name, password, shake) {
+  createUser(email, givenName, familyName, password, shake) {
     return axios({
       method: 'post',
       url,
@@ -13,8 +13,8 @@ class UserApiService {
         request: "CREATE_USER",
         email: email,
         password,
-        given_name,
-        family_name,
+        givenName,
+        familyName,
         shake: shake
       }),
       responseType: 'text'
