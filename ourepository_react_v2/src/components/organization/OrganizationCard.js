@@ -17,7 +17,7 @@ const OrganizationCard = ({ organization, ...rest }) => {
   const navigate = useNavigate();
 
   const handleCardClick = () => {
-    navigate('/app/organization', { state: {organization} });
+    navigate(`/app/organization/${organization.uuid}`);
   }
 
   return (

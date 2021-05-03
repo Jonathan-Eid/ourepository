@@ -5,31 +5,19 @@ import {
   Grid,
 } from '@material-ui/core';
 import React from "react";
-import {Navigate, useLocation} from "react-router-dom";
+import {useParams} from "react-router-dom";
 import mosaicApiService from "../services/mosaicApi";
-import MosaicCard from "../components/mosaic/MosaicCard";
 import MosaicListToolbar from "../components/mosaic/MosaicListToolbar";
 import {OpenSeaDragonViewer} from "../components/OpenSeadragonViewer";
 
 const Mosaic = () => {
 
-  const {state} = useLocation();
+  const {mosaicUuid} = useParams();
 
   const [mosaic, setMosaic] = React.useState(null)
 
-  // // get the mosaic from the previous page
-  // React.useEffect(() => {
-  //   if (state) {
-  //     setMosaic({state});
-  //   }
-  // }, []);
-
   React.useEffect(() => {
-    if (!state) {
-      return;
-    }
-
-    mosaicApiService.getMosaic(state.mosaic.uuid).then((response) => {
+    mosaicApiService.getMosaic(mosaicUuid).then((response) => {
       const data = response.data;
       if (data.code === "MOSAIC_RECEIVED") {
         setMosaic(data.message);
@@ -41,19 +29,10 @@ const Mosaic = () => {
     });
   }, []);
 
-  const determineRedirect = () => {
-    if (state) {
-      return <></>;
-    } else {
-      return <Navigate to="/app/mosaics" />;
-    }
-  }
-
   return (
     <>
-      {determineRedirect()}
       <Helmet>
-        <title>Mosaics | OURepostory</title>
+        <title>Mosaic | OURepostory</title>
       </Helmet>
       <Box
         sx={{

@@ -100,11 +100,13 @@ const DashboardSidebar = ({ onMobileClose, openMobile }) => {
         data.message.organizations.forEach(organization => {
           const organizationItem = {};
           organizationItem['name'] = organization.name;
+          organizationItem['href'] = `/app/organization/${organization.uuid}`;
 
           const projectItems = [];
           organization.projects.forEach(project => {
             const projectItem = {};
             projectItem['name'] = project.name;
+            projectItem['href'] = `/app/project/${project.uuid}`;
             projectItems.push(projectItem);
           })
 

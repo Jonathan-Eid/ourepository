@@ -17,7 +17,7 @@ const ProjectCard = ({ project, ...rest }) => {
   const navigate = useNavigate();
 
   const handleCardClick = () => {
-    navigate('/app/project', { state: {project} });
+    navigate(`/app/project/${project.uuid}`);
   }
 
   return (

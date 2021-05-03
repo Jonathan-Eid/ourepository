@@ -17,7 +17,7 @@ const MosaicCard = ({ mosaic, ...rest }) => {
   const navigate = useNavigate();
 
   const handleCardClick = () => {
-    navigate('/app/mosaic', { state: {mosaic} });
+    navigate(`/app/mosaic/${mosaic.uuid}`);
   }
 
   return (

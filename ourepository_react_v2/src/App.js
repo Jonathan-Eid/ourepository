@@ -23,9 +23,9 @@ function App() {
       children: [
         { path: '/', element: <Navigate to="/app/organizations" /> },
         { path: '/organizations', element: <OrganizationList /> },
-        { path: '/organization', element: <Organization /> },
-        { path: '/project', element: <Project /> },
-        { path: '/mosaic', element: <Mosaic /> },
+        { path: '/organization/:organizationUuid', element: <Organization /> },
+        { path: '/project/:projectUuid', element: <Project /> },
+        { path: '/mosaic/:mosaicUuid', element: <Mosaic /> },
       ]
     }
   ]

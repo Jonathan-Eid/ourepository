@@ -5,31 +5,20 @@ import {
   Grid,
 } from '@material-ui/core';
 import React from "react";
-import {Navigate, useLocation} from "react-router-dom";
+import {useParams} from "react-router-dom";
 import projectApiService from "../services/projectApi";
 import MosaicCard from "../components/mosaic/MosaicCard";
 import MosaicListToolbar from "../components/mosaic/MosaicListToolbar";
 
 const Project = () => {
 
-  const {state} = useLocation();
+  const {projectUuid} = useParams();
 
   const [project, setProject] = React.useState(null)
   const [mosaics, setMosaics] = React.useState([])
 
-  // get the project from the previous page
   React.useEffect(() => {
-    if (state) {
-      setProject({state});
-    }
-  }, []);
-
-  React.useEffect(() => {
-    if (!state) {
-      return;
-    }
-
-    projectApiService.getMosaics(state.project.uuid).then((response) => {
+    projectApiService.getMosaics(projectUuid).then((response) => {
       const data = response.data;
       if (data.code === "MOSAICS_RECEIVED") {
         setMosaics(data.message.mosaics);
@@ -41,19 +30,10 @@ const Project = () => {
     });
   }, []);
 
-  const determineRedirect = () => {
-    if (state) {
-      return <></>;
-    } else {
-      return <Navigate to="/app/projects" />;
-    }
-  }
-
   return (
     <>
-      {determineRedirect()}
       <Helmet>
-        <title>Projects | OURepostory</title>
+        <title>Project | OURepostory</title>
       </Helmet>
       <Box
         sx={{

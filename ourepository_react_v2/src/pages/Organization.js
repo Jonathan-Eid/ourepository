@@ -5,33 +5,20 @@ import {
   Grid,
 } from '@material-ui/core';
 import React from "react";
-import {Navigate, useLocation} from "react-router-dom";
+import {useParams} from "react-router-dom";
 import organizationApiService from "../services/organizationApi";
 import ProjectCard from "../components/project/ProjectCard";
 import ProjectListToolbar from "../components/project/ProjectListToolbar";
 
 const Organization = () => {
 
-  const {state} = useLocation();
-
+  const {organizationUuid} = useParams();
 
   const [organization, setOrganization] = React.useState(null)
   const [projects, setProjects] = React.useState([])
-  // const [projectItems, setProjectItems] = React.useState(null)
-
-  // get the organization from the previous page
-  React.useEffect(() => {
-    if (state) {
-      setOrganization({state});
-    }
-  }, []);
 
   React.useEffect(() => {
-    if (!state) {
-      return;
-    }
-
-    organizationApiService.getProjects(state.organization.uuid).then((response) => {
+    organizationApiService.getProjects(organizationUuid).then((response) => {
       const data = response.data;
       if (data.code === "PROJECTS_RECEIVED") {
         setProjects(data.message.projects);
@@ -43,19 +30,10 @@ const Organization = () => {
     });
   }, []);
 
-  const determineRedirect = () => {
-    if (state) {
-      return <></>;
-    } else {
-      return <Navigate to="/app/organizations" />;
-    }
-  }
-
   return (
     <>
-      {determineRedirect()}
       <Helmet>
-        <title>Projects | OURepostory</title>
+        <title>Organization | OURepostory</title>
       </Helmet>
       <Box
         sx={{

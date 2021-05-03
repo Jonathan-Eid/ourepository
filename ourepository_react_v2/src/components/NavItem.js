@@ -6,7 +6,7 @@ import React from "react";
 import {ExpandLess, ExpandMore} from "@material-ui/icons";
 
 const NavItem = ({
-                   href = "/app/organization",
+                   href = null,
                    icon: Icon,
                    name,
                    items = null,
@@ -58,8 +58,7 @@ const NavItem = ({
         {...rest}
       >
         <Button
-          // component={RouterLink}
-          onClick={(() => alert("helllo"))}
+          component={href ? RouterLink : null}
           sx={{
             color: 'text.secondary',
             fontWeight: 'medium',
@@ -75,7 +74,7 @@ const NavItem = ({
               mr: 1
             }
           }}
-          // to={href}
+          to={href}
         >
           {Icon && (
             <Icon size="20"/>
@@ -91,7 +90,7 @@ const NavItem = ({
           <List component="div" disablePadding>
             <NavItem
               className={classes.nested}
-              // href={organizationsItem.href}
+              href={item.href}
               key={item.name}
               name={item.name}
               icon={Icon}
