@@ -4,11 +4,11 @@ $cwd[__FILE__] = __FILE__;
 if (is_link($cwd[__FILE__])) $cwd[__FILE__] = readlink($cwd[__FILE__]);
 $cwd[__FILE__] = dirname($cwd[__FILE__]);
 
-require_once($cwd[__FILE__] . "/../db/my_query.php");
+require_once($cwd[__FILE__] . "/../../db/my_query.php");
 //require_once($cwd[__FILE__] . "/../../Mustache.php/src/Mustache/Autoloader.php");
 //Mustache_Autoloader::register();
 
-require_once "bootstrap.php";
+require_once "../bootstrap.php";
 require_once "export_labels_v2.php";
 
 use phpseclib3\Net\SSH2;

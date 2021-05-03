@@ -20,11 +20,11 @@ require_once "organization_api.php";
 require_once "project_api.php";
 require_once "user_api.php";
 require_once "../bootstrap.php";
-require_once "../upload_2.php";
-require_once "../mosaics_v2.php";
-require_once "../export_labels_v2.php";
-require_once "../predictions.php";
-require_once "../permissions.php";
+require_once "../util/upload_2.php";
+require_once "../util/mosaics_v2.php";
+require_once "../util/export_labels_v2.php";
+require_once "../util/predictions.php";
+require_once "../util/permissions.php";
 
 global $entityManager;
 
