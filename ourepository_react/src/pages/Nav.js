@@ -1,5 +1,5 @@
 import React from 'react';
-import {Link, Route, Redirect} from "react-router-dom";
+import {Link, Route, Redirect, useHistory} from "react-router-dom";
 import apiService from '../services/api';
 import emitter from "../services/emitter"
 import {useCookies} from 'react-cookie';
@@ -8,8 +8,7 @@ import {useCookies} from 'react-cookie';
 const Nav = (props) => {
 
   const logOutBtn = <a onClick={handleLogOut}
-                       class="inline-block text-gray-600 no-underline hover:text-gray-200 hover:text-underline py-2 px-4"><Link
-    to="/">Logout</Link></a>
+                       class="inline-block text-gray-600 no-underline hover:text-gray-200 hover:text-underline py-2 px-4">Logout</a>
   const logInBtn = <a
     class="inline-block text-gray-600 no-underline hover:text-gray-200 hover:text-underline py-2 px-4"> <Link
     to="/login">Login</Link></a>
@@ -20,6 +19,7 @@ const Nav = (props) => {
 
   const [heading, setHeading] = React.useState(<Link to="/">OURepository</Link>);
   const [toolBar, setToolbar] = React.useState([]);
+  const history = useHistory();
 
   React.useEffect(() => {
 
@@ -60,14 +60,22 @@ const Nav = (props) => {
 
 
   function handleLogOut() {
-    apiService.logout();
-    removeCookie("PHPSESSID");
-    removeCookie("session_id");
-    localStorage.removeItem("user")
+    apiService.logout()
+    .then(()=>{
+      removeCookie("PHPSESSID");
+      removeCookie("session_id");
+      localStorage.removeItem("user")
+      emitter.emit("storage","")
+      history.push("/");
+    })
+    .catch((err)=>{
+      alert(err);
+    });
+    
+    
 
     setUserBtn(<a class="inline-block text-gray-600 no-underline hover:text-gray-200 hover:text-underline py-2 px-4">
       <Link to="/login">Login</Link></a>)
-
   }
 
   return (<>

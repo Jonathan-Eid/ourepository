@@ -55,6 +55,8 @@ const ManageRoles = (props) => {
   const [changes, setChanges] = React.useState({})
   const [add_view, setAddView] = React.useState(false)
   const [role_name, setRoleName] = React.useState(false)
+  const [ar_perm, setARPerm]  = React.useState(false)
+  const [dr_perm, setDRPerm]  = React.useState(false)
 
   React.useEffect(() => {
     apiService.getOrgRoles(props.id)
@@ -80,6 +82,7 @@ const ManageRoles = (props) => {
   }, [active_permissions, add_view])
 
   React.useEffect(() => {
+    console.log("ACTIVATED");
     if (active_role) {
       apiService.getRolePermissions(active_role).then((data) => {
         const resp = data.data
@@ -95,6 +98,43 @@ const ManageRoles = (props) => {
         }
       })
     }
+
+
+    apiService.getOrgByUUID(props.id).then((data) => {
+      const resp = data.data
+      if(resp.code == "ORGS_RECEIVED"){
+          let org = resp.message
+          
+          apiService.hasPermission("add_roles",props.id).then((data)=> {
+              const resp = data.data
+              console.log(JSON.stringify(resp));
+              if(resp.code=="HAS_ORG_PERMISSION"){
+                setARPerm(true)
+              }
+          })
+          .catch((err)=> {
+              console.log(err);
+          })
+
+          apiService.hasPermission("delete_roles",props.id).then((data)=> {
+            const resp = data.data
+            console.log(JSON.stringify(resp));
+            if(resp.code=="HAS_ORG_PERMISSION"){
+              setDRPerm(true)
+
+            }
+        })
+        .catch((err)=> {
+            console.log(err);
+        })
+        
+        }
+
+
+          
+  }).catch((err) => console.log(err))
+
+
   }, [active_role])
 
   function changeActiveRole(idx) {
@@ -127,7 +167,10 @@ const ManageRoles = (props) => {
         console.log("PERMISSIONS" + JSON.stringify(resp));
 
         if (resp.code == "ROLE_PERMISSIONS_CHANGED") {
-          setActiveRole(active_role)
+          alert("Permissions successfully changed")
+          const roleCopy = Object.assign({}, active_role);
+          setActiveRole(roleCopy)
+
         }
       })
       .catch((err) => {
@@ -176,19 +219,19 @@ const ManageRoles = (props) => {
   return (<>
 
 
-      <div class="bg-blue-100 shadow-md rounded px-8 pt-6 pb-8 mb-4 flex w-3/5">
+      <div class="bg-blue-100 shadow-md rounded px-8 pt-6 pb-8 mb-4 flex w-2/3">
 
-        <div class="bg-gray-700 shadow-md rounded px-8 pt-6 pb-8 w-3/4">
+        <div class="bg-gray-700 shadow-md rounded px-8 pt-6 pb-8 w-3/5">
 
           {
             !add_view &&
             <><span class="pr-3">Roles: </span>
-              <button onClick={addView} class="bg-gray-600 border-white border shadow-md rounded px-3 pt-0 pb-1">
+              {ar_perm && <button onClick={addView} class="bg-gray-600 border-white border shadow-md rounded px-3 pt-0 pb-1">
                 <img class="w-8" src="/images/plus.svg"></img>
-              </button>
-              <button onClick={deleteRole} class="bg-gray-600 border-white border shadow-md rounded px-3 pt-0 pb-1">
+              </button>}
+              {dr_perm &&  <button onClick={deleteRole} class="bg-gray-600 border-white border shadow-md rounded px-3 pt-0 pb-1">
                 <img class="w-8" src="/images/delete.svg"></img>
-              </button>
+              </button>}
             </>
 
           }
@@ -210,7 +253,8 @@ const ManageRoles = (props) => {
 
           {!add_view && roles && roles.map((role, idx) => (
             <div onClick={() => changeActiveRole(idx)}
-                 class={"border-white border shadow-md rounded px-4 pt-3 pb-4 " + ((role && role == active_role) ? "bg-gray-400" : "bg-gray-800")}>
+              class={"border-white border shadow-md rounded px-4 pt-3 pb-4 " +
+              ( ((active_role && role) && role.id == active_role.id) ? "bg-gray-400" : "bg-gray-800")}>
               {role.name.charAt(0).toUpperCase() + role.name.slice(1)}
             </div>
           ))}

@@ -72,10 +72,10 @@ function App() {
             localStorage.setItem("user",true)
             setAuthStatus(true)
             setProtectedRoutes(protected_routes)
-
           }else{
             setAuthStatus(false)
             setProtectedRoutes([])
+            return <Redirect exact to={`/`}></Redirect>
           }
 
       });

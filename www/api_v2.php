@@ -300,7 +300,7 @@ if($request_type == "CREATE_USER"){
 
 
         $acls = $query->getResult();
-        if(!isset($acls)){
+        if(!isset($acls) || count($acls) == 0 ){
             echo rsp_msg("NO_ORG_PERMISSION","The user does not have the proper permissions");
             return;
         }
@@ -431,8 +431,14 @@ if($request_type == "CREATE_USER"){
         
 
 
-        $query = $entityManager->createQuery('SELECT o FROM Organization o JOIN o.memberRoles m WHERE m.member = '.$uid.' AND  m.role = \''.$roleId.'\'');
+        $query = $entityManager->createQuery('SELECT o FROM Organization o JOIN o.memberRoles m WITH m.member = :uid  WHERE  m.role = :role_id');
+        
+        $query->setParameter('role_id', $roleId);
+        $query->setParameter('uid', $uid);
+
+        
         $org = $query->getResult()[0];
+
         error_log(json_encode($org));
         $role=$entityManager->getRepository('Role')
                             ->findOneBy(array('id' => $roleId));
@@ -645,7 +651,6 @@ if($request_type == "CREATE_USER"){
     $newProject = new Project();
     $newProject ->setName($name);
     $newProject ->setOrganization($existingOrg);
-    $newProject ->setMosaics("");
     $newProject ->setOwners(true);
 
     $entityManager->persist($newProject);
