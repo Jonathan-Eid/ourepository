@@ -181,5 +181,70 @@ function handleUserRequest($request_type) {
             } catch (Exception $e) {
                 echo 'Caught exception: ', $e->getMessage(), "\n";
             }
+
+            break;
+
+        case "CREATE_ORG":
+            if (!enforceAuth()) return;
+
+            global $org_perm_map;
+
+            $existingUser=$entityManager->getRepository('User')
+                ->findOneBy(array('id' => $_SESSION['uid']));
+
+            $visible = $_POST['visible'];
+            $org_name = $_POST['name'];
+
+            $adminRole = new Role();
+            $adminRole->setName("admin");
+            $entityManager->persist($adminRole);
+
+            $defaultRole= new Role();
+            $defaultRole->setName("default");
+            $entityManager->persist($defaultRole);
+
+            $newMemberRole = new MemberRole();
+            $newMemberRole->setMember($existingUser);
+            $newMemberRole->setRole($adminRole);
+            $entityManager->persist($newMemberRole);
+
+            $newOrgACL = new OrgACL();
+            $newOrgACL->setPermission($org_perm_map->{'ALL'});
+            $newOrgACL->setRole($adminRole);
+            $entityManager->persist($newOrgACL);
+
+            $defaultACL = new OrgACL();
+            $defaultACL->setPermission($org_perm_map->{'VIEW_PROJECTS'});
+            $defaultACL->setRole($defaultRole);
+            $entityManager->persist($defaultACL);
+
+            $newOrganization = new Organization();
+//            $newOrganization->addMemberRole($newMemberRole);
+//            $newOrganization->addOrgACL($newOrgACL);
+//            $newOrganization->addRole($adminRole);
+//            $newOrganization->addRole($defaultRole);
+            $newOrganization->setName($org_name);
+            $newOrganization->setVisible($visible);
+
+            $newMemberRole->setOrganization($newOrganization);
+            $adminRole->setOrganization($newOrganization);
+            $defaultRole->setOrganization($newOrganization);
+            $newOrgACL->setOrganization($newOrganization);
+            $defaultACL->setOrganization($newOrganization);
+
+            $entityManager->persist($newOrganization);
+
+            try{
+                $entityManager->flush();
+
+                echo rsp_msg("ORG_CREATED","org_created");
+
+            }
+            catch (Exception $e) {
+                echo json_encode("error in org creation");
+                echo 'Caught exception: ',  $e->getMessage(), "\n";
+            }
+
+            break;
     }
 }

@@ -21,7 +21,7 @@ const OrganizationListToolbar = (props) => {
 
   return (
     <div>
-      <CreateOrganizationModal openNew={open} setOpen={handleCreateOrganizationClick} />
+      {open && <CreateOrganizationModal setOpen={handleCreateOrganizationClick} />}
       <Box {...props}>
         <Box
           sx={{

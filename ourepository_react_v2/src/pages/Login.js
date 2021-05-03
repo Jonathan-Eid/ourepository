@@ -60,7 +60,7 @@ const LoginPage = (props) => {
     try {
       event.preventDefault();
 
-      const res = await userApiService.createUser(email, givenName, familyName, password, Math.random() * x * y)
+      const res = await userApiService.createUser(email, givenName, familyName, password, Math.random() * x * y);
       if (res.data.code === "user_exists") {
         alert(res.data.message)
       }

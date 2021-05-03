@@ -10,6 +10,9 @@ import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import Link from "@material-ui/core/Link";
 import Container from "@material-ui/core/Container";
+import {FormControlLabel, Radio, RadioGroup} from "@material-ui/core";
+import userApiService from "../../services/userApi";
+import emitter from "../../services/emitter";
 
 function getModalStyle() {
   const top = 50;
@@ -55,64 +58,70 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function CreateOrganizationModal({openNew, setOpen}) {
+export default function CreateOrganizationModal({setOpen}) {
   const classes = useStyles();
   // getModalStyle is not a pure function, we roll the style only on the first render
   const [modalStyle] = React.useState(getModalStyle);
 
+  const [organizationName, setOrganizationName] = React.useState(null)
+  const [visible, setVisible] = React.useState(false)
+
+  const submit = async (event) => {
+    try {
+      event.preventDefault();
+
+      const res = await userApiService.createOrg(organizationName, visible);
+      if (res.data.code === "ORG_CREATED") {
+        setOpen(false);
+      } else {
+        alert("An error occurred");
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   const body = (
     <div style={modalStyle} className={classes.paper}>
-      {/*<Container component="main" maxWidth="xs">*/}
-      {/*  <CssBaseline/>*/}
-      {/*  <div className={classes.paper}>*/}
-          <Avatar className={classes.avatar}>
-            <BusinessIcon/>
-          </Avatar>
-          <Typography component="h1" variant="h5">
-            {"Create organization"}
-          </Typography>
-          <form className={classes.form}>
-            <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoFocus
-              // onInput={e => setEmail(e.target.value)}
-            />
-            <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              // onInput={e => setPassword(e.target.value)}
-            />
-            <Button
-              // type="submit"
-              fullWidth
-              variant="contained"
-              color="primary"
-              className={classes.submit}
-            >
-              Create organization
-            </Button>
-          </form>
-        {/*</div>*/}
-      {/*</Container>*/}
+      <Avatar className={classes.avatar}>
+        <BusinessIcon/>
+      </Avatar>
+      <Typography component="h1" variant="h5">
+        {"Create organization"}
+      </Typography>
+      <form className={classes.form} onSubmit={submit}>
+        <TextField
+          variant="outlined"
+          margin="normal"
+          required
+          fullWidth
+          id="organization-name"
+          label="Organization Name"
+          name="organization-name"
+          autoFocus
+          onInput={e => setOrganizationName(e.target.value)}
+        />
+        <RadioGroup className={classes.form} name="visible" value={visible} defaultValue={false} onChange={e => setVisible(e.target.value === "true")}>
+          <FormControlLabel value={false} control={<Radio />} label="No" />
+          <FormControlLabel value={true} control={<Radio />} label="Yes" />
+        </RadioGroup>
+        <Button
+          type="submit"
+          fullWidth
+          variant="contained"
+          color="primary"
+          className={classes.submit}
+        >
+          Create organization
+        </Button>
+      </form>
     </div>
   );
 
   return (
     <div>
       <Modal
-        open={openNew}
+        open={true}
         onClose={setOpen}
         aria-labelledby="simple-modal-title"
         aria-describedby="simple-modal-description"

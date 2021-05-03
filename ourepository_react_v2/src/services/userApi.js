@@ -82,6 +82,20 @@ class UserApiService {
       responseType: 'text'
     });
   }
+
+  createOrg(name, visible) {
+    return axios({
+      method: 'post',
+      url,
+      data: new URLSearchParams({
+        request: "CREATE_ORG",
+        name,
+        visible,
+      }),
+      withCredentials: true,
+      responseType: 'text'
+    });
+  }
 }
 
 const userApiService = new UserApiService()
