@@ -99,22 +99,12 @@ const DashboardSidebar = ({ onMobileClose, openMobile }) => {
         const organizationItems = [];
         data.message.organizations.forEach(organization => {
           const organizationItem = {};
-          organizationItem['title'] = organization.name;
+          organizationItem['name'] = organization.name;
 
           const projectItems = [];
           organization.projects.forEach(project => {
             const projectItem = {};
-            projectItem['title'] = project.name;
-
-            const mosaicItems = [];
-            project.mosaics.forEach(mosaic => {
-              const mosaicItem = {};
-              mosaicItem['title'] = mosaic.name;
-
-              mosaicItems.push(mosaicItem);
-            })
-
-            projectItem["items"] = mosaicItems;
+            projectItem['name'] = project.name;
             projectItems.push(projectItem);
           })
 
@@ -181,7 +171,7 @@ const DashboardSidebar = ({ onMobileClose, openMobile }) => {
         <List>
           <NavItem
             key={organizationsItem.title}
-            title="Organizations"
+            name="Organizations"
             icon={BarChartIcon}
             items={organizationItems}
           />

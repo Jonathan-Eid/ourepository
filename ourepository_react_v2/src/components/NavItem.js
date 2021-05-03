@@ -8,7 +8,7 @@ import {ExpandLess, ExpandMore} from "@material-ui/icons";
 const NavItem = ({
                    href = "/app/organization",
                    icon: Icon,
-                   title,
+                   name,
                    items = null,
                    spacing = 2,
                    ...rest
@@ -81,7 +81,7 @@ const NavItem = ({
             <Icon size="20"/>
           )}
           <span>
-            {title}
+            {name}
           </span>
           {renderExpand()}
         </Button>
@@ -92,8 +92,8 @@ const NavItem = ({
             <NavItem
               className={classes.nested}
               // href={organizationsItem.href}
-              key={item.title}
-              title={item.title}
+              key={item.name}
+              name={item.name}
               icon={Icon}
               items={item.items}
               spacing={spacing + 2}

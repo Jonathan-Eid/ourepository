@@ -252,16 +252,8 @@ if($request_type == "CREATE_USER"){
             $projects = $organizationUuid->getProjects();
 
             $response["organizations"][$i]["projects"] = array();
-            $j = 0;
             foreach ($projects as $project) {
                 array_push($response["organizations"][$i]["projects"], $project->jsonSerialize());
-                $mosaics = $project->getMosaics();
-
-                $response["organizations"][$i]["projects"][$j]["mosaics"] = array();
-                foreach ($mosaics as $mosaic) {
-                    array_push($response["organizations"][$i]["projects"][$j]["mosaics"], $mosaic->jsonSerialize());
-                }
-                $j++;
             }
             $i++;
         }
