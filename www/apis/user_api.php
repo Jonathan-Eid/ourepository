@@ -236,8 +236,10 @@ function handleUserRequest($request_type) {
 
             try{
                 $entityManager->flush();
+                $response = array();
+                $response["organizationUuid"] = $newOrganization->getUuid();
 
-                echo rsp_msg("ORG_CREATED","org_created");
+                echo rsp_msg("ORG_CREATED", $response);
 
             }
             catch (Exception $e) {

@@ -1,18 +1,17 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
-import CssBaseline from "@material-ui/core/CssBaseline";
 import Avatar from "@material-ui/core/Avatar";
 import BusinessIcon from "@material-ui/icons/Business";
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
-import Link from "@material-ui/core/Link";
 import Container from "@material-ui/core/Container";
 import {FormControlLabel, Radio, RadioGroup} from "@material-ui/core";
 import userApiService from "../../services/userApi";
 import emitter from "../../services/emitter";
+import {useNavigate} from "react-router-dom";
 
 function getModalStyle() {
   const top = 50;
@@ -59,6 +58,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function CreateOrganizationModal({setOpen}) {
+
+  const navigate = useNavigate();
+
   const classes = useStyles();
   // getModalStyle is not a pure function, we roll the style only on the first render
   const [modalStyle] = React.useState(getModalStyle);
@@ -73,6 +75,7 @@ export default function CreateOrganizationModal({setOpen}) {
       const res = await userApiService.createOrg(organizationName, visible);
       if (res.data.code === "ORG_CREATED") {
         setOpen(false);
+        navigate(`/app/organization/${res.data.message.organizationUuid}`);
       } else {
         alert("An error occurred");
       }
