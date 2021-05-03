@@ -777,20 +777,20 @@ if($request_type == "CREATE_USER"){
 
     $uid = $_SESSION['uid'];
     process_chunk($uid);
-} else if ($request_type == "GET_MOSAICS"){
-
-    if($_SESSION["id"] != session_id()){
-        echo json_encode("USER NOT AUTHENTICATED");
-        return;
-    }
-
-    try {
-        $mosaicUuids = display_index($entityManager);
-        echo rsp_msg("MOSAIC_UUIDS_RECEIVED", $mosaicUuids);
-    } catch (Exception $e) {
-        echo rsp_msg("MOSAIC_UUIDS_RECEIVED_FAILED", "failed to retreive mosaic UUIDs for project");
-        echo 'Caught exception: ',  $e->getMessage(), "\n";
-    }
+//} else if ($request_type == "GET_MOSAICS"){
+//
+//    if($_SESSION["id"] != session_id()){
+//        echo json_encode("USER NOT AUTHENTICATED");
+//        return;
+//    }
+//
+//    try {
+//        $mosaicUuids = display_index($entityManager);
+//        echo rsp_msg("MOSAIC_UUIDS_RECEIVED", $mosaicUuids);
+//    } catch (Exception $e) {
+//        echo rsp_msg("MOSAIC_UUIDS_RECEIVED_FAILED", "failed to retreive mosaic UUIDs for project");
+//        echo 'Caught exception: ',  $e->getMessage(), "\n";
+//    }
 } else if($request_type == "GET_MOSAIC_CARD") {
 
     if($_SESSION["id"] != session_id()){
@@ -799,25 +799,27 @@ if($request_type == "CREATE_USER"){
     }
 
     try {
-        $mosaic_info = get_mosaic_card($entityManager);
-        echo rsp_msg("MOSAIC_CARD_RECEIVED", $mosaic_info);
+        $response = get_mosaic_card($entityManager);
+        echo rsp_msg("MOSAIC_CARD_RECEIVED", $response);
     } catch (Exception $e) {
         echo rsp_msg("MOSAIC_CARD_RECEIVED_FAILED", "failed to retrieve mosaic data for cards");
         echo 'Caught exception: ',  $e->getMessage(), "\n";
     }
 
-} else if($request_type == "GET_MOSAIC_DATA") {
+} else if($request_type == "GET_MOSAIC") {
 
     if($_SESSION["id"] != session_id()){
         echo json_encode("USER NOT AUTHENTICATED");
         return;
     }
 
+    $mosaicUuid = $_GET['mosaicUuid'];
+
     try {
-        $mosaic_info = get_mosaic_data($entityManager);
-        echo rsp_msg("MOSAIC_DATA_RECEIVED", $mosaic_info);
+        $response = getMosaic($entityManager, $mosaicUuid);
+        echo rsp_msg("MOSAIC_RECEIVED", $response);
     } catch (Exception $e) {
-        echo rsp_msg("MOSAIC_DATA_RECEIVED_FAILED", "failed to retrieve mosaic data");
+        echo rsp_msg("MOSAIC_RECEIVED_FAILED", "failed to retrieve mosaic data");
         echo 'Caught exception: ',  $e->getMessage(), "\n";
     }
 
@@ -860,13 +862,13 @@ if($request_type == "CREATE_USER"){
     try {
         $csv_contents = array();
         if ($export_type == "POLYGONS") {
-            export_polygons($label_id, $mosaic_id, $coord_type);
+//            export_polygons($label_id, $mosaic_id, $coord_type);
         } else if ($export_type == "RECTANGLES") {
             $csv_contents = export_rectangles($entityManager, $label_id, $coord_type, $mosaicUuid);
         } else if ($export_type == "LINES") {
-            export_lines($label_id, $mosaic_id, $coord_type);
+//            export_lines($label_id, $mosaic_id, $coord_type);
         } else if ($export_type == "POINTS") {
-            export_points($label_id, $mosaic_id, $coord_type);
+//            export_points($label_id, $mosaic_id, $coord_type);
         }
 
         $response = array();

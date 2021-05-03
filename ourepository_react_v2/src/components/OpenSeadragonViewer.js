@@ -55,8 +55,8 @@ const OpenSeaDragonViewer = ({ tilingDir }) => {
     <div
       id="openSeaDragon"
       style={{
-        height: "800px",
-        width: "1200px"
+        height: "100vh",
+        width: "100vh"
       }}
     >
     </div>

@@ -346,28 +346,27 @@ function get_mosaic_card($entityManager) {
     return $mosaic_info;
 }
 
-function get_mosaic_data($entityManager) {
+function getMosaic($entityManager, $mosaicUuid) {
     global $ARCHIVE_DIRECTORY;
 
     // TODO make sure user has access
 
-    $mosaicUuid = $_GET['mosaicUuid'];
     $mosaic = $entityManager->getRepository('Mosaic')
         ->findOneBy(array('uuid' => $mosaicUuid));
-    $mosaic_owner_id = $mosaic->getOwnerId();
+    $mosaicOwnerId = $mosaic->getOwnerId();
 
     // return information about the mosaic
-    $mosaic_info = array();
+    $response = array();
 
-    $mosaic_info['uuid'] = $mosaicUuid;
+    $response = array_merge($response, $mosaic->jsonSerialize());
 
     // filenames
     $filename = $mosaic->getFilename();
     $filename_base = substr($filename, 0, strrpos($filename, "."));
-    $tiling_dir = "mosaics/{$mosaic_owner_id}/{$filename_base}_files";
-    $mosaic_info['tiling_dir'] = $tiling_dir;
+    $tilingDir = "mosaics/{$mosaicOwnerId}/{$filename_base}_files";
+    $response['tilingDir'] = $tilingDir;
 
-    return $mosaic_info;
+    return $response;
 }
 
 //function display_mosaic($user_id, $mosaic_id) {
