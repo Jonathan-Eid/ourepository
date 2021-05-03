@@ -8,54 +8,44 @@ import {
   SvgIcon
 } from '@material-ui/core';
 import { Search as SearchIcon } from 'react-feather';
+import CreateOrganizationModal from "./CreateOrganizationModal";
+import React from "react";
 
-const OrganizationListToolbar = (props) => (
-  <Box {...props}>
-    <Box
-      sx={{
-        display: 'flex',
-        justifyContent: 'flex-end'
-      }}
-    >
-      <Button>
-        Import
-      </Button>
-      <Button sx={{ mx: 1 }}>
-        Export
-      </Button>
-      <Button
-        color="primary"
-        variant="contained"
-      >
-        Add product
-      </Button>
-    </Box>
-    {/*<Box sx={{ mt: 3 }}>*/}
-    {/*  <Card>*/}
-    {/*    <CardContent>*/}
-    {/*      <Box sx={{ maxWidth: 500 }}>*/}
-    {/*        <TextField*/}
-    {/*          fullWidth*/}
-    {/*          InputProps={{*/}
-    {/*            startAdornment: (*/}
-    {/*              <InputAdornment position="start">*/}
-    {/*                <SvgIcon*/}
-    {/*                  fontSize="small"*/}
-    {/*                  color="action"*/}
-    {/*                >*/}
-    {/*                  <SearchIcon />*/}
-    {/*                </SvgIcon>*/}
-    {/*              </InputAdornment>*/}
-    {/*            )*/}
-    {/*          }}*/}
-    {/*          placeholder="Search product"*/}
-    {/*          variant="outlined"*/}
-    {/*        />*/}
-    {/*      </Box>*/}
-    {/*    </CardContent>*/}
-    {/*  </Card>*/}
-    {/*</Box>*/}
-  </Box>
-);
+const OrganizationListToolbar = (props) => {
+
+  const [open, setOpen] = React.useState(false);
+
+  const handleCreateOrganizationClick = () => {
+    setOpen(!open);
+  }
+
+  return (
+    <div>
+      <CreateOrganizationModal openNew={open} setOpen={handleCreateOrganizationClick} />
+      <Box {...props}>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'flex-end'
+          }}
+        >
+          <Button>
+            Import
+          </Button>
+          <Button sx={{ mx: 1 }}>
+            Export
+          </Button>
+          <Button
+            color="primary"
+            variant="contained"
+            onClick={handleCreateOrganizationClick}
+          >
+            Create organization
+          </Button>
+        </Box>
+      </Box>
+    </div>
+  );
+}
 
 export default OrganizationListToolbar;

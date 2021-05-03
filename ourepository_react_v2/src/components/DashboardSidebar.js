@@ -22,7 +22,7 @@ import {
   Users as UsersIcon
 } from 'react-feather';
 import NavItem from './NavItem';
-import apiService from "../services/api";
+import userApiService from "../services/userApi";
 
 const user = {
   // avatar: '/static/images/avatars/avatar_6.png',
@@ -93,7 +93,7 @@ const DashboardSidebar = ({ onMobileClose, openMobile }) => {
 
   // get the organizations, projects, and mosaics for the current user
   React.useEffect(() => {
-    apiService.getSidebarOrgs().then((response) => {
+    userApiService.getSidebarOrgs().then((response) => {
       const data = response.data;
       if (data.code === "SIDEBAR_ORGS_RECEIVED") {
         const organizationItems = [];
@@ -113,7 +113,7 @@ const DashboardSidebar = ({ onMobileClose, openMobile }) => {
         })
 
         setOrganizationItems(organizationItems);
-      } else {
+      } else if (data.code === "SIDEBAR_ORGS_RECEIVED_FAILED") {
         alert("Something went wrong");
       }
     }).catch((err) => {

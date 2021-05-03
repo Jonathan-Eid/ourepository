@@ -33,7 +33,7 @@ const Mosaic = () => {
       const data = response.data;
       if (data.code === "MOSAIC_RECEIVED") {
         setMosaic(data.message);
-      } else {
+      } else if (data.code === "MOSAIC_RECEIVED_FAILED") {
         alert("Something went wrong");
       }
     }).catch((err) => {

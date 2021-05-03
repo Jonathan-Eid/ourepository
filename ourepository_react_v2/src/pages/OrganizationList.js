@@ -19,7 +19,7 @@ const OrganizationList = () => {
       const data = response.data;
       if (data.code === "ORGS_RECEIVED") {
         setOrganizations(data.message.organizations);
-      } else {
+      } else if (data.code === "ORGS_RECEIVED_FAILED") {
         alert("Something went wrong");
       }
     }).catch((err) => {

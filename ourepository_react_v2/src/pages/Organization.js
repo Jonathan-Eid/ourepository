@@ -35,7 +35,7 @@ const Organization = () => {
       const data = response.data;
       if (data.code === "PROJECTS_RECEIVED") {
         setProjects(data.message.projects);
-      } else {
+      } else if (data.code === "PROJECTS_RECEIVED_FAILED") {
         alert("Something went wrong");
       }
     }).catch((err) => {

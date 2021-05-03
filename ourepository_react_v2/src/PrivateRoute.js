@@ -43,15 +43,6 @@ const PrivateRoute = ({element: Component, path, ...rest}) => {
     } else {
       if (authStatus) {
         return (<Route path={path} element={Component} />);
-        // return (
-        //   <Route
-        //     {...rest}
-        //     render={props => (
-        //         <Component {...props} />
-        //       )
-        //     }
-        //   />
-        // );
       } else {
         navigate('/login');
       }

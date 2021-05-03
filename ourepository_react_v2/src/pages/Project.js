@@ -33,7 +33,7 @@ const Project = () => {
       const data = response.data;
       if (data.code === "MOSAICS_RECEIVED") {
         setMosaics(data.message.mosaics);
-      } else {
+      } else if (data.code === "MOSAICS_RECEIVED_FAILED") {
         alert("Something went wrong");
       }
     }).catch((err) => {

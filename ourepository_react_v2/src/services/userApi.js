@@ -1,9 +1,21 @@
 const fetch = require('node-fetch');
 const axios = require('../config/axios');
 
-const url = "api_v2.php"
+const url = "apis/api_v2.php"
 
 class UserApiService {
+
+  isAuth() {
+    return axios({
+      method: 'get',
+      url,
+      params: {
+        request: "GET_AUTH"
+      },
+      withCredentials: true,
+      responseType: 'text'
+    });
+  }
 
   createUser(email, givenName, familyName, password, shake) {
     return axios({
@@ -35,18 +47,6 @@ class UserApiService {
     });
   }
 
-  isAuth() {
-    return axios({
-      method: 'get',
-      url,
-      params: {
-        request: "GET_AUTH"
-      },
-      withCredentials: true,
-      responseType: 'text'
-    });
-  }
-
   logout() {
     return axios({
       method: 'get',
@@ -65,6 +65,18 @@ class UserApiService {
       url,
       params: {
         request: "GET_ORGS"
+      },
+      withCredentials: true,
+      responseType: 'text'
+    });
+  }
+
+  getSidebarOrgs() {
+    return axios({
+      method: 'get',
+      url,
+      params: {
+        request: "GET_SIDEBAR_ORGS"
       },
       withCredentials: true,
       responseType: 'text'

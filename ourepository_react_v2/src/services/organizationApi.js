@@ -1,7 +1,7 @@
 const fetch = require('node-fetch');
 const axios = require('../config/axios');
 
-const url = "api_v2.php"
+const url = "apis/api_v2.php"
 
 class OrganizationApiService {
 
@@ -17,25 +17,6 @@ class OrganizationApiService {
       withCredentials: true,
       responseType: 'text'
     });
-  }
-
-  createMosaic(name, proj, vis, file, filename, sizeBytes, md5Hash, numberChunks) {
-    return axios({
-      method: 'post',
-      url,
-      data: new URLSearchParams({
-        request: "CREATE_MOSAIC",
-        name,
-        proj,
-        vis,
-        sizeBytes,
-        filename,
-        md5Hash,
-        numberChunks
-      }),
-      withCredentials: true,
-      responseType: 'text'
-    })
   }
 
   addUser(email,org,role){
@@ -77,19 +58,6 @@ class OrganizationApiService {
       withCredentials: true,
       responseType: 'text'
     })
-  }
-
-  getOrgByName(name) {
-    return axios({
-      method: 'get',
-      url,
-      params: {
-        request: "GET_AUTH_ORG_BY_NAME",
-        name
-      },
-      withCredentials: true,
-      responseType: 'text'
-    });
   }
 
   hasPermission(permission, organization) {

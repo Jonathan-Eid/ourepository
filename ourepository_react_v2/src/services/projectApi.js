@@ -1,7 +1,7 @@
 const fetch = require('node-fetch');
 const axios = require('../config/axios');
 
-const url = "api_v2.php"
+const url = "apis/api_v2.php"
 
 class ProjectApiService {
 
@@ -37,27 +37,28 @@ class ProjectApiService {
     })
   }
 
-  uploadChunk(chunk, identifier, md5Hash, part) {
-    const formData = new FormData();
-    formData.append('request', "UPLOAD_CHUNK");
-    formData.append('chunk', chunk);
-    formData.append('identifier', identifier);
-    formData.append('md5Hash', md5Hash);
-    formData.append('part', part);
-
-
+  submitTrainingJob(mosaicUuids, modelWidth, modelHeight, strideLength, ratio,
+                    modelName, continueFromCheckpoint) {
     return axios({
       method: 'post',
       url,
-      data: formData,
-      headers: {
-        'content-type': 'multipart/form-data'
-      },
+      data: new URLSearchParams({
+        request: "SUBMIT_TRAINING_JOB",
+        mosaicUuids,
+        // crop phase
+        modelWidth,
+        modelHeight,
+        strideLength,
+        ratio,
+        // train phase
+        modelName,
+        continueFromCheckpoint,
+      }),
       withCredentials: true,
       responseType: 'text'
     })
-
   }
+
 
 }
 

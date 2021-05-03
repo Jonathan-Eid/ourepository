@@ -87,7 +87,7 @@ const NavItem = ({
         </Button>
       </ListItem>
       {items && items.map((item) => (
-        <Collapse in={open} timeout="auto" unmountOnExit>
+        <Collapse in={open} timeout="auto" key={item.name} unmountOnExit>
           <List component="div" disablePadding>
             <NavItem
               className={classes.nested}

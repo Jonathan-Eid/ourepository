@@ -1,7 +1,7 @@
 const fetch = require('node-fetch');
 const axios = require('../config/axios');
 
-const url = "api_v2.php"
+const url = "apis/api_v2.php"
 
 class MosaicApiService {
 
@@ -33,19 +33,6 @@ class MosaicApiService {
       url,
       params: {
         request: "GET_MOSAIC",
-        mosaicUuid
-      },
-      withCredentials: true,
-      responseType: 'text'
-    })
-  }
-
-  getMosaicData(mosaicUuid) {
-    return axios({
-      method: 'get',
-      url,
-      params: {
-        request: "GET_MOSAIC_DATA",
         mosaicUuid
       },
       withCredentials: true,
@@ -89,7 +76,7 @@ class MosaicApiService {
       method: 'post',
       url,
       data: new URLSearchParams({
-        request: "INTERFACE_MOSAIC",
+        request: "INFERENCE_MOSAIC",
         name,
         imagePath,
         model,

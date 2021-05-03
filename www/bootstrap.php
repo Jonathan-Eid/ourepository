@@ -17,7 +17,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\DBAL\Types\Type;
 
 require_once "vendor/autoload.php";
-require_once "../db/db_info.php";
+require_once __DIR__."/../db/db_info.php";
 
 global $our_db, $our_db_name, $our_db_user, $our_db_password, $our_db_host;
 
