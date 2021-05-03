@@ -1,15 +1,15 @@
 <?php
 session_start();
 
-if(!isset($_SESSION["count"])){
+if (!isset($_SESSION["count"])) {
     $_SESSION["count"] = 0;
-}else{
-    $_SESSION["count"] = $_SESSION["count"]+1;
+} else {
+    $_SESSION["count"] = $_SESSION["count"] + 1;
 }
 
 $secret_key = "test_secret";
 
-header("Access-Control-Allow-Origin: "."http://".getenv("REACT_DOMAIN").":".getenv("REACT_PORT"));
+header("Access-Control-Allow-Origin: " . "http://" . getenv("REACT_DOMAIN") . ":" . getenv("REACT_PORT"));
 header("Access-Control-Allow-Credentials: true");
 header("Access-Control-Max-Age: 1000");
 header("Access-Control-Allow-Headers: alg, X-Requested-With, Content-Type, Origin, Cache-Control, Pragma, Authorization, Accept, Accept-Encoding,xhrfields,crossdomain");
@@ -44,11 +44,11 @@ foreach ($_POST as $key => $value) {
 if (isset($_POST['request'])) {
     $request_type = $_POST['request'];
 
-} else if(isset($_GET['request'])){
+} else if (isset($_GET['request'])) {
 
     $request_type = $_GET['request'];
 
-}else{
+} else {
 
     return;
 }
@@ -58,12 +58,12 @@ handleOrganizationRequest($request_type);
 handleProjectRequest($request_type);
 handleUserRequest($request_type);
 
-function rsp_msg($code,$message){
-    return json_encode(["code" => $code , "message" => $message ]);
+function rsp_msg($code, $message) {
+    return json_encode(["code" => $code, "message" => $message]);
 }
 
 function enforceAuth() {
-    if($_SESSION["id"] != session_id()){
+    if ($_SESSION["id"] != session_id()) {
         echo json_encode("USER NOT AUTHENTICATED");
         return false;
     }

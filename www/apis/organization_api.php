@@ -16,25 +16,24 @@ function handleOrganizationRequest($request_type) {
             $name = $_POST['name'];
             $organizationUuid = $_POST['org'];
 
-            $existingOrg=$entityManager->getRepository('Organization')
+            $existingOrg = $entityManager->getRepository('Organization')
                 ->findOneBy(array('uuid' => $organizationUuid));
 
             $newProject = new Project();
-            $newProject ->setName($name);
-            $newProject ->setOrganization($existingOrg);
-            $newProject ->setMosaics("");
-            $newProject ->setOwners(true);
+            $newProject->setName($name);
+            $newProject->setOrganization($existingOrg);
+            $newProject->setMosaics("");
+            $newProject->setOwners(true);
 
             $entityManager->persist($newProject);
 
-            try{
+            try {
                 $entityManager->flush();
-                echo rsp_msg("PROJ_CREATED","project created");
+                echo rsp_msg("PROJ_CREATED", "project created");
 
-            }
-            catch (Exception $e) {
+            } catch (Exception $e) {
                 echo json_encode("error in creating project");
-                echo 'Caught exception: ',  $e->getMessage(), "\n";
+                echo 'Caught exception: ', $e->getMessage(), "\n";
             }
 
             break;
@@ -50,7 +49,7 @@ function handleOrganizationRequest($request_type) {
 
             $existingOrg = $existingRole->getOrganization();
 
-            $existingUser=$entityManager->getRepository('User')
+            $existingUser = $entityManager->getRepository('User')
                 ->findOneBy(array('email' => $email));
 
             $newMemberRole = new MemberRole();
@@ -58,15 +57,14 @@ function handleOrganizationRequest($request_type) {
             $newMemberRole->setRole($existingRole);
             $newMemberRole->setOrganization($existingOrg);
             $entityManager->persist($newMemberRole);
-            try{
+            try {
                 $entityManager->flush();
 
-                echo rsp_msg("USER_ADDED","user_added");
+                echo rsp_msg("USER_ADDED", "user_added");
 
-            }
-            catch (Exception $e) {
+            } catch (Exception $e) {
                 echo json_encode("error in adding user to org");
-                echo 'Caught exception: ',  $e->getMessage(), "\n";
+                echo 'Caught exception: ', $e->getMessage(), "\n";
             }
 
             break;
@@ -79,15 +77,15 @@ function handleOrganizationRequest($request_type) {
 
             try {
 
-                $query = $entityManager->createQuery('SELECT o FROM Organization o JOIN o.memberRoles m WHERE m.member = '.$uid.' AND  o.uuid = \''.$oid.'\'');
+                $query = $entityManager->createQuery('SELECT o FROM Organization o JOIN o.memberRoles m WHERE m.member = ' . $uid . ' AND  o.uuid = \'' . $oid . '\'');
                 $orgs = $query->getResult();
-                if(!isset($orgs)){
-                    echo rsp_msg("ORGS_RECEIVED_FAILED","no orgs were returned in the query");
+                if (!isset($orgs)) {
+                    echo rsp_msg("ORGS_RECEIVED_FAILED", "no orgs were returned in the query");
                     return;
                 }
-                echo rsp_msg("ORGS_RECEIVED",$orgs[0]);
-            } catch (Exception $e){
-                echo 'Caught exception: ',  $e->getMessage(), "\n";
+                echo rsp_msg("ORGS_RECEIVED", $orgs[0]);
+            } catch (Exception $e) {
+                echo 'Caught exception: ', $e->getMessage(), "\n";
             }
 
             break;
@@ -109,8 +107,8 @@ function handleOrganizationRequest($request_type) {
                 }
 
                 echo rsp_msg("PROJECTS_RECEIVED", $response);
-            } catch (Exception $e){
-                echo 'Caught exception: ',  $e->getMessage(), "\n";
+            } catch (Exception $e) {
+                echo 'Caught exception: ', $e->getMessage(), "\n";
             }
             break;
 
@@ -126,17 +124,17 @@ function handleOrganizationRequest($request_type) {
                 $query = $entityManager->createQuery('SELECT o FROM OrgACL o JOIN o.organization g WITH g.uuid = :org JOIN g.memberRoles m WITH m.member = :uid AND m.role = o.role WHERE o.permission IN (:permissions)');
                 $query->setParameter('org', $organization);
                 $query->setParameter('uid', $uid);
-                $query->setParameter('permissions', array('all',$permission));
+                $query->setParameter('permissions', array('all', $permission));
 
 
                 $acls = $query->getResult();
-                if(!isset($acls)){
-                    echo rsp_msg("NO_ORG_PERMISSION","The user does not have the proper permissions");
+                if (!isset($acls)) {
+                    echo rsp_msg("NO_ORG_PERMISSION", "The user does not have the proper permissions");
                     return;
                 }
-                echo rsp_msg("HAS_ORG_PERMISSION",$acls);
-            } catch (Exception $e){
-                echo 'Caught exception: ',  $e->getMessage(), "\n";
+                echo rsp_msg("HAS_ORG_PERMISSION", $acls);
+            } catch (Exception $e) {
+                echo 'Caught exception: ', $e->getMessage(), "\n";
 
             }
 
@@ -148,21 +146,20 @@ function handleOrganizationRequest($request_type) {
             $uid = $_SESSION['uid'];
             $organization = $_GET['organization'];
 
-            try{
+            try {
                 $query = $entityManager->createQuery('SELECT r FROM Role r JOIN r.organization g WITH g.uuid = :org JOIN g.memberRoles m WITH m.member = :uid');
                 $query->setParameter('org', $organization);
                 $query->setParameter('uid', $uid);
 
 
                 $roles = $query->getResult();
-                if(!isset($roles)){
-                    echo rsp_msg("NO_ORG_ROLE","Failed to retrieves roles from organization");
+                if (!isset($roles)) {
+                    echo rsp_msg("NO_ORG_ROLE", "Failed to retrieves roles from organization");
                     return;
                 }
-                echo rsp_msg("ORG_ROLES_RECEIVED",$roles);
-            }
-            catch (Exception $e){
-                echo 'Caught exception: ',  $e->getMessage(), "\n";
+                echo rsp_msg("ORG_ROLES_RECEIVED", $roles);
+            } catch (Exception $e) {
+                echo 'Caught exception: ', $e->getMessage(), "\n";
             }
 
             break;
@@ -178,13 +175,13 @@ function handleOrganizationRequest($request_type) {
 
 
                 $users = $query->getResult();
-                if(!isset($users)){
-                    echo rsp_msg("NO_ORG_USER","Failed to retrieves users from organization");
+                if (!isset($users)) {
+                    echo rsp_msg("NO_ORG_USER", "Failed to retrieves users from organization");
                     return;
                 }
-                echo rsp_msg("ORG_USERS_RECEIVED",$users);
-            } catch (Exception $e){
-                echo 'Caught exception: ',  $e->getMessage(), "\n";
+                echo rsp_msg("ORG_USERS_RECEIVED", $users);
+            } catch (Exception $e) {
+                echo 'Caught exception: ', $e->getMessage(), "\n";
             }
             break;
 
@@ -193,19 +190,19 @@ function handleOrganizationRequest($request_type) {
 
             $roleId = $_GET['roleId'];
 
-            try{
+            try {
 
                 $query = $entityManager->createQuery('SELECT a FROM OrgACL a JOIN a.role r WITH r.id = :role_id');
                 $query->setParameter('role_id', $roleId);
 
                 $roles = $query->getResult();
-                if(!isset($roles)){
-                    echo rsp_msg("NO_ROLE_PERMISSIONS","Failed to retrieve permissions for this role");
+                if (!isset($roles)) {
+                    echo rsp_msg("NO_ROLE_PERMISSIONS", "Failed to retrieve permissions for this role");
                     return;
                 }
-                echo rsp_msg("ROLE_PERMISSIONS_RECEIVED",$roles);
-            } catch (Exception $e){
-                echo 'Caught exception: ',  $e->getMessage(), "\n";
+                echo rsp_msg("ROLE_PERMISSIONS_RECEIVED", $roles);
+            } catch (Exception $e) {
+                echo 'Caught exception: ', $e->getMessage(), "\n";
 
             }
 
@@ -228,7 +225,7 @@ function handleOrganizationRequest($request_type) {
 
             $changeObj = json_decode($changes);
 
-            if(!isset($changes)){
+            if (!isset($changes)) {
                 return;
             }
 
@@ -262,7 +259,7 @@ function handleOrganizationRequest($request_type) {
                 }
 
                 echo rsp_msg("ROLE_PERMISSIONS_CHANGED", $roles);
-            } catch(Exception $e) {
+            } catch (Exception $e) {
                 error_log(json_encode($e));
             }
 
@@ -286,28 +283,28 @@ function handleOrganizationRequest($request_type) {
 
             $changeObj = json_decode($changes);
 
-            if(!isset($changes)){
+            if (!isset($changes)) {
                 return;
             }
 
-            try{
+            try {
                 $query = $entityManager->createQuery('SELECT o FROM Organization o JOIN o.memberRoles m WITH m.member = :uid WHERE o.uuid = :organization');
                 $query->setParameter('organization', $organization);
                 $query->setParameter('uid', $uid);
 
                 $organizationUuid = $query->getResult()[0];
                 error_log(json_encode($organizationUuid));
-                $role= new Role();
+                $role = new Role();
                 $role->setName($roleName);
                 $role->setOrganization($organizationUuid);
 
                 $entityManager->persist($role);
 
-                foreach($changeObj as $key => $value) {
+                foreach ($changeObj as $key => $value) {
 
                     error_log($key . " => " . $value);
 
-                    if($value){
+                    if ($value) {
                         $newOrgACL = new OrgACL();
                         $newOrgACL->setOrganization($organizationUuid);
                         $newOrgACL->setRole($role);
@@ -318,8 +315,8 @@ function handleOrganizationRequest($request_type) {
                     }
                 }
 
-                echo rsp_msg("ROLE_ADDED",$roles);
-            } catch(Exception $e){
+                echo rsp_msg("ROLE_ADDED", $roles);
+            } catch (Exception $e) {
                 error_log(json_encode($e));
             }
 
@@ -332,20 +329,20 @@ function handleOrganizationRequest($request_type) {
             $roleId = $_POST['roleId'];
 
             try {
-                $query = $entityManager->createQuery('SELECT o FROM Organization o JOIN o.memberRoles m WHERE m.member = '.$uid.' AND  m.role = \''.$roleId.'\'');
+                $query = $entityManager->createQuery('SELECT o FROM Organization o JOIN o.memberRoles m WHERE m.member = ' . $uid . ' AND  m.role = \'' . $roleId . '\'');
                 $organizationUuid = $query->getResult()[0];
                 error_log(json_encode($organizationUuid));
-                $role=$entityManager->getRepository('Role')
+                $role = $entityManager->getRepository('Role')
                     ->findOneBy(array('id' => $roleId));
-                if(!isset($role)){
+                if (!isset($role)) {
                     return;
                 }
 
                 $entityManager->remove($role);
                 $entityManager->flush();
 
-                echo rsp_msg("ROLE_DELETED",$role);
-            } catch(Exception $e){
+                echo rsp_msg("ROLE_DELETED", $role);
+            } catch (Exception $e) {
                 error_log(json_encode($e));
             }
 

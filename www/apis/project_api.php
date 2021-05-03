@@ -26,8 +26,8 @@ function handleProjectRequest($request_type) {
                 }
 
                 echo rsp_msg("MOSAICS_RECEIVED", $response);
-            } catch (Exception $e){
-                echo 'Caught exception: ',  $e->getMessage(), "\n";
+            } catch (Exception $e) {
+                echo 'Caught exception: ', $e->getMessage(), "\n";
             }
 
             break;
@@ -36,12 +36,11 @@ function handleProjectRequest($request_type) {
             if (!enforceAuth()) return;
 
             $uid = $_SESSION['uid'];
-            try{
+            try {
                 initiate_upload($uid, $entityManager);
-            }
-            catch (Exception $e) {
+            } catch (Exception $e) {
                 echo json_encode("error in creating mosaic");
-                echo 'Caught exception: ',  $e->getMessage(), "\n";
+                echo 'Caught exception: ', $e->getMessage(), "\n";
             }
 
             break;
@@ -54,7 +53,7 @@ function handleProjectRequest($request_type) {
                 echo rsp_msg("SUBMIT_TRAINING_JOB_SUCCESS", "successfully submitted training job");
             } catch (Exception $e) {
                 echo rsp_msg("SUBMIT_TRAINING_JOB_FAILURE", "failed to submit training job");
-                echo 'Caught exception: ',  $e->getMessage(), "\n";
+                echo 'Caught exception: ', $e->getMessage(), "\n";
             }
 
             break;

@@ -27,7 +27,7 @@ function handleMosaicRequest($request_type) {
                 echo rsp_msg("MOSAIC_RECEIVED", $response);
             } catch (Exception $e) {
                 echo rsp_msg("MOSAIC_RECEIVED_FAILED", "failed to retrieve mosaic data");
-                echo 'Caught exception: ',  $e->getMessage(), "\n";
+                echo 'Caught exception: ', $e->getMessage(), "\n";
             }
 
             break;
@@ -40,7 +40,7 @@ function handleMosaicRequest($request_type) {
                 echo rsp_msg("ANNOTATION_CSV_UPLOADED", "CSV containing annotations successfully uploaded");
             } catch (Exception $e) {
                 echo rsp_msg("ANNOTATION_CSV_UPLOADED_FAILED", "failed to upload CSV with annotations");
-                echo 'Caught exception: ',  $e->getMessage(), "\n";
+                echo 'Caught exception: ', $e->getMessage(), "\n";
             }
 
             break;
@@ -74,7 +74,7 @@ function handleMosaicRequest($request_type) {
                 echo rsp_msg("EXPORT_RECTANGLES_SUCCESS", $response);
             } catch (Exception $e) {
                 echo rsp_msg("EXPORT_RECTANGLES_FAILURE", "failed to upload CSV with annotations");
-                echo 'Caught exception: ',  $e->getMessage(), "\n";
+                echo 'Caught exception: ', $e->getMessage(), "\n";
             }
 
             break;
@@ -82,7 +82,7 @@ function handleMosaicRequest($request_type) {
         case "INFERENCE_MOSAIC":
             if (!enforceAuth()) return;
 
-            echo rsp_msg("PLACEHOLDER","lorem ipsum");
+            echo rsp_msg("PLACEHOLDER", "lorem ipsum");
 
             break;
     }
