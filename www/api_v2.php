@@ -226,7 +226,7 @@ if($request_type == "CREATE_USER"){
         echo 'Caught exception: ',  $e->getMessage(), "\n";
     }
 
-}else if($request_type == "GET_ORGS"){
+} else if ($request_type == "GET_SIDEBAR_ORGS") {
     if($_SESSION["id"] != session_id()){
         echo json_encode("USER NOT AUTHENTICATED");
         return;
@@ -234,16 +234,17 @@ if($request_type == "CREATE_USER"){
 
     $uid = $_SESSION['uid'];
 
-    try{
+    try {
         $query = $entityManager->createQuery('SELECT o FROM Organization o JOIN o.memberRoles m WHERE m.member = '.$uid);
         $orgs = $query->getResult();
         if(count($orgs) == 0){
-            echo rsp_msg("ORGS_RECEIVED_FAILED","no orgs were returned in the query");
+            echo rsp_msg("SIDEBAR_ORGS_FAILED","no orgs were returned in the query");
             return;
         }
 
         $response = array();
 
+        // get organizations that contain projects that contain mosaics
         $response["organizations"] = array();
         $i = 0;
         foreach ($orgs as $org) {
@@ -265,17 +266,38 @@ if($request_type == "CREATE_USER"){
             $i++;
         }
 
-        echo rsp_msg("ORGS_RECEIVED", $response);
-    }
-
-    catch (Exception $e){
+        echo rsp_msg("SIDEBAR_ORGS_RECEIVED", $response);
+    } catch (Exception $e){
         echo 'Caught exception: ',  $e->getMessage(), "\n";
-
+    }
+} else if ($request_type == "GET_ORGS") {
+    if($_SESSION["id"] != session_id()){
+        echo json_encode("USER NOT AUTHENTICATED");
+        return;
     }
 
+    $uid = $_SESSION['uid'];
 
+    try {
+        $query = $entityManager->createQuery('SELECT o FROM Organization o JOIN o.memberRoles m WHERE m.member = '.$uid);
+        $orgs = $query->getResult();
+        if(count($orgs) == 0){
+            echo rsp_msg("ORGS_RECEIVED_FAILED","no orgs were returned in the query");
+            return;
+        }
 
-    
+        $response = array();
+
+        // get organizations
+        $response["organizations"] = array();
+        foreach ($orgs as $org) {
+            array_push($response["organizations"], $org->jsonSerialize());
+        }
+
+        echo rsp_msg("ORGS_RECEIVED", $response);
+    } catch (Exception $e){
+        echo 'Caught exception: ',  $e->getMessage(), "\n";
+    }
 }else if($request_type == "GET_AUTH_ORG_BY_UUID"){
     if($_SESSION["id"] != session_id()){
         echo json_encode("USER NOT AUTHENTICATED");

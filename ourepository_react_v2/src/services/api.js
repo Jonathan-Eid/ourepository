@@ -157,6 +157,18 @@ getOrgByUUID(uuid){
       });
 }
 
+  getSidebarOrgs() {
+    return axios({
+      method: 'get',
+      url,
+      params: {
+        request: "GET_SIDEBAR_ORGS"
+      },
+      withCredentials: true,
+      responseType: 'text'
+    });
+  }
+
   getOrgs() {
     return axios({
       method: 'get',

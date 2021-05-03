@@ -13,6 +13,8 @@ import GlobalStyles from "./components/GlobalStyles";
 import theme from "./theme";
 import MainLayout from "./components/MainLayout";
 import NotFound from "./pages/NotFound";
+import OrganizationList from "./pages/OrganizationList";
+import ProjectList from "./pages/ProjectList";
 
 function App() {
   const protectedRoutes = [
@@ -20,7 +22,9 @@ function App() {
       path: 'app',
       element: <DashboardLayout />,
       children: [
-        { path: '/', element: <HomePage /> },
+        { path: '/', element: <Navigate to="/app/organizations" /> },
+        { path: '/organizations', element: <OrganizationList /> },
+        { path: '/organization', element: <ProjectList /> },
       ]
     }
   ]

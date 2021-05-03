@@ -25,9 +25,9 @@ import NavItem from './NavItem';
 import apiService from "../services/api";
 
 const user = {
-  avatar: '/static/images/avatars/avatar_6.png',
-  jobTitle: 'Senior Developer',
-  name: 'Katarina Smith'
+  // avatar: '/static/images/avatars/avatar_6.png',
+  // jobTitle: 'Senior Developer',
+  name: 'Placeholder'
 };
 
 const organizationsItem = {
@@ -93,9 +93,9 @@ const DashboardSidebar = ({ onMobileClose, openMobile }) => {
 
   // get the organizations, projects, and mosaics for the current user
   React.useEffect(() => {
-    apiService.getOrgs().then((response) => {
+    apiService.getSidebarOrgs().then((response) => {
       const data = response.data;
-      if (data.code === "ORGS_RECEIVED") {
+      if (data.code === "SIDEBAR_ORGS_RECEIVED") {
         const organizationItems = [];
         data.message.organizations.forEach(organization => {
           const organizationItem = {};
@@ -125,7 +125,6 @@ const DashboardSidebar = ({ onMobileClose, openMobile }) => {
         setOrganizationItems(organizationItems);
       } else {
         alert("Something went wrong");
-        // setOrganizations(resp.message);
       }
     }).catch((err) => {
       console.log(err);
