@@ -22,7 +22,7 @@ function handleProjectRequest($request_type) {
                 // get mosaics
                 $response["mosaics"] = array();
                 foreach ($project->getMosaics() as $mosaic) {
-                    array_push($response["mosaics"], $mosaic->jsonSerialize());
+                    array_push($response["mosaics"], getMosaicCard($mosaic));
                 }
 
                 echo rsp_msg("MOSAICS_RECEIVED", $response);

@@ -32,7 +32,7 @@ const Mosaic = () => {
   return (
     <>
       <Helmet>
-        <title>Mosaic | OURepostory</title>
+        <title>Mosaic | OURepository</title>
       </Helmet>
       <Box
         sx={{

@@ -3,7 +3,7 @@ import {
   Avatar,
   Box,
   Card,
-  CardContent,
+  CardContent, CardMedia,
   Divider,
   Grid,
   Typography
@@ -11,6 +11,9 @@ import {
 import AccessTimeIcon from '@material-ui/icons/AccessTime';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import {useNavigate} from "react-router-dom";
+
+const {REACT_APP_PHP_DOMAIN, REACT_APP_PHP_PORT} = process.env;
+const baseURL = `http://${REACT_APP_PHP_DOMAIN}:${REACT_APP_PHP_PORT}/`;
 
 const MosaicCard = ({ mosaic, ...rest }) => {
 
@@ -29,6 +32,11 @@ const MosaicCard = ({ mosaic, ...rest }) => {
           }}
           {...rest}
     >
+      <CardMedia
+        component="img"
+        image={baseURL + mosaic.thumbnail}
+        title={mosaic.name}
+      />
       <CardContent>
         <Box
           sx={{
@@ -37,11 +45,6 @@ const MosaicCard = ({ mosaic, ...rest }) => {
             pb: 3
           }}
         >
-          <Avatar
-            alt="Product"
-            src={"/favicon.ico"}
-            variant="square"
-          />
         </Box>
         <Typography
           align="center"

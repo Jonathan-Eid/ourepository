@@ -320,22 +320,15 @@ function display_index($entityManager) {
     echo json_encode($response);
 }
 
-function get_mosaic_card($entityManager) {
-    global $ARCHIVE_DIRECTORY;
-
-    // TODO make sure user has access
-
-    $mosaicUuid = $_GET['mosaicUuid'];
-    $mosaic = $entityManager->getRepository('Mosaic')
-        ->findOneBy(array('uuid' => $mosaicUuid));
-    $mosaic_owner_id = $mosaic->getOwnerId();
-
+function getMosaicCard($mosaic) {
     // return information about the mosaic to display a card
     $mosaic_info = array();
+    $mosaic_info = array_merge($mosaic_info, $mosaic->jsonSerialize());
 
-    $mosaic_info['uuid'] = $mosaicUuid;
+    $mosaic_info['uuid'] = $mosaic->getUuid();
 
     // filenames
+    $mosaic_owner_id = $mosaic->getOwnerId();
     $filename = $mosaic->getFilename();
     $filename_base = substr($filename, 0, strrpos($filename, "."));
     $thumbnail_filename = "mosaics/{$mosaic_owner_id}/{$filename_base}_thumbnail.png";
