@@ -1,8 +1,8 @@
 import React from 'react';
 import {Link, Route, Redirect} from "react-router-dom";
-import apiService from '../services/api';
 import emitter from "../services/emitter"
 import {useCookies} from 'react-cookie';
+import userApiService from "../services/userApi";
 
 
 const Nav = (props) => {
@@ -60,7 +60,7 @@ const Nav = (props) => {
 
 
   function handleLogOut() {
-    apiService.logout();
+    userApiService.logout();
     removeCookie("PHPSESSID");
     removeCookie("session_id");
     localStorage.removeItem("user")

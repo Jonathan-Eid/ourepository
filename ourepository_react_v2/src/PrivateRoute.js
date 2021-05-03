@@ -1,7 +1,7 @@
 import React from "react";
 import {Route, useNavigate} from "react-router-dom";
-import apiService from "./services/api";
 import emitter from "./services/emitter"
+import userApiService from "./services/userApi";
 
 
 const PrivateRoute = ({element: Component, path, ...rest}) => {
@@ -12,7 +12,7 @@ const PrivateRoute = ({element: Component, path, ...rest}) => {
   const [loading, setLoading] = React.useState(true)
 
   React.useEffect(() => {
-    apiService.isAuth().then((data) => {
+    userApiService.isAuth().then((data) => {
       if (data.data === "true") {
         localStorage.setItem("user", "true");
         setAuthStatus(true);
@@ -26,7 +26,7 @@ const PrivateRoute = ({element: Component, path, ...rest}) => {
     });
 
     emitter.addListener("storage", async () => {
-      let res = await apiService.isAuth();
+      let res = await userApiService.isAuth();
       if (res.data === "true") {
         localStorage.setItem("user", "true");
         setAuthStatus(true);

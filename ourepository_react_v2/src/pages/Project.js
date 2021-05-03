@@ -5,13 +5,16 @@ import {Link, useRouteMatch, Switch, Route, useParams} from "react-router-dom"
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import Project from '../components/Project';
-import apiService from '../services/api';
 import button from '../logo.svg';
 import {Redirect} from "react-router-dom";
 import Modal from 'react-modal';
 import MosaicCard from "../components/MosaicCard";
 
 import {Row} from "reactstrap";
+import mosaicApiService from "../services/mosaicApi";
+import projectApiService from "../services/projectApi";
+import organizationApiService from "../services/organizationApi";
+import userApiService from "../services/userApi";
 
 const customStyles = {
   content : {
@@ -72,7 +75,7 @@ const ProjectPage = (props) => {
     console.log(event.target.value);
     var selectedMosaics = getCheckedBoxes();
     console.log(selectedMosaics);
-    apiService.submitTrainingJob(selectedMosaics, document.getElementById("dropdown").value, 1, 1, strideLength, 0).then((data) => {
+    mosaicApiService.submitTrainingJob(selectedMosaics, document.getElementById("dropdown").value, 1, 1, strideLength, 0).then((data) => {
       if (data.data.code === "SUBMIT_TRAINING_JOB_SUCCESS") {
         alert("Training job submitted");
       } else {
@@ -85,13 +88,13 @@ const ProjectPage = (props) => {
 
   // get the mosaics
   React.useEffect(() => {
-    apiService.getMosaics(project).then((data) => {
+    projectApiService.getMosaics(project).then((data) => {
       const resp = data.data
       if (resp.code === "MOSAIC_UUIDS_RECEIVED") {
         var mosaicUuids = resp.message;
 
         mosaicUuids.forEach(mosaicUuid => {
-          apiService.getMosaicCard(mosaicUuid).then((data1) => {
+          mosaicApiService.getMosaicCard(mosaicUuid).then((data1) => {
             const resp1 = data1.data
             if (resp1.code === "MOSAIC_CARD_RECEIVED") {
               updateMosaicArray(mosaicArray => [...mosaicArray, resp1.message]);
@@ -130,12 +133,12 @@ const ProjectPage = (props) => {
   React.useEffect(() => {
     console.log("NAME" + id);
 
-    apiService.getOrgByName(id).then((data) => {
+    organizationApiService.getOrgByName(id).then((data) => {
       const resp = data.data
       if (resp.code == "ORGS_RECEIVED") {
         let org = resp.message
         setOrganization(org)
-        apiService.hasPermission("edit_org", id.name).then((data) => {
+        organizationApiService.hasPermission("edit_org", id.name).then((data) => {
           const resp = data.data
           console.log(JSON.stringify(resp));
           if (resp.code == "HAS_ORG_PERMISSION") {
@@ -149,7 +152,7 @@ const ProjectPage = (props) => {
       }
     }).catch((err) => console.log(err))
 
-    apiService.getOrgs().then((data) => {
+    userApiService.getOrgs().then((data) => {
       console.log("ORG DATA: " + JSON.stringify(data.data))
       const resp = data.data
       if (resp.code == "ORGS_RECEIVED_FAILED") {

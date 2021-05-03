@@ -3,8 +3,8 @@ import navbarService from "../services/navbar"
 import sidebarService from "../services/sidebar"
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
-import apiService from "../services/api"
 import {Redirect} from "react-router-dom";
+import userApiService from "../services/userApi";
 
 const CreateProjectPage = (props) => {
 
@@ -51,7 +51,7 @@ const CreateProjectPage = (props) => {
 
   let submitOrg = (event) => {
     console.log(event.target.value);
-    apiService.createOrg(name, visible).then((data) => {
+    userApiService.createOrg(name, visible).then((data) => {
       if (data.data.code == "ORG_CREATED") {
         alert(` Organization ' ${name} ' created `)
         setCreated(true)

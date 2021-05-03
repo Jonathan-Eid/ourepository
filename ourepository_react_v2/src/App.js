@@ -3,10 +3,7 @@ import './App.css';
 import LoginPage from './pages/Login';
 import {BrowserRouter, Navigate, Route, Routes} from "react-router-dom";
 import PrivateRoute from './PrivateRoute';
-import emitter from "./services/emitter"
 
-import apiService from "./services/api";
-import HomePage from "./pages/Home";
 import DashboardLayout from "./components/DashboardLayout";
 import {ThemeProvider} from "@material-ui/core";
 import GlobalStyles from "./components/GlobalStyles";

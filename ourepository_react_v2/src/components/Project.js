@@ -1,6 +1,5 @@
 import React from 'react';
 import {Link, useRouteMatch, Switch, Route, useParams} from "react-router-dom"
-import apiService from '../services/api';
 import button from '../logo.svg';
 import Popup from 'reactjs-popup';
 

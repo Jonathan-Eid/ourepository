@@ -2,8 +2,8 @@ import React from 'react';
 import navbarService from "../services/navbar"
 import {Link, Redirect} from "react-router-dom";
 import sidebarSerice from "../services/sidebar"
-import apiService from "../services/api"
 import emitter from "../services/emitter"
+import userApiService from "../services/userApi";
 
 const HomePage = (props) => {
 
@@ -12,7 +12,7 @@ const HomePage = (props) => {
   // const [authStatus, setAuthStatus] = React.useState(false)
 
   React.useEffect(() => {
-    apiService.getOrgs().then((data) => {
+    userApiService.getOrgs().then((data) => {
       const resp = data.data;
       if (resp.code === "ORGS_RECEIVED_FAILED") {
 

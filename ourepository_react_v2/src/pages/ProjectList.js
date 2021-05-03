@@ -7,7 +7,6 @@ import {
 import OrganizationCard from "../components/organization/OrganizationCard";
 import OrganizationListToolbar from "../components/organization/OrganizationListToolbar";
 import React from "react";
-import apiService from "../services/api";
 import {Navigate, useLocation} from "react-router-dom";
 
 const ProjectList = () => {

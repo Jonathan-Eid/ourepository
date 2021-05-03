@@ -12,10 +12,10 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import {makeStyles} from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
-import apiService from "../services/api"
 import emitter from "../services/emitter"
 import useMousePosition from "../hooks/useMousePosition";
 import {useNavigate} from "react-router-dom";
+import userApiService from "../services/userApi";
 
 const LoginPage = (props) => {
 
@@ -30,7 +30,7 @@ const LoginPage = (props) => {
   const {x, y} = useMousePosition();
 
   React.useEffect(() => {
-    apiService.isAuth().then((data) => {
+    userApiService.isAuth().then((data) => {
       if (data.data === "true") {
         navigate('/app');
       }
@@ -43,7 +43,7 @@ const LoginPage = (props) => {
     try {
       event.preventDefault();
 
-      const response = await apiService.loginUser(email, password);
+      const response = await userApiService.loginUser(email, password);
       if (response.data.code === "hash_matches") {
         localStorage.setItem("user", "true")
         emitter.emit("storage")
@@ -60,7 +60,7 @@ const LoginPage = (props) => {
     try {
       event.preventDefault();
 
-      const res = await apiService.createUser(email, givenName, familyName, password, Math.random() * x * y)
+      const res = await userApiService.createUser(email, givenName, familyName, password, Math.random() * x * y)
       if (res.data.code === "user_exists") {
         alert(res.data.message)
       }

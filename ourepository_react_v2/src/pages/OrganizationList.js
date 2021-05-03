@@ -7,7 +7,7 @@ import {
 import OrganizationCard from "../components/organization/OrganizationCard";
 import OrganizationListToolbar from "../components/organization/OrganizationListToolbar";
 import React from "react";
-import apiService from "../services/api";
+import userApiService from "../services/userApi";
 
 const OrganizationList = () => {
 
@@ -15,7 +15,7 @@ const OrganizationList = () => {
 
   // get the organizations, projects, and mosaics for the current user
   React.useEffect(() => {
-    apiService.getOrgs().then((response) => {
+    userApiService.getOrgs().then((response) => {
       const data = response.data;
       if (data.code === "ORGS_RECEIVED") {
         setOrganizations(data.message.organizations);

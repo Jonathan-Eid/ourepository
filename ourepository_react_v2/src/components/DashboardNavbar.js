@@ -12,7 +12,7 @@ import {
 import MenuIcon from '@material-ui/icons/Menu';
 import NotificationsIcon from '@material-ui/icons/NotificationsOutlined';
 import Logo from './Logo';
-import apiService from "../services/api";
+import userApiService from "../services/userApi";
 
 const DashboardNavbar = ({ onMobileNavOpen, ...rest }) => {
 
@@ -41,7 +41,7 @@ const DashboardNavbar = ({ onMobileNavOpen, ...rest }) => {
             </Badge>
           </IconButton>
           <Button onClick={() => {
-            apiService.logout();
+            userApiService.logout();
             navigate('/login');
           }} color="inherit">
             Logout

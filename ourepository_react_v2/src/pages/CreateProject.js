@@ -4,8 +4,8 @@ import sidebarService from "../services/sidebar"
 import Popup from 'reactjs-popup';
 import {Link, useRouteMatch, Switch, Route, useParams} from "react-router-dom"
 import 'reactjs-popup/dist/index.css';
-import apiService from "../services/api"
 import {Redirect} from "react-router-dom";
+import organizationApiService from "../services/organizationApi";
 
 let permissions = [
   {
@@ -69,7 +69,7 @@ const CreateProjectPage = (props) => {
 
   React.useEffect(()=>{
 
-    apiService.getOrgRoles(id)
+    organizationApiService.getOrgRoles(id)
     .then((data) => {
         const resp = data.data
         console.log(JSON.stringify(resp));
@@ -80,7 +80,7 @@ const CreateProjectPage = (props) => {
     })
     .catch((err)=>{})
 
-    apiService.getOrgUsers(id)
+    organizationApiService.getOrgUsers(id)
     .then((data) => {
         const resp = data.data
         console.log(JSON.stringify(resp));
@@ -129,8 +129,8 @@ const CreateProjectPage = (props) => {
 
   let submitProj = (event) => {
     console.log(event.target.value);
-    apiService.createProject(name, id).then((data) => {
-      if (data.data.code == "PROJ_CREATED") {
+    organizationApiService.createProject(name, id).then((data) => {
+      if (data.data.code === "PROJ_CREATED") {
         alert(` Project ' ${name} ' created `)
         setCreated(true)
       } else {

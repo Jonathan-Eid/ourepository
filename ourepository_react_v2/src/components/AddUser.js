@@ -4,8 +4,8 @@ import sidebarService from "../services/sidebar"
 import {Link, useRouteMatch, Switch, Route,useParams} from "react-router-dom"
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
-import apiService from "../services/api"
 import {  Redirect } from "react-router-dom";
+import organizationApiService from "../services/organizationApi";
 
 const AddUser = (props) => {
     let { id } = useParams();
@@ -17,7 +17,7 @@ const AddUser = (props) => {
 
 
     React.useEffect(()=>{
-        apiService.getOrgRoles(props.id)
+        organizationApiService.getOrgRoles(props.id)
         .then((data) => {
             const resp = data.data
             console.log(JSON.stringify(resp));
@@ -43,8 +43,8 @@ const AddUser = (props) => {
 
     let submitAddUser = (event) => {
       console.log(event.target.value);
-      apiService.addUser(name,id,selected_role).then((data) => {
-        if(data.data.code == "USER_ADDED"){
+      organizationApiService.addUser(name,id,selected_role).then((data) => {
+        if(data.data.code === "USER_ADDED"){
           alert(` user: ' ${name} ' added to organization `)
           setCreated(true)
         }

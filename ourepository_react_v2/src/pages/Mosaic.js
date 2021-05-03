@@ -4,13 +4,13 @@ import sidebarService from "../services/sidebar"
 import {Link, useRouteMatch, Switch, Route, useParams} from "react-router-dom"
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
-import apiService from "../services/api"
 import {Redirect} from "react-router-dom";
 import AddUserPage from './AddUserToOrg';
 import {OpenSeaDragonViewer} from "../components/OpenSeadragonViewer";
 import {Button} from "reactstrap";
 
 import {useState} from "react";
+import mosaicApiService from "../services/mosaicApi";
 
 
 
@@ -32,7 +32,7 @@ const MosaicPage = (props) => {
     setIsSelected(true);
     const file = event.target.files[0];
     if (file && file.type) {
-      apiService.uploadAnnotationCSV(mosaicUuid, file).then((data) => {
+      mosaicApiService.uploadAnnotationCSV(mosaicUuid, file).then((data) => {
         if(data.data.code === "ANNOTATION_CSV_UPLOADED"){
          alert(` annotation uploaded `);
         }
@@ -48,7 +48,7 @@ const MosaicPage = (props) => {
 
   // show annotations in a new window in CSV format
   const exportLabelCsv = (event) => {
-    apiService.exportLabelCsv(mosaicUuid).then((data) => {
+    mosaicApiService.exportLabelCsv(mosaicUuid).then((data) => {
       const resp = data.data
       if (resp.code === "EXPORT_RECTANGLES_SUCCESS") {
         alert(resp.message.csv_contents)
@@ -62,7 +62,7 @@ const MosaicPage = (props) => {
 
   // get the mosaic data
   React.useEffect(() => {
-    apiService.getMosaicData(mosaicUuid).then((data) => {
+    mosaicApiService.getMosaicData(mosaicUuid).then((data) => {
       const resp = data.data
       if (resp.code === "MOSAIC_DATA_RECEIVED") {
         setMosaicData(resp.message);

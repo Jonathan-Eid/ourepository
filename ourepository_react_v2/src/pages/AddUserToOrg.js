@@ -4,8 +4,8 @@ import sidebarService from "../services/sidebar"
 import {Link, useRouteMatch, Switch, Route, useParams} from "react-router-dom"
 import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
-import apiService from "../services/api"
 import {Redirect} from "react-router-dom";
+import organizationApiService from "../services/organizationApi";
 
 const AddUserPage = (props) => {
   let {id} = useParams();
@@ -45,8 +45,8 @@ const AddUserPage = (props) => {
 
   let submitAddUser = (event) => {
     console.log(event.target.value);
-    apiService.addUser(name, id, role).then((data) => {
-      if (data.data.code == "USER_ADDED") {
+    organizationApiService.addUser(name, id, role).then((data) => {
+      if (data.data.code === "USER_ADDED") {
         alert(` user: ' ${name} ' added to organization `)
         setCreated(true)
       } else {

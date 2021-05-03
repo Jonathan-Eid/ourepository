@@ -92,7 +92,7 @@ dev.sh
 
 ###### API calls to the php server can be found here
 ```
-./ourepository_react/src/services/apiService.js
+./ourepository_react/src/services
 
 ```
 

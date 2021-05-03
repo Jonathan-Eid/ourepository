@@ -6,7 +6,7 @@ import 'reactjs-popup/dist/index.css';
 import {Link, Redirect, useRouteMatch, Switch, Route, useParams} from "react-router-dom"
 import ManageRoles from '../components/ManageRoles';
 import AddUser from '../components/AddUser';
-import apiService from '../services/api';
+import organizationApiService from "../services/organizationApi";
 
 
 const OrgSettingsPage = (props) => {
@@ -32,7 +32,7 @@ const OrgSettingsPage = (props) => {
   React.useEffect(() => {
 
 
-    apiService.getOrgByUUID(id).then((data) => {
+    organizationApiService.getOrgByUUID(id).then((data) => {
       const resp = data.data
       if(resp.code == "ORGS_RECEIVED"){
           let org = resp.message

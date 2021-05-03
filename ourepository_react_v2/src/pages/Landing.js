@@ -2,7 +2,7 @@ import React from 'react';
 import {Link} from "react-router-dom";
 import navbarService from "../services/navbar"
 import sidebarSerice from "../services/sidebar"
-import apiService from "../services/api"
+import userApiService from "../services/userApi";
 
 const LandingPage = (props) => {
 
@@ -14,7 +14,7 @@ const LandingPage = (props) => {
     navbarService.setToolbar([])
     sidebarSerice.setHeader(<></>)
 
-    apiService.getOrgs().then((data) => {
+    userApiService.getOrgs().then((data) => {
       console.log("ORG DATA: " + JSON.stringify(data.data))
       const resp = data.data
       if (resp.code == "ORGS_RECEIVED_FAILED") {

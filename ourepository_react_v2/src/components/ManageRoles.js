@@ -1,7 +1,7 @@
 import React from 'react';
 import {Link, Route, Redirect} from "react-router-dom";
 import emitter from "../services/emitter"
-import apiService from "../services/api"
+import organizationApiService from "../services/organizationApi";
 
 let permissions = [
     {
@@ -57,7 +57,7 @@ const ManageRoles = (props) => {
   const [role_name, setRoleName] = React.useState(false)
 
   React.useEffect(() => {
-    apiService.getOrgRoles(props.id)
+    organizationApiService.getOrgRoles(props.id)
       .then((data) => {
         const resp = data.data
         console.log(JSON.stringify(resp));
@@ -81,7 +81,7 @@ const ManageRoles = (props) => {
 
   React.useEffect(() => {
     if (active_role) {
-      apiService.getRolePermissions(active_role).then((data) => {
+      organizationApiService.getRolePermissions(active_role).then((data) => {
         const resp = data.data
         console.log("PERMISSIONS" + JSON.stringify(resp));
 
@@ -121,7 +121,7 @@ const ManageRoles = (props) => {
   }
 
   function submitChanges() {
-    apiService.changeRolePermissions(active_role, JSON.stringify(changes))
+    organizationApiService.changeRolePermissions(active_role, JSON.stringify(changes))
       .then((data) => {
         const resp = data.data
         console.log("PERMISSIONS" + JSON.stringify(resp));
@@ -141,7 +141,7 @@ const ManageRoles = (props) => {
   }
 
   function addRole() {
-    apiService.addRole(role_name, JSON.stringify(changes), props.id)
+    organizationApiService.addRole(role_name, JSON.stringify(changes), props.id)
       .then((data) => {
         const resp = data.data
         console.log("PERMISSIONS" + JSON.stringify(resp));
@@ -157,7 +157,7 @@ const ManageRoles = (props) => {
   }
 
   function deleteRole() {
-    apiService.deleteRole(active_role)
+    organizationApiService.deleteRole(active_role)
       .then((data) => {
         const resp = data.data
         console.log("PERMISSIONS" + JSON.stringify(resp));

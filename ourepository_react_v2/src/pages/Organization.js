@@ -6,7 +6,7 @@ import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import Project from '../components/Project';
 import ProjectPage from './Project'
-import apiService from '../services/api';
+import organizationApiService from "../services/organizationApi";
 
 const OrganizationPage = (props) => {
   let {id} = useParams();
@@ -32,13 +32,13 @@ const OrganizationPage = (props) => {
 
   React.useEffect(() => {
 
-        apiService.getOrgByUUID(id).then((data) => {
+        organizationApiService.getOrgByUUID(id).then((data) => {
             const resp = data.data
             if(resp.code == "ORGS_RECEIVED"){
                 let org = resp.message
                 setOrganization(org)
                 
-                apiService.hasPermission("edit_org",id).then((data)=> {
+                organizationApiService.hasPermission("edit_org",id).then((data)=> {
                     const resp = data.data
                     console.log(JSON.stringify(resp));
                     if(resp.code=="HAS_ORG_PERMISSION"){
@@ -51,7 +51,7 @@ const OrganizationPage = (props) => {
                 
         }).catch((err) => console.log(err))
 
-        apiService.getProjects(id)
+        organizationApiService.getProjects(id)
         .then((data) => {
             console.log("PROJECT DATA: " + JSON.stringify(data.data))
             const resp = data.data

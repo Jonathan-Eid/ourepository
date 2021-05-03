@@ -1,5 +1,6 @@
-import apiService from "./services/api";
 import * as SparkMD5 from 'spark-md5';
+import projectApiService from "./services/projectApi";
+import mosaicApiService from "./services/mosaicApi";
 
 var mosaics = [];
 
@@ -267,7 +268,7 @@ export function start_upload(name, file, proj, visible) {
     file.md5_hash = md5_hash;
     console.log("got md5_hash: '" + md5_hash + "'");
 
-    apiService.createMosaic(name, proj, visible, file, file.name, file.size, md5_hash, number_chunks).then((data) => {
+    projectApiService.createMosaic(name, proj, visible, file, file.name, file.size, md5_hash, number_chunks).then((data) => {
       // if(data.data.code == "MOS_CREATED"){
       //   alert(` Mosaic ' ${name} ' created `)
       //   setCreated(true)
@@ -363,7 +364,7 @@ function upload_chunk(mosaic_info) {
 
   //console.log(bytes);
 
-  apiService.uploadChunk(chunk_number, file.identifier, file.md5_hash, bytes).then((data) => {
+  mosaicApiService.uploadChunk(chunk_number, file.identifier, file.md5_hash, bytes).then((data) => {
     console.log("Upload response: " + data.data);
 
     // var response = JSON.parse(xhr.responseText);
