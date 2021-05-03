@@ -1,4 +1,4 @@
-import {matchPath, NavLink as RouterLink, useLocation} from 'react-router-dom';
+import {matchPath, useLocation, useNavigate} from 'react-router-dom';
 import PropTypes from 'prop-types';
 import {Button, Collapse, List, ListItem} from '@material-ui/core';
 import {makeStyles} from "@material-ui/core/styles";
@@ -15,7 +15,13 @@ const NavItem = ({
                  }) => {
   const location = useLocation();
 
+  const navigate = useNavigate();
+
   const [open, setOpen] = React.useState(true);
+
+  const handleButtonClick = () => {
+    navigate(href);
+  }
 
   const handleOpenClick = (event) => {
     event.stopPropagation();
@@ -58,7 +64,7 @@ const NavItem = ({
         {...rest}
       >
         <Button
-          component={href ? RouterLink : null}
+          onClick={handleButtonClick}
           sx={{
             color: 'text.secondary',
             fontWeight: 'medium',
@@ -74,7 +80,7 @@ const NavItem = ({
               mr: 1
             }
           }}
-          to={href}
+          // to={href}
         >
           {Icon && (
             <Icon size="20"/>

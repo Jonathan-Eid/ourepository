@@ -174,6 +174,7 @@ const DashboardSidebar = ({ onMobileClose, openMobile }) => {
           <NavItem
             key={organizationsItem.title}
             name="Organizations"
+            href="/app/organizations"
             icon={BarChartIcon}
             items={organizationItems}
           />
