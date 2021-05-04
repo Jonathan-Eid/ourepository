@@ -5,47 +5,47 @@ const url = "apis/api_v2.php"
 
 class OrganizationApiService {
 
-  createProject(name, org) {
+  createProject(name, organizationUuid) {
     return axios({
       method: 'post',
       url,
       data: new URLSearchParams({
         request: "CREATE_PROJECT",
         name,
-        org
+        organizationUuid
       }),
       withCredentials: true,
       responseType: 'text'
     });
   }
 
-  addUser(email,org,role){
+  addUser(email, organizationUuid, role) {
     return axios({
-        method: 'post',
-        url,
-        data: new URLSearchParams({
-            request:"ADD_USER",
-            email,
-            org,
-            role
-        }),
-        withCredentials: true,
-        responseType: 'text'
+      method: 'post',
+      url,
+      data: new URLSearchParams({
+        request: "ADD_USER",
+        email,
+        organizationUuid,
+        role
+      }),
+      withCredentials: true,
+      responseType: 'text'
     })
-}
+  }
 
-  getOrganization(uuid){
+  getOrganization(uuid) {
     return axios({
-        method: 'get',
-        url ,
-        params: {
-            request:"GET_ORGANIZATION",
-            uuid
-        },
-        withCredentials: true,
-        responseType: 'text'
-      });
-}
+      method: 'get',
+      url,
+      params: {
+        request: "GET_ORGANIZATION",
+        uuid
+      },
+      withCredentials: true,
+      responseType: 'text'
+    });
+  }
 
   getProjects(organizationUuid) {
     return axios({
@@ -60,40 +60,40 @@ class OrganizationApiService {
     })
   }
 
-  hasPermission(permission, organization) {
+  hasPermission(permission, organizationUuid) {
     return axios({
       method: 'get',
       url,
       params: {
         request: "HAS_ORGANIZATION_PERMISSION",
         permission,
-        organization
+        organizationUuid
       },
       withCredentials: true,
       responseType: 'text'
     });
   }
 
-  getOrgRoles(organization) {
+  getOrgRoles(organizationUuid) {
     return axios({
       method: 'get',
       url,
       params: {
         request: "GET_ORGANIZATION_ROLES",
-        organization
+        organizationUuid
       },
       withCredentials: true,
       responseType: 'text'
     });
   }
 
-  getOrgUsers(organization) {
+  getOrgUsers(organizationUuid) {
     return axios({
       method: 'get',
       url,
       params: {
         request: "GET_ORGANIZATION_USERS",
-        organization
+        organizationUuid
       },
       withCredentials: true,
       responseType: 'text'
@@ -127,7 +127,7 @@ class OrganizationApiService {
     });
   }
 
-  addRole(roleName, changes,organization) {
+  addRole(roleName, changes, organizationUuid) {
     return axios({
       method: 'post',
       url,
@@ -135,7 +135,7 @@ class OrganizationApiService {
         request: "ADD_ROLE",
         roleName,
         changes,
-        organization
+        organizationUuid
       }),
       withCredentials: true,
       responseType: 'text'

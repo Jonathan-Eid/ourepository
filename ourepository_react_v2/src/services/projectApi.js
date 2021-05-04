@@ -18,14 +18,14 @@ class ProjectApiService {
     })
   }
 
-  createMosaic(name, proj, vis, file, filename, sizeBytes, md5Hash, numberChunks) {
+  createMosaic(name, projectUuid, vis, file, filename, sizeBytes, md5Hash, numberChunks) {
     return axios({
       method: 'post',
       url,
       data: new URLSearchParams({
         request: "CREATE_MOSAIC",
         name,
-        proj,
+        projectUuid,
         vis,
         sizeBytes,
         filename,

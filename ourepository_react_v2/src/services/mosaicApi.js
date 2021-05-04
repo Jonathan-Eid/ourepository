@@ -71,13 +71,13 @@ class MosaicApiService {
     })
   }
 
-  inferenceMosaic(name, imagePath, model, width, height, strideLength) {
+  inferenceMosaic(mosaicUuid, imagePath, model, width, height, strideLength) {
     return axios({
       method: 'post',
       url,
       data: new URLSearchParams({
         request: "INFERENCE_MOSAIC",
-        name,
+        mosaicUuid,
         imagePath,
         model,
         width,

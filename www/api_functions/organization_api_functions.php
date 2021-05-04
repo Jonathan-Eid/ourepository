@@ -84,11 +84,11 @@ function getProjects($organizationUuid) {
     return responseMessage("SUCCESS", $responseObject);
 }
 
-function hasOrgPermission($uid, $permission, $organization) {
+function hasOrgPermission($uid, $permission, $organizationUuid) {
     global $entityManager;
 
     $query = $entityManager->createQuery('SELECT o FROM OrgACL o JOIN o.organization g WITH g.uuid = :org JOIN g.memberRoles m WITH m.member = :uid AND m.role = o.role WHERE o.permission IN (:permissions)');
-    $query->setParameter('org', $organization);
+    $query->setParameter('org', $organizationUuid);
     $query->setParameter('uid', $uid);
     $query->setParameter('permissions', array('all', $permission));
 
@@ -104,11 +104,11 @@ function hasOrgPermission($uid, $permission, $organization) {
 
 }
 
-function getOrgRoles($uid, $organization) {
+function getOrgRoles($uid, $organizationUuid) {
     global $entityManager;
 
     $query = $entityManager->createQuery('SELECT r FROM Role r JOIN r.organization g WITH g.uuid = :org JOIN g.memberRoles m WITH m.member = :uid');
-    $query->setParameter('org', $organization);
+    $query->setParameter('org', $organizationUuid);
     $query->setParameter('uid', $uid);
 
 
@@ -123,11 +123,11 @@ function getOrgRoles($uid, $organization) {
     return responseMessage("SUCCESS", $responseObject);
 }
 
-function getOrganizationUsers($organization) {
+function getOrganizationUsers($organizationUuid) {
     global $entityManager;
 
     $query = $entityManager->createQuery('SELECT m FROM MemberRole m JOIN m.organization g WITH g.uuid = :org JOIN m.member r');
-    $query->setParameter('org', $organization);
+    $query->setParameter('org', $organizationUuid);
 
     $users = $query->getResult();
     if (!isset($users)) {
@@ -179,8 +179,8 @@ function changeRolePermissions($uid, $roleId, $changes) {
     }
 
     $query = $entityManager->createQuery('SELECT o FROM organizations o JOIN o.memberRoles m WHERE m.member = ' . $uid . ' AND  m.role = \'' . $roleId . '\'');
-    $organizationUuid = $query->getResult()[0];
-    error_log(json_encode($organizationUuid));
+    $organization = $query->getResult()[0];
+    error_log(json_encode($organization));
     $role = $entityManager->getRepository('Role')
         ->findOneBy(array('id' => $roleId));
 
@@ -190,7 +190,7 @@ function changeRolePermissions($uid, $roleId, $changes) {
 
         if ($value) {
             $newOrgACL = new OrgACL();
-            $newOrgACL->setOrganization($organizationUuid);
+            $newOrgACL->setOrganization($organization);
             $newOrgACL->setRole($role);
             $newOrgACL->setPermission($key);
 
@@ -216,7 +216,7 @@ function changeRolePermissions($uid, $roleId, $changes) {
  * @throws \Doctrine\ORM\OptimisticLockException
  * @throws \Doctrine\ORM\ORMException
  */
-function addRole($uid, $roleName, $changes, $organization {
+function addRole($uid, $roleName, $changes, $organizationUuid) {
     global $entityManager;
 
     //The change object contains keys and values that represent permissions
@@ -233,15 +233,15 @@ function addRole($uid, $roleName, $changes, $organization {
         return;
     }
 
-    $query = $entityManager->createQuery('SELECT o FROM Organization o JOIN o.memberRoles m WITH m.member = :uid WHERE o.uuid = :organization');
-    $query->setParameter('organization', $organization);
+    $query = $entityManager->createQuery('SELECT o FROM Organization o JOIN o.memberRoles m WITH m.member = :uid WHERE o.uuid = :organizationUuid');
+    $query->setParameter('organizationUuid', $organizationUuid);
     $query->setParameter('uid', $uid);
 
-    $organizationUuid = $query->getResult()[0];
-    error_log(json_encode($organizationUuid));
+    $organization = $query->getResult()[0];
+    error_log(json_encode($organization));
     $role = new Role();
     $role->setName($roleName);
-    $role->setOrganization($organizationUuid);
+    $role->setOrganization($organization);
 
     $entityManager->persist($role);
 
@@ -251,7 +251,7 @@ function addRole($uid, $roleName, $changes, $organization {
 
         if ($value) {
             $newOrgACL = new OrgACL();
-            $newOrgACL->setOrganization($organizationUuid);
+            $newOrgACL->setOrganization($organization);
             $newOrgACL->setRole($role);
             $newOrgACL->setPermission($key);
 
@@ -274,8 +274,8 @@ function deleteRole($uid, $roleId) {
     global $entityManager;
 
     $query = $entityManager->createQuery('SELECT o FROM Organization o JOIN o.memberRoles m WHERE m.member = ' . $uid . ' AND  m.role = \'' . $roleId . '\'');
-    $organizationUuid = $query->getResult()[0];
-    error_log(json_encode($organizationUuid));
+    $organization = $query->getResult()[0];
+    error_log(json_encode($organization));
     $role = $entityManager->getRepository('Role')
         ->findOneBy(array('id' => $roleId));
     if (!isset($role)) {

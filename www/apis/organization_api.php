@@ -57,9 +57,9 @@ function handleOrganizationRequest($request_type) {
 
             $uid = $_SESSION['uid'];
             $permission = $_GET['permission'];
-            $organization = $_GET['organization'];
+            $organizationUuid = $_GET['organizationUuid'];
 
-            $response = hasOrgPermission($uid, $permission, $organization);
+            $response = hasOrgPermission($uid, $permission, $organizationUuid);
             echo $response;
             break;
 
@@ -69,18 +69,18 @@ function handleOrganizationRequest($request_type) {
             if (!enforceAuth()) return;
 
             $uid = $_SESSION['uid'];
-            $organization = $_GET['organization'];
+            $organizationUuid = $_GET['organizationUuid'];
             
-            $response = getOrgRoles($uid, $organization);
+            $response = getOrgRoles($uid, $organizationUuid);
             echo $response;
             break;
 
         case "GET_ORGANIZATION_USERS":
             if (!enforceAuth()) return;
 
-            $organization = $_GET['organization'];
+            $organizationUuid = $_GET['organizationUuid'];
 
-            $response = getOrganizationUsers($organization);
+            $response = getOrganizationUsers($organizationUuid);
             echo $response;
             break;
 
@@ -110,9 +110,9 @@ function handleOrganizationRequest($request_type) {
             $uid = $_SESSION['uid'];
             $roleName = $_POST['roleName'];
             $changes = $_POST['changes'];
-            $organization = $_POST['organization'];
+            $organizationUuid = $_POST['organizationUuid'];
 
-            $response = addRole($uid, $roleName, $changes, $organization);
+            $response = addRole($uid, $roleName, $changes, $organizationUuid);
             echo $response;
             break;
 
