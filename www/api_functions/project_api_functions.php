@@ -6,7 +6,7 @@ require_once "../util/export_labels_v2.php";
 
 use phpseclib3\Net\SSH2;
 
-function getMosaics() {
+function getMosaics($projectUuid) {
     global $entityManager;
 
     // get the project these mosaics are in
@@ -27,7 +27,7 @@ function getMosaics() {
  * This function only initiates the upload;
  * @throws \Doctrine\ORM\ORMException
  */
-function createMosaic($uid, $name, $projectUuid, $visible, $filename, $md5Hash, $numberChunks, $sizeBytes) {
+function createMosaic($uid, $mosaicName, $projectUuid, $visible, $filename, $md5Hash, $numberChunks, $sizeBytes) {
     global $entityManager;
 
     // get the project to place this mosaic in
@@ -58,7 +58,7 @@ function createMosaic($uid, $name, $projectUuid, $visible, $filename, $md5Hash, 
 
         // create the new mosaic
         $newMosaic = new Mosaic();
-        $newMosaic->setIdentifier($name);
+        $newMosaic->setIdentifier($mosaicName);
         $newMosaic->setFilename($filename);
         $newMosaic->setVisible(true);
         $newMosaic->setMembers($visible);
@@ -155,7 +155,7 @@ function submitTrainingJob($mosaicUuids, $modelWidth, $modelHeight, $strideLengt
         // copy all the annotations for each label for this mosaic to a CSV on the shared drive
         foreach ($mosaicLabelIds as $labelId) {
             // create the file for this label for this mosaic
-            $csvContents = exportRectangles($entityManager, $labelId, "PIXEL", $mosaicUuid);
+            $csvContents = exportRectangles($labelId, "PIXEL", $mosaicUuid);
             $labelCsvPath = "$modelInputMosaicDir/$labelId.csv";
             $csvFile = fopen($labelCsvPath, "w");
             fwrite($csvFile, $csvContents);

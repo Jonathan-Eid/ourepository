@@ -1,58 +1,44 @@
 <?php
 
-function processChunk($uid) {
+require_once "../apis/api_v2.php";
+require_once "../utils_v2/mosaic_utils.php";
+require_once "../util/export_labels_v2.php";
+
+function processChunk($uid, $identifier, $md5Hash, $chunk) {
     connect_our_db();
     global $our_db, $UPLOAD_DIRECTORY;
 
     if (count($_FILES) == 0) {
         error_log("ERROR, no files attached to upload!");
-        $response['err_title'] = "File Chunk Upload Failure";
-        $response['err_msg'] = "No files attached to php request.";
-        echo json_encode($response);
-
-        exit(1);
+        return responseMessage("FAILURE", "No files attached to php request.");
 
     } else if (count($_FILES) > 1) {
         error_log("ERROR, more than one file attached to upload!");
-        $response['err_title'] = "File Chunk Upload Failure";
-        $response['err_msg'] = "Multiple files attached to php request.";
-        echo json_encode($response);
-        exit(1);
+        return responseMessage("FAILURE", "Multiple files attached to php request.");
     }
 
-    if (!isset($_POST['identifier'])) {
+    if (!isset($identifier)) {
         error_log("ERROR! Missing upload identifier");
-        $response['err_title'] = "File Chunk Upload Failure";
-        $response['err_msg'] = "File identifier was missing.";
-        echo json_encode($response);
-        exit(1);
+        return responseMessage("FAILURE", "File identifier was missing.");
     }
 
-    if (!isset($_POST['md5Hash'])) {
+    if (!isset($md5Hash)) {
         error_log("ERROR! Missing upload md5_hash");
-        $response['err_title'] = "File Chunk Upload Failure";
-        $response['err_msg'] = "File md5_hash was missing.";
-        echo json_encode($response);
-        exit(1);
+        return responseMessage("FAILURE", "File md5_hash was missing.");
     }
 
-    if (!isset($_POST['chunk'])) {
+    if (!isset($chunk)) {
         error_log("ERROR! Missing upload chunk");
-        $response['err_title'] = "File Chunk Upload Failure";
-        $response['err_msg'] = "Chunk number was missing.";
-        echo json_encode($response);
-        exit(1);
+        return responseMessage("FAILURE", "Chunk number was missing.");
     }
 
-    $identifier = $_POST['identifier'];
-    $md5_hash = $_POST['md5Hash'];
-    $chunk = $_POST['chunk'];
-    $chunk_size = 0;
+    $chunkSize = 0;
 
+    // copy the file chunk to the server
     foreach ($_FILES as $file) {
         error_log("working with file: " . json_encode($file));
 
-        //overwrite chunk if it already exists due to some issue
+        // overwrite chunk if it already exists due to some issue
         $target = "$UPLOAD_DIRECTORY/$uid/$identifier";
         if (!file_exists($target)) {
             mkdir($target, 0777, true); //make the parent directory if it does not exist
@@ -64,51 +50,43 @@ function processChunk($uid) {
         //TODO: maybe test to see if move failed (i.e., upload directory was
         //moved). This shouldn't happen without concurrent uploads however.
 
-        $chunk_size = filesize($target);
-        error_log("chunk file '$target' size: " . $chunk_size);
+        $chunkSize = filesize($target);
+        error_log("chunk file '$target' size: " . $chunkSize);
     }
 
-    error_log("temp file size: $chunk_size");
-
-    //update database setting chunk as uploaded
-    //if all chunks uploaded, combine file and report progress
-    //if not all chunks uploaded, report progress
-
-    mysqli_begin_transaction($our_db, MYSQLI_TRANS_START_READ_WRITE);
-
-    $query = "SELECT uploaded_chunks, chunk_status FROM mosaics WHERE md5_hash = '$md5_hash' AND owner_id = '$uid' FOR UPDATE";
+    error_log("temp file size: $chunkSize");
+    
+    // update database as chunk status
+    
+    $query = "SELECT uploaded_chunks, chunk_status FROM mosaics WHERE md5_hash = '$md5Hash' AND owner_id = '$uid' FOR UPDATE";
     error_log($query);
-    if ($result = query_our_db($query)) {
-        $row = $result->fetch_assoc();
 
-        $db_uploaded_chunks = $row['uploaded_chunks'] + 1;
-        $db_chunk_status = $row['chunk_status'];
+    $result = query_our_db($query);
+    $row = $result->fetch_assoc();
 
-        $db_chunk_status[$chunk] = '1';
+    $dbUploadedChunks = $row['uploaded_chunks'] + 1;
+    $dbChunkStatus = $row['chunk_status'];
 
-        $query = "UPDATE mosaics SET uploaded_chunks = $db_uploaded_chunks, chunk_status = '$db_chunk_status', bytes_uploaded = bytes_uploaded + $chunk_size WHERE md5_hash = '$md5_hash' AND owner_id = '$uid'";
-        error_log($query);
-        if (!($result = query_our_db($query))) {
-            mysqli_rollback($our_db);
-        }
-    } else {
-        mysqli_rollback($our_db);
-    }
-    mysqli_commit($our_db);
+    $dbChunkStatus[$chunk] = '1';
 
-    $response['mosaic_info'] = get_mosaic_info($uid, $md5_hash);
-    $db_number_chunks = $response['mosaic_info']['number_chunks'];
+    $query = "UPDATE mosaics SET uploaded_chunks = $dbUploadedChunks, chunk_status = '$dbChunkStatus', bytes_uploaded = bytes_uploaded + $chunkSize WHERE md5_hash = '$md5Hash' AND owner_id = '$uid'";
+    error_log($query);
 
-    if ($db_uploaded_chunks == $db_number_chunks) {
-        $db_filename = $response['mosaic_info']['filename'];
-        $db_md5_hash = $response['mosaic_info']['md5_hash'];
+    // build the response object
+    $dbMosaicInfo = getMosaicInfo($uid, $md5Hash);
 
-        //create the final file
-        $target = "$UPLOAD_DIRECTORY/$uid/$db_filename";
+    // if all the chinks have been uploaded
+    $dbNumberChunks = $dbMosaicInfo['numberChunks'];
+    if ($dbUploadedChunks == $dbNumberChunks) {
+        $dbFilename = $dbMosaicInfo['filename'];
+        $dbMd5Hash = $dbMosaicInfo['md5_hash'];
+
+        // create the final file
+        $target = "$UPLOAD_DIRECTORY/$uid/$dbFilename";
         error_log("attempting to write file to '$target'");
 
         if (($fp = fopen($target, 'w')) !== false) {
-            for ($i = 0; $i < $db_number_chunks; $i++) {
+            for ($i = 0; $i < $dbNumberChunks; $i++) {
                 $source = "$UPLOAD_DIRECTORY/$uid/$identifier/$i.part";
                 error_log("appending file: '$source'");
                 fwrite($fp, file_get_contents($source));
@@ -119,46 +97,127 @@ function processChunk($uid) {
             $new_md5_hash = md5_file($target);
 
             error_log("new md5 hash:      '$new_md5_hash'");
-            error_log("expected md5 hash: '$db_md5_hash'");
+            error_log("expected md5 hash: '$dbMd5Hash'");
 
-            if ($new_md5_hash == $db_md5_hash) {
-                $query = "UPDATE mosaics SET status = 'UPLOADED' WHERE md5_hash = '$db_md5_hash' AND owner_id = '$uid'";
+            if ($new_md5_hash == $dbMd5Hash) {
+                $query = "UPDATE mosaics SET status = 'UPLOADED' WHERE md5_hash = '$dbMd5Hash' AND owner_id = '$uid'";
                 error_log($query);
                 query_our_db($query);
                 //we're golden
-                //TODO: delete the directory and parts
 
                 $upload_dir = "$UPLOAD_DIRECTORY/$uid/$identifier";
                 error_log("removing directory: '$upload_dir'");
                 // rename the temporary directory (to avoid access from other
-                // concurrent chunks uploads) and than delete it
+                // concurrent chunks uploads) and then delete it
                 if (rename($upload_dir, $upload_dir.'_UNUSED')) {
                     rrmdir($upload_dir.'_UNUSED');
                 } else {
                     rrmdir($upload_dir);
                 }
 
-
             } else {
                 error_log("ERROR! Final file had incorrect bytes, original MD5 hash and uploaded MD5 hashes do not match, some data may have been corrupted.");
-                $response['err_title'] = "File Upload Failure";
-                $response['err_msg'] = "An error occurred while putting the chunk files together to make the full uploaded file. The new full file had different bytes than the one that was originally uploaded, so some corruption may have occurred on transfer. Please delete this file, reload the webpage and retry.";
-                echo json_encode($response);
-                return false;
+                return responseMessage("FAILURE", "An error occurred while putting the chunk files together to make the full uploaded file. The new full file had different bytes than the one that was originally uploaded, so some corruption may have occurred on transfer. Please delete this file, reload the webpage and retry.");
             }
 
         } else {
             error_log("ERROR! Could not create the final file.");
-            $response['err_title'] = "File Upload Failure";
-            $response['err_msg'] = "An error occurred while putting the chunk files together to make the full uploaded file. Please delete and retry.";
-            echo json_encode($response);
-            return false;
+            $responseObject['err_title'] = "File Upload Failure";
+            return responseMessage("FAILURE", "An error occurred while putting the chunk files together to make the full uploaded file. Please delete and retry.");
         }
-
     }
-    error_log("number_uploaded $db_uploaded_chunks of $db_number_chunks");
 
-    $response['code'] = "CHUNK_UPLOADED";
-    $response['message'] = "chunk uploaded";
-    echo json_encode($response);
+    error_log("number_uploaded $dbUploadedChunks of $dbNumberChunks");
+    return responseMessage("SUCCESS", "");
+}
+
+function getMosaic($mosaicUuid) {
+    global $entityManager;
+
+    // get the mosaic
+    $mosaic = $entityManager->getRepository('Mosaic')
+        ->findOneBy(array('uuid' => $mosaicUuid));
+    $mosaicOwnerId = $mosaic->getOwnerId();
+
+    // return information about the mosaic
+    $responseObject = array();
+    $responseObject = array_merge($responseObject, $mosaic->jsonSerialize());
+
+    // filenames
+    $filename = $mosaic->getFilename();
+    $filename_base = substr($filename, 0, strrpos($filename, "."));
+    $tilingDir = "mosaics/{$mosaicOwnerId}/{$filename_base}_files";
+    $responseObject['tilingDir'] = $tilingDir;
+
+    return responseMessage("SUCCESS", $responseObject);
+}
+
+/**
+ * @throws \Doctrine\ORM\OptimisticLockException
+ * @throws \Doctrine\ORM\ORMException
+ */
+function uploadAnnotationCsv($mosaicUuid) {
+    global $entityManager;
+
+    // get the mosaic that these annotations are for
+    $mosaic = $entityManager->getRepository('Mosaic')
+        ->findOneBy(array('uuid' => $mosaicUuid));
+    $width = $mosaic->getWidth();
+    $height = $mosaic->getHeight();
+
+    // gather all the annotations in the CSV
+    $annotations_to_add = array();
+    $i = 0;
+    $header = array("x1", "y1", "x2", "y2");
+    $found_header = false;
+    if (($handle = fopen($_FILES["csv"]["tmp_name"], "r")) !== FALSE) {
+        while (($row = fgetcsv($handle, 1000, ",")) !== FALSE) {
+            // skip until the header is found
+            if (!$found_header) {
+                if ($header === $row) {
+                    $found_header = true;
+                }
+            } else {
+                foreach ($row as $k=>$value) {
+                    if ($header[$k] == 'x1' || $header[$k] == 'x2') {
+                        $annotations_to_add[$i][$header[$k]] = $value / $width;
+                    } else {
+                        $annotations_to_add[$i][$header[$k]] = $value / $height;
+                    }
+                }
+                $i++;
+            }
+        }
+        fclose($handle);
+    } else {
+        return responseMessage("FAILURE", "File not uploaded properly.");
+    }
+
+    // iterate over the annotations
+    foreach ($annotations_to_add as $annotation_to_add) {
+        // add each annotation to the database
+
+        $newRectangle = new Rectangle();
+        $newRectangle->setMosaic($mosaic);
+        $newRectangle->setX1($annotation_to_add["x1"]);
+        $newRectangle->setY1($annotation_to_add["y1"]);
+        $newRectangle->setX2($annotation_to_add["x2"]);
+        $newRectangle->setY2($annotation_to_add["y2"]);
+
+        $entityManager->persist($newRectangle);
+    }
+    $entityManager->flush();
+
+    return responseMessage("SUCCESS", "");
+}
+
+function exportLabelCsv($mosaicUuid) {
+
+    $label_id = 1;
+    $coord_type = "PIXEL";
+
+    $responseObject = array();
+    $responseObject["csvContents"] = exportRectangles($label_id, $coord_type, $mosaicUuid);
+
+    return responseMessage("SUCCESS", $responseObject);
 }

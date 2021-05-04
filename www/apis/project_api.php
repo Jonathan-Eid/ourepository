@@ -25,7 +25,7 @@ function handleProjectRequest($request_type) {
             if (!enforceAuth()) return;
 
             $uid = $_SESSION['uid'];
-            $name = $_POST['name'];
+            $mosaicName = $_POST['name'];
             $projectUuid = $our_db->real_escape_string($_POST['projectUuid']);
             $visible = $our_db->real_escape_string($_POST['visible']);
             $filename = $our_db->real_escape_string($_POST['filename']);
@@ -33,7 +33,7 @@ function handleProjectRequest($request_type) {
             $numberChunks = $our_db->real_escape_string($_POST['numberChunks']);
             $sizeBytes = $our_db->real_escape_string($_POST['sizeBytes']);
 
-            $response = createMosaic($uid, $name, $projectUuid, $visible, $filename, $md5Hash, $numberChunks, $sizeBytes);
+            $response = createMosaic($uid, $mosaicName, $projectUuid, $visible, $filename, $md5Hash, $numberChunks, $sizeBytes);
             echo $response;
             break;
 

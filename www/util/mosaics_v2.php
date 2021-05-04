@@ -28,26 +28,3 @@ function getMosaicCard($mosaic) {
 
     return $mosaicInfo;
 }
-
-function getMosaic($mosaicUuid) {
-    global $entityManager;
-
-    // TODO make sure user has access
-
-    $mosaic = $entityManager->getRepository('Mosaic')
-        ->findOneBy(array('uuid' => $mosaicUuid));
-    $mosaicOwnerId = $mosaic->getOwnerId();
-
-    // return information about the mosaic
-    $response = array();
-
-    $response = array_merge($response, $mosaic->jsonSerialize());
-
-    // filenames
-    $filename = $mosaic->getFilename();
-    $filename_base = substr($filename, 0, strrpos($filename, "."));
-    $tilingDir = "mosaics/{$mosaicOwnerId}/{$filename_base}_files";
-    $response['tilingDir'] = $tilingDir;
-
-    return $response;
-}

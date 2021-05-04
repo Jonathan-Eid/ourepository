@@ -150,7 +150,8 @@ function export_polygons($label_id, $mosaic_id, $coord_type) {
 
 }
 
-function exportRectangles($entityManager, $label_id, $coord_type, $mosaicUuid) {
+function exportRectangles($label_id, $coord_type, $mosaicUuid) {
+    global $entityManager;
 
     $mosaic = $entityManager->getRepository('Mosaic')
         ->findOneBy(array('uuid' => $mosaicUuid));
