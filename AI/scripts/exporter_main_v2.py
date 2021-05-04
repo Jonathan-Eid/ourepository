@@ -22,7 +22,8 @@ configuration and a trained checkpoint. Outputs associated checkpoint files,
 a SavedModel, and a copy of the model config.
 
 
-# TODO Flags must be adjusted a bit.
+TODO Flags must be adjusted a bit for which are required and what is necessary for the file structure regarding
+organizations, projects, etc.
 
        USAGE: exporter_main_v2.py [flags]
 flags:
@@ -78,10 +79,12 @@ TODO: The following flag may be kept or removed depending on how we want to hand
 import logging
 import os
 
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'  # suppress TensorFlow logging
+
 from absl import app
 from absl import flags
 
-import tensorflow.compat.v2 as tf
+import tensorflow as tf
 from google.protobuf import text_format
 from object_detection import exporter_lib_v2
 
@@ -89,8 +92,6 @@ from scripts.util.edit_pipeline_config import load_config
 from scripts.util.file_utils import create_directory_if_not_exists
 
 from scripts import ROOT_DIR
-
-tf.enable_v2_behavior()
 
 logger = logging.getLogger(__name__)
 
@@ -130,10 +131,6 @@ flags.DEFINE_string('side_input_names', '',
                     'assuming the names will be a comma-separated list of '
                     'strings. This flag is required if using side inputs.')
 
-# flags.mark_flag_as_required('pipeline_config_path')
-# flags.mark_flag_as_required('trained_checkpoint_dir')
-# flags.mark_flag_as_required('output_directory')
-
 # NEW FLAGS
 
 flags.DEFINE_string(
@@ -150,6 +147,9 @@ flags.DEFINE_string(
 
 def main(_):
     # TODO what flags should be required?
+    # flags.mark_flag_as_required('pipeline_config_path')
+    # flags.mark_flag_as_required('trained_checkpoint_dir')
+    # flags.mark_flag_as_required('output_directory')
 
     # path to directory containing the specific user-trained model for this mosaic
     trained_mosaic_model_dir = os.path.join(ROOT_DIR, 'models', FLAGS.name, FLAGS.model_name)
@@ -174,6 +174,7 @@ def main(_):
     text_format.Merge(FLAGS.config_override, pipeline_config)
 
     # export the model
+    logger.info(f'Model export has started...')
     exporter_lib_v2.export_inference_graph(
         FLAGS.input_type, pipeline_config, trained_mosaic_model_dir,
         mosaic_model_dir, FLAGS.use_side_inputs, FLAGS.side_input_shapes,

@@ -15,7 +15,8 @@
 # ==============================================================================
 
 """
-# TODO Flags must be adjusted a bit.
+TODO Flags must be adjusted a bit for which are required and what is necessary for the file structure regarding
+organizations, projects, etc.
 
        USAGE: model_main_tf2.py [flags]
 flags:
@@ -69,15 +70,16 @@ model_main_tf2.py:
     (default: 'false')
 """
 
+import logging
 import os
 import shutil
 import sys
 
-from absl import flags
-import tensorflow.compat.v2 as tf
-from object_detection import model_lib_v2
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'  # suppress TensorFlow logging
 
-import logging
+from absl import flags
+import tensorflow as tf
+from object_detection import model_lib_v2
 
 from scripts.util.download_model import download_and_unpack_model
 from scripts.util.edit_pipeline_config import edit_pipeline_config
@@ -85,7 +87,6 @@ from scripts.util.file_utils import create_directory_if_not_exists, full_path
 
 from scripts import ROOT_DIR
 
-# TODO change TF logging. Do not know how to make it use this logger. May have to configure separately.
 logger = logging.getLogger(__name__)
 
 flags.DEFINE_string('pipeline_config_path', None, 'Path to pipeline config '
@@ -152,7 +153,6 @@ FLAGS = flags.FLAGS
 
 
 def main(unused_argv):
-    # TODO what flags should be required?
     # TODO how to handle checkpoint
 
     # pretrained model from TensorFlow Object Detection model zoo
@@ -172,11 +172,14 @@ def main(unused_argv):
     mosaic_model_dir = os.path.join(mosaic_models_dir, FLAGS.model_name)
     if os.path.exists(mosaic_model_dir):
         if FLAGS.continue_from_checkpoint:
-            logger.error(f'Cannot find {full_path(mosaic_model_dir)}')
-            sys.exit(1)
+            logger.info(f'Continuing from checkpoint at {full_path(mosaic_model_dir)}')
         else:
             shutil.rmtree(mosaic_model_dir)
             logger.info(f'Removed {full_path(mosaic_model_dir)}')
+    else:
+        if FLAGS.continue_from_checkpoint:
+            logger.error(f'Cannot find {full_path(mosaic_model_dir)}')
+            sys.exit(1)
 
     create_directory_if_not_exists(mosaic_model_dir)
 
@@ -185,6 +188,7 @@ def main(unused_argv):
     pipeline_config_path = edit_pipeline_config(pretrained_model_dir, mosaic_model_dir, num_classes, mosaic_annotations_dir)
 
 
+    # TODO what flags should be required
     # flags.mark_flag_as_required('model_dir')
     # flags.mark_flag_as_required('pipeline_config_path')
     tf.config.set_soft_device_placement(True)
@@ -213,7 +217,7 @@ def main(unused_argv):
         else:
             strategy = tf.compat.v2.distribute.MirroredStrategy()
 
-
+        logger.info(f'Model training has started...')
         with strategy.scope():
             model_lib_v2.train_loop(
                 pipeline_config_path=pipeline_config_path,
@@ -222,6 +226,7 @@ def main(unused_argv):
                 use_tpu=FLAGS.use_tpu,
                 checkpoint_every_n=FLAGS.checkpoint_every_n,
                 record_summaries=FLAGS.record_summaries)
+        logger.info(f'Model training completed')
 
 
 if __name__ == '__main__':

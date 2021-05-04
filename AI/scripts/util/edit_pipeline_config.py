@@ -10,6 +10,8 @@ import logging
 import os
 import sys
 
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'  # suppress TensorFlow logging
+
 import tensorflow as tf
 from google.protobuf import text_format
 from object_detection.protos import pipeline_pb2

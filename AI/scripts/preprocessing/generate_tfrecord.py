@@ -9,10 +9,10 @@ import logging
 import os
 import io
 
-import tensorflow.compat.v1 as tf
-from object_detection.utils import dataset_util, label_map_util
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'  # suppress TensorFlow logging
 
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'  # Suppress TensorFlow logging (1)
+import tensorflow as tf
+from object_detection.utils import dataset_util, label_map_util
 
 logger = logging.getLogger(__name__)
 

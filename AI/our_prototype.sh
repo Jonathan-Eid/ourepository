@@ -40,20 +40,18 @@
 
 ## RUN TENSORFLOW JOB ##
 
-# get positional arguments 
+# get positional arguments
 # to pass job params to python scripts
 
 crop_args="default"
 train_args="default"
 
-for args in "$@" 
+for args in "$@"
 do
-	crop_args=$1
-	train_args=$2
+        crop_args=$1
+        train_args=$2
 done
 
-#echo $crop_args
-#echo $train_args
 
 # navigate to AI dir
 PATH_TO_AI="/home/jtm5356/ourepository/AI"
@@ -71,6 +69,7 @@ then
 	python -m scripts.model_main_tf2 $train_args
 else
 	echo "Job failure while attempting to crop mosaic!"
+	exit 1
 fi
 
 # export model
@@ -79,6 +78,7 @@ then
 	python -m scripts.exporter_main_v2
 else
 	echo "Job failure while attempting to train model!"
+	exit 1
 fi
 
 ## evaluate
@@ -89,4 +89,6 @@ then
 	echo "finished!"
 else
 	echo "Job failure while attempting to export model!"
+	exit 1
 fi
+
