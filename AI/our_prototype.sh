@@ -66,12 +66,27 @@ cd $PATH_TO_AI
 python -m scripts.preprocessing.crop $crop_args
 
 # begin training
-python -m scripts.model_main_tf2 $train_args
+if [$? -eq 0]
+then
+	python -m scripts.model_main_tf2 $train_args
+else
+	echo "Job failure while attempting to crop mosaic!"
+fi
 
 # export model
-python -m scripts.exporter_main_v2
+if [$? -eq 0]
+then
+	python -m scripts.exporter_main_v2
+else
+	echo "Job failure while attempting to train model!"
+fi
 
 ## evaluate
 #python -m scripts.evaluation.inference
 
-echo "finished!"
+if [$? -eq 0]
+then
+	echo "finished!"
+else
+	echo "Job failure while attempting to export model!"
+fi
