@@ -10,7 +10,7 @@ class OrganizationApiService {
       method: 'post',
       url,
       data: new URLSearchParams({
-        request: "CREATE_PROJ",
+        request: "CREATE_PROJECT",
         name,
         org
       }),
@@ -34,12 +34,12 @@ class OrganizationApiService {
     })
 }
 
-  getOrgByUUID(uuid){
+  getOrganization(uuid){
     return axios({
         method: 'get',
         url ,
         params: {
-            request:"GET_AUTH_ORG_BY_UUID",
+            request:"GET_ORGANIZATION",
             uuid
         },
         withCredentials: true,
@@ -65,7 +65,7 @@ class OrganizationApiService {
       method: 'get',
       url,
       params: {
-        request: "HAS_ORG_PERMISSION",
+        request: "HAS_ORGANIZATION_PERMISSION",
         permission,
         organization
       },
@@ -79,7 +79,7 @@ class OrganizationApiService {
       method: 'get',
       url,
       params: {
-        request: "GET_ORG_ROLES",
+        request: "GET_ORGANIZATION_ROLES",
         organization
       },
       withCredentials: true,
@@ -92,7 +92,7 @@ class OrganizationApiService {
       method: 'get',
       url,
       params: {
-        request: "GET_ORG_USERS",
+        request: "GET_ORGANIZATION_USERS",
         organization
       },
       withCredentials: true,

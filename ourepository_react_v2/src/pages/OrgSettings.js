@@ -32,7 +32,7 @@ const OrgSettingsPage = (props) => {
   React.useEffect(() => {
 
 
-    organizationApiService.getOrgByUUID(id).then((data) => {
+    organizationApiService.getOrganization(id).then((data) => {
       const resp = data.data
       if(resp.code == "ORGS_RECEIVED"){
           let org = resp.message

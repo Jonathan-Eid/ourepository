@@ -5,8 +5,6 @@ require_once "../api_functions/mosaic_api_functions.php";
 
 function handleMosaicRequest($request_type) {
 
-    global $entityManager;
-
     switch ($request_type) {
 
         case "UPLOAD_CHUNK":
