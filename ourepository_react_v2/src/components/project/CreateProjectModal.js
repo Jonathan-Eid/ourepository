@@ -2,14 +2,15 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
 import Avatar from "@material-ui/core/Avatar";
-import BusinessIcon from "@material-ui/icons/Business";
+import FolderIcon from '@material-ui/icons/Folder';
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
 import Container from "@material-ui/core/Container";
-import {FormControlLabel, FormLabel, Radio, RadioGroup} from "@material-ui/core";
+import {FormControlLabel, Radio, RadioGroup} from "@material-ui/core";
 import userApiService from "../../services/userApi";
+import emitter from "../../services/emitter";
 import {useNavigate} from "react-router-dom";
 
 function getModalStyle() {
@@ -56,7 +57,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function CreateOrganizationModal({setOpen}) {
+export default function CreateProjectModal({setOpen}) {
 
   const navigate = useNavigate();
 
@@ -64,20 +65,20 @@ export default function CreateOrganizationModal({setOpen}) {
   // getModalStyle is not a pure function, we roll the style only on the first render
   const [modalStyle] = React.useState(getModalStyle);
 
-  const [organizationName, setOrganizationName] = React.useState(null)
+  const [projectName, setProjectName] = React.useState(null)
   const [visible, setVisible] = React.useState(false)
 
   const submit = async (event) => {
     try {
       event.preventDefault();
 
-      const res = await userApiService.createOrg(organizationName, visible);
-      if (res.data.code === "ORG_CREATED") {
-        setOpen(false);
-        navigate(`/app/organization/${res.data.message.organizationUuid}`);
-      } else {
-        alert("An error occurred");
-      }
+      // const res = await userApiService.createOrg(projectName, visible);
+      // if (res.data.code === "ORG_CREATED") {
+      //   setOpen(false);
+      //   navigate(`/app/project/${res.data.message.projectUuid}`);
+      // } else {
+      //   alert("An error occurred");
+      // }
     } catch (err) {
       console.log(err);
     }
@@ -86,10 +87,10 @@ export default function CreateOrganizationModal({setOpen}) {
   const body = (
     <div style={modalStyle} className={classes.paper}>
       <Avatar className={classes.avatar}>
-        <BusinessIcon/>
+        <FolderIcon/>
       </Avatar>
       <Typography component="h1" variant="h5">
-        {"Create organization"}
+        {"Create project"}
       </Typography>
       <form className={classes.form} onSubmit={submit}>
         <TextField
@@ -97,14 +98,13 @@ export default function CreateOrganizationModal({setOpen}) {
           margin="normal"
           required
           fullWidth
-          id="organization-name"
-          label="Organization Name"
-          name="organization-name"
+          id="project-name"
+          label="Project Name"
+          name="project-name"
           autoFocus
-          onInput={e => setOrganizationName(e.target.value)}
+          onInput={e => setProjectName(e.target.value)}
         />
-        <FormLabel>Visible</FormLabel>
-        <RadioGroup name="visible" value={visible} defaultValue={false} onChange={e => setVisible(e.target.value === "true")}>
+        <RadioGroup className={classes.form} name="visible" value={visible} defaultValue={false} onChange={e => setVisible(e.target.value === "true")}>
           <FormControlLabel value={false} control={<Radio />} label="No" />
           <FormControlLabel value={true} control={<Radio />} label="Yes" />
         </RadioGroup>
@@ -115,7 +115,7 @@ export default function CreateOrganizationModal({setOpen}) {
           color="primary"
           className={classes.submit}
         >
-          Create organization
+          Create project
         </Button>
       </form>
     </div>
