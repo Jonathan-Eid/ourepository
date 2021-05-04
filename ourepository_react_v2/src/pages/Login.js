@@ -44,12 +44,12 @@ const LoginPage = (props) => {
       event.preventDefault();
 
       const response = await userApiService.loginUser(email, password);
-      if (response.data.code === "hash_matches") {
-        // localStorage.setItem("user", "true")
-        // emitter.emit("storage")
+      if (response.data.code === "SUCCESS") {
         navigate('/');
-      } else {
+      } else if (response.data.code === "WRONG_PASSWORD") {
         alert("Incorrect password");
+      } else {
+        alert("Something went wrong");
       }
     } catch (err) {
       console.log(err);

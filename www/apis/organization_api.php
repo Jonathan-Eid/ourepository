@@ -1,7 +1,6 @@
 <?php
 
 require_once "api_v2.php";
-require_once "../bootstrap.php";
 
 function handleOrganizationRequest($request_type) {
 
@@ -29,7 +28,7 @@ function handleOrganizationRequest($request_type) {
 
             try {
                 $entityManager->flush();
-                echo rsp_msg("PROJ_CREATED", "project created");
+                echo responseMessage("PROJ_CREATED", "project created");
 
             } catch (Exception $e) {
                 echo json_encode("error in creating project");
@@ -60,7 +59,7 @@ function handleOrganizationRequest($request_type) {
             try {
                 $entityManager->flush();
 
-                echo rsp_msg("USER_ADDED", "user_added");
+                echo responseMessage("USER_ADDED", "user_added");
 
             } catch (Exception $e) {
                 echo json_encode("error in adding user to org");
@@ -80,12 +79,13 @@ function handleOrganizationRequest($request_type) {
                 $query = $entityManager->createQuery('SELECT o FROM Organization o JOIN o.memberRoles m WHERE m.member = ' . $uid . ' AND  o.uuid = \'' . $oid . '\'');
                 $orgs = $query->getResult();
                 if (!isset($orgs)) {
-                    echo rsp_msg("ORGS_RECEIVED_FAILED", "no orgs were returned in the query");
+                    echo responseMessage("ORGS_RECEIVED_FAILED", "no orgs were returned in the query");
                     return;
                 }
-                echo rsp_msg("ORGS_RECEIVED", $orgs[0]);
-            } catch (Exception $e) {
-                echo 'Caught exception: ', $e->getMessage(), "\n";
+                echo responseMessage("ORGS_RECEIVED", $orgs[0]);
+            } catch (Throwable $t) {
+                error_log($t->getMessage());
+                echo responseMessage("ERROR", "something went wrong");
             }
 
             break;
@@ -106,9 +106,10 @@ function handleOrganizationRequest($request_type) {
                     array_push($response["projects"], $project->jsonSerialize());
                 }
 
-                echo rsp_msg("PROJECTS_RECEIVED", $response);
-            } catch (Exception $e) {
-                echo 'Caught exception: ', $e->getMessage(), "\n";
+                echo responseMessage("PROJECTS_RECEIVED", $response);
+            } catch (Throwable $t) {
+                error_log($t->getMessage());
+                echo responseMessage("ERROR", "something went wrong");
             }
             break;
 
@@ -129,10 +130,10 @@ function handleOrganizationRequest($request_type) {
 
                 $acls = $query->getResult();
                 if (!isset($acls)) {
-                    echo rsp_msg("NO_ORG_PERMISSION", "The user does not have the proper permissions");
+                    echo responseMessage("NO_ORG_PERMISSION", "The user does not have the proper permissions");
                     return;
                 }
-                echo rsp_msg("HAS_ORG_PERMISSION", $acls);
+                echo responseMessage("HAS_ORG_PERMISSION", $acls);
             } catch (Exception $e) {
                 echo 'Caught exception: ', $e->getMessage(), "\n";
 
@@ -154,12 +155,13 @@ function handleOrganizationRequest($request_type) {
 
                 $roles = $query->getResult();
                 if (!isset($roles)) {
-                    echo rsp_msg("NO_ORG_ROLE", "Failed to retrieves roles from organization");
+                    echo responseMessage("NO_ORG_ROLE", "Failed to retrieves roles from organization");
                     return;
                 }
-                echo rsp_msg("ORG_ROLES_RECEIVED", $roles);
-            } catch (Exception $e) {
-                echo 'Caught exception: ', $e->getMessage(), "\n";
+                echo responseMessage("ORG_ROLES_RECEIVED", $roles);
+            } catch (Throwable $t) {
+                error_log($t->getMessage());
+                echo responseMessage("ERROR", "something went wrong");
             }
 
             break;
@@ -176,12 +178,13 @@ function handleOrganizationRequest($request_type) {
 
                 $users = $query->getResult();
                 if (!isset($users)) {
-                    echo rsp_msg("NO_ORG_USER", "Failed to retrieves users from organization");
+                    echo responseMessage("NO_ORG_USER", "Failed to retrieves users from organization");
                     return;
                 }
-                echo rsp_msg("ORG_USERS_RECEIVED", $users);
-            } catch (Exception $e) {
-                echo 'Caught exception: ', $e->getMessage(), "\n";
+                echo responseMessage("ORG_USERS_RECEIVED", $users);
+            } catch (Throwable $t) {
+                error_log($t->getMessage());
+                echo responseMessage("ERROR", "something went wrong");
             }
             break;
 
@@ -197,10 +200,10 @@ function handleOrganizationRequest($request_type) {
 
                 $roles = $query->getResult();
                 if (!isset($roles)) {
-                    echo rsp_msg("NO_ROLE_PERMISSIONS", "Failed to retrieve permissions for this role");
+                    echo responseMessage("NO_ROLE_PERMISSIONS", "Failed to retrieve permissions for this role");
                     return;
                 }
-                echo rsp_msg("ROLE_PERMISSIONS_RECEIVED", $roles);
+                echo responseMessage("ROLE_PERMISSIONS_RECEIVED", $roles);
             } catch (Exception $e) {
                 echo 'Caught exception: ', $e->getMessage(), "\n";
 
@@ -258,7 +261,7 @@ function handleOrganizationRequest($request_type) {
                     }
                 }
 
-                echo rsp_msg("ROLE_PERMISSIONS_CHANGED", $roles);
+                echo responseMessage("ROLE_PERMISSIONS_CHANGED", $roles);
             } catch (Exception $e) {
                 error_log(json_encode($e));
             }
@@ -315,7 +318,7 @@ function handleOrganizationRequest($request_type) {
                     }
                 }
 
-                echo rsp_msg("ROLE_ADDED", $roles);
+                echo responseMessage("ROLE_ADDED", $roles);
             } catch (Exception $e) {
                 error_log(json_encode($e));
             }
@@ -341,7 +344,7 @@ function handleOrganizationRequest($request_type) {
                 $entityManager->remove($role);
                 $entityManager->flush();
 
-                echo rsp_msg("ROLE_DELETED", $role);
+                echo responseMessage("ROLE_DELETED", $role);
             } catch (Exception $e) {
                 error_log(json_encode($e));
             }

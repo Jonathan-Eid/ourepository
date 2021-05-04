@@ -4,8 +4,8 @@ $cwd[__FILE__] = __FILE__;
 if (is_link($cwd[__FILE__])) $cwd[__FILE__] = readlink($cwd[__FILE__]);
 $cwd[__FILE__] = dirname($cwd[__FILE__]);
 
-require_once($cwd[__FILE__] . "/../settings.php");
-require_once($cwd[__FILE__] . "/../../db/my_query.php");
+require_once "../settings.php";
+require_once "../../db/my_query.php";
 require_once "../bootstrap.php";
 
 /**
@@ -36,45 +36,32 @@ function rrmdir($dir) {
 }
 
 
-function get_mosaic_info($uid, $md5_hash) {
-    $query = "SELECT id, filename, identifier, uploaded_chunks, number_chunks, size_bytes, bytes_uploaded, chunk_status, tiling_progress, status FROM mosaics WHERE md5_hash = '$md5_hash' AND owner_id = '$uid'";
+function getMosaicInfo($uid, $md5Hash) {
+    $query = "SELECT id, filename, identifier, uploaded_chunks, number_chunks, size_bytes, bytes_uploaded, chunk_status, tiling_progress, status FROM mosaics WHERE md5_hash = '$md5Hash' AND owner_id = '$uid'";
     $result = query_our_db($query);
     $row = $result->fetch_assoc();
-    $row['md5_hash'] = $md5_hash;
+    $row['md5_hash'] = $md5Hash;
 
     if ($row['status'] == 'UPLOADED') {
-        $queue_query = "SELECT count(id) FROM mosaics WHERE id < " . $row['id'] . " AND status = 'UPLOADED'";
-        $queue_result = query_our_db($queue_query);
-        $queue_row = $queue_result->fetch_assoc();
-        $row['queue_position'] = $queue_row['count(id)'] + 1;
+        $queueQuery = "SELECT count(id) FROM mosaics WHERE id < " . $row['id'] . " AND status = 'UPLOADED'";
+        $queueResult = query_our_db($queueQuery);
+        $queueRow = $queueResult->fetch_assoc();
+        $row['queue_position'] = $queueRow['count(id)'] + 1;
     }
 
     return $row;
 }
 
-//function initiate_upload($owner_id, $filename, $identifier, $number_chunks, $size_bytes, $md5_hash) {
-function initiate_upload($uid, $entityManager) {
+/**
+ * @throws \Doctrine\ORM\OptimisticLockException
+ * @throws \Doctrine\ORM\ORMException
+ */
+function initiateUpload($uid, $name, $projectUuid, $visible, $filename, $md5Hash, $numberChunks, $sizeBytes) {
     connect_our_db();
-    global $our_db, $UPLOAD_DIRECTORY;
-    error_log(json_encode($_POST));
-    error_log(json_encode($our_db));
+    global $entityManager;
 
-    $name = $_POST['name'];
-    $projUuid = $our_db->real_escape_string($_POST['proj']);
-    $visible = $our_db->real_escape_string($_POST['vis']);
-//    $file = $our_db->real_escape_string($_POST['file']);
-    $filename = $our_db->real_escape_string($_POST['filename']);
-    $md5_hash = $our_db->real_escape_string($_POST['md5Hash']);
-    $number_chunks = $our_db->real_escape_string($_POST['numberChunks']);
-    $size_bytes = $our_db->real_escape_string($_POST['sizeBytes']);
     $existingProj=$entityManager->getRepository('Project')
-        ->findOneBy(array('uuid' => $projUuid));
-
-//    $filename = $our_db->real_escape_string($_POST['filename']);
-//    $identifier = $our_db->real_escape_string($_POST['identifier']);
-//    $number_chunks = $our_db->real_escape_string($_POST['number_chunks']);
-//    $size_bytes = $our_db->real_escape_string($_POST['size_bytes']);
-//    $md5_hash = $our_db->real_escape_string($_POST['md5_hash']);
+        ->findOneBy(array('uuid' => $projectUuid));
 
     $filename = str_replace(" ", "_", $filename);
     if (!preg_match("/^[a-zA-Z0-9_.-]*$/", $filename)) {
@@ -86,7 +73,6 @@ function initiate_upload($uid, $entityManager) {
         echo json_encode($response);
         exit(1);
     }
-
 
     //options:
     //  1. file does not exist, insert into database -- start upload
@@ -101,7 +87,7 @@ function initiate_upload($uid, $entityManager) {
     if ($row == NULL) {
         //  1. file does not exist, insert into database -- start upload
         $chunk_status = "";
-        for ($i = 0; $i < $number_chunks; $i++) {
+        for ($i = 0; $i < $numberChunks; $i++) {
             $chunk_status .= '0';
         }
 
@@ -113,12 +99,12 @@ function initiate_upload($uid, $entityManager) {
         $newMosaic->setRoles(true);
         $newMosaic->setProject($existingProj);
         $newMosaic->setOwnerId($uid);
-        $newMosaic->setNumberChunks($number_chunks);
+        $newMosaic->setNumberChunks($numberChunks);
         $newMosaic->setUploadedChunks(0);
         $newMosaic->setChunkStatus($chunk_status);
-        $newMosaic->setSizeBytes($size_bytes);
+        $newMosaic->setSizeBytes($sizeBytes);
         $newMosaic->setBytesUploaded(0);
-        $newMosaic->setMd5Hash($md5_hash);
+        $newMosaic->setMd5Hash($md5Hash);
         $newMosaic->setTilingProgress(0);
         $newMosaic->setStatus("UPLOADING");
         $newMosaic->setHeight(0);
@@ -133,19 +119,16 @@ function initiate_upload($uid, $entityManager) {
         $entityManager->persist($newMosaic);
         $entityManager->flush();
 
-//        $query = "INSERT INTO mosaics SET owner_id = 'uid', name = '$filename', identifier = '$identifier', size_bytes = '$size_bytes', number_chunks = '$number_chunks', md5_hash='$md5_hash', uploaded_chunks = 0, chunk_status = '$chunk_status', status = 'UPLOADING'";
-//        error_log($query);
-//        query_our_db($query);
-        $response['mosaic_info'] = get_mosaic_info($uid, $md5_hash);
+        $response['mosaic_info'] = get_mosaic_info($uid, $md5Hash);
         $response['code'] = "MOS_CREATED";
         $response['message'] = "mosaic created";
         echo json_encode($response);
 
     } else {
-        $db_md5_hash = $row['md5_hash'];
-        error_log($db_md5_hash);
-        error_log($md5_hash);
-        if ($db_md5_hash != $md5_hash) {
+        $dbMd5Hash = $row['md5_hash'];
+        error_log($dbMd5Hash);
+        error_log($md5Hash);
+        if ($dbMd5Hash != $md5Hash) {
             //  4. file does exist but with different hash -- error message
 
             error_log("ERROR! file exists with different md5 hash");
@@ -165,13 +148,13 @@ function initiate_upload($uid, $entityManager) {
             return false;
 
         } else {
-            $db_number_chunks = $row['number_chunks'];
-            $db_uploaded_chunks = $row['uploaded_chunks'];
-            $db_chunk_status = $row['chunk_status'];
+            $dbNumberChunks = $row['number_chunks'];
+            $dbUploadedChunks = $row['uploaded_chunks'];
+            $dbChunkStatus = $row['chunk_status'];
 
             //  2. file does exist and has not finished uploading -- restart upload
 
-            $response['mosaic_info'] = get_mosaic_info($uid, $md5_hash);
+            $response['mosaic_info'] = getMosaicInfo($uid, $md5Hash);
             $response['html'] = "success!";
             error_log(json_encode($response));
             echo json_encode($response);
@@ -389,5 +372,3 @@ function upload_annotation_csv($entityManager) {
     }
     $entityManager->flush();
 }
-
-?>

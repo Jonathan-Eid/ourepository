@@ -58,7 +58,7 @@ handleOrganizationRequest($request_type);
 handleProjectRequest($request_type);
 handleUserRequest($request_type);
 
-function rsp_msg($code, $message) {
+function responseMessage($code, $message) {
     return json_encode(["code" => $code, "message" => $message]);
 }
 

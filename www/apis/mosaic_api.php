@@ -1,7 +1,6 @@
 <?php
 
 require_once "api_v2.php";
-require_once "../bootstrap.php";
 
 function handleMosaicRequest($request_type) {
 
@@ -12,21 +11,26 @@ function handleMosaicRequest($request_type) {
         case "UPLOAD_CHUNK":
             if (!enforceAuth()) return;
 
-            $uid = $_SESSION['uid'];
-            process_chunk($uid);
+            try {
+                $uid = $_SESSION['uid'];
+
+
+                processChunk($uid);
+            } catch (Exception $e) {
+
+            }
 
             break;
 
         case "GET_MOSAIC":
             if (!enforceAuth()) return;
 
-            $mosaicUuid = $_GET['mosaicUuid'];
-
             try {
-                $response = getMosaic($entityManager, $mosaicUuid);
-                echo rsp_msg("MOSAIC_RECEIVED", $response);
+                $mosaicUuid = $_GET['mosaicUuid'];
+                $response = getMosaic($mosaicUuid);
+                echo responseMessage("MOSAIC_RECEIVED", $response);
             } catch (Exception $e) {
-                echo rsp_msg("MOSAIC_RECEIVED_FAILED", "failed to retrieve mosaic data");
+                echo responseMessage("MOSAIC_RECEIVED_FAILED", "failed to retrieve mosaic data");
                 echo 'Caught exception: ', $e->getMessage(), "\n";
             }
 
@@ -37,9 +41,9 @@ function handleMosaicRequest($request_type) {
 
             try {
                 upload_annotation_csv($entityManager);
-                echo rsp_msg("ANNOTATION_CSV_UPLOADED", "CSV containing annotations successfully uploaded");
+                echo responseMessage("ANNOTATION_CSV_UPLOADED", "CSV containing annotations successfully uploaded");
             } catch (Exception $e) {
-                echo rsp_msg("ANNOTATION_CSV_UPLOADED_FAILED", "failed to upload CSV with annotations");
+                echo responseMessage("ANNOTATION_CSV_UPLOADED_FAILED", "failed to upload CSV with annotations");
                 echo 'Caught exception: ', $e->getMessage(), "\n";
             }
 
@@ -71,9 +75,9 @@ function handleMosaicRequest($request_type) {
 
                 $response = array();
                 $response["csv_contents"] = $csv_contents;
-                echo rsp_msg("EXPORT_RECTANGLES_SUCCESS", $response);
+                echo responseMessage("EXPORT_RECTANGLES_SUCCESS", $response);
             } catch (Exception $e) {
-                echo rsp_msg("EXPORT_RECTANGLES_FAILURE", "failed to upload CSV with annotations");
+                echo responseMessage("EXPORT_RECTANGLES_FAILURE", "failed to upload CSV with annotations");
                 echo 'Caught exception: ', $e->getMessage(), "\n";
             }
 
@@ -82,7 +86,7 @@ function handleMosaicRequest($request_type) {
         case "INFERENCE_MOSAIC":
             if (!enforceAuth()) return;
 
-            echo rsp_msg("PLACEHOLDER", "lorem ipsum");
+            echo responseMessage("PLACEHOLDER", "lorem ipsum");
 
             break;
     }

@@ -64,7 +64,7 @@ class UserApiService {
       method: 'get',
       url,
       params: {
-        request: "GET_ORGS"
+        request: "GET_ORGANIZATIONS"
       },
       withCredentials: true,
       responseType: 'text'
@@ -76,7 +76,7 @@ class UserApiService {
       method: 'get',
       url,
       params: {
-        request: "GET_SIDEBAR_ORGS"
+        request: "GET_SIDEBAR_ORGANIZATIONS"
       },
       withCredentials: true,
       responseType: 'text'
@@ -88,7 +88,7 @@ class UserApiService {
       method: 'post',
       url,
       data: new URLSearchParams({
-        request: "CREATE_ORG",
+        request: "CREATE_ORGANIZATION",
         name,
         visible,
       }),

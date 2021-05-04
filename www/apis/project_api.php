@@ -1,7 +1,6 @@
 <?php
 
 require_once "api_v2.php";
-require_once "../bootstrap.php";
 
 function handleProjectRequest($request_type) {
 
@@ -25,9 +24,10 @@ function handleProjectRequest($request_type) {
                     array_push($response["mosaics"], getMosaicCard($mosaic));
                 }
 
-                echo rsp_msg("MOSAICS_RECEIVED", $response);
-            } catch (Exception $e) {
-                echo 'Caught exception: ', $e->getMessage(), "\n";
+                echo responseMessage("MOSAICS_RECEIVED", $response);
+            } catch (Throwable $t) {
+                error_log($t->getMessage());
+                echo responseMessage("ERROR", "something went wrong");
             }
 
             break;
@@ -35,9 +35,18 @@ function handleProjectRequest($request_type) {
         case "CREATE_MOSAIC":
             if (!enforceAuth()) return;
 
-            $uid = $_SESSION['uid'];
             try {
-                initiate_upload($uid, $entityManager);
+                global $our_db;
+                $uid = $_SESSION['uid'];
+                $name = $_POST['name'];
+                $projectUuid = $our_db->real_escape_string($_POST['projectUuid']);
+                $visible = $our_db->real_escape_string($_POST['visible']);
+                $filename = $our_db->real_escape_string($_POST['filename']);
+                $md5Hash = $our_db->real_escape_string($_POST['md5Hash']);
+                $numberChunks = $our_db->real_escape_string($_POST['numberChunks']);
+                $sizeBytes = $our_db->real_escape_string($_POST['sizeBytes']);
+
+                initiateUpload($uid, $name, $projectUuid, $visible, $filename, $md5Hash, $numberChunks, $sizeBytes);
             } catch (Exception $e) {
                 echo json_encode("error in creating mosaic");
                 echo 'Caught exception: ', $e->getMessage(), "\n";
@@ -49,10 +58,21 @@ function handleProjectRequest($request_type) {
             if (!enforceAuth()) return;
 
             try {
-                submit_training_job($entityManager);
-                echo rsp_msg("SUBMIT_TRAINING_JOB_SUCCESS", "successfully submitted training job");
+                // crop phase
+                $mosaicUuids = explode(",", $_POST["mosaicUuids"]);
+                $modelWidth = $_POST['modelWidth'];
+                $modelHeight = $_POST['modelHeight'];
+                $strideLength = $_POST['strideLength'];
+                $ratio = $_POST['ratio'];
+
+                // train phase
+                $modelName = $_POST['modelName'];
+                $continueFromCheckpoint = $_POST['continueFromCheckpoint'];
+
+                submitTrainingJob($mosaicUuids, $modelWidth, $modelHeight, $strideLength, $ratio, $modelName, $continueFromCheckpoint);
+                echo responseMessage("SUBMIT_TRAINING_JOB_SUCCESS", "successfully submitted training job");
             } catch (Exception $e) {
-                echo rsp_msg("SUBMIT_TRAINING_JOB_FAILURE", "failed to submit training job");
+                echo responseMessage("SUBMIT_TRAINING_JOB_FAILURE", "failed to submit training job");
                 echo 'Caught exception: ', $e->getMessage(), "\n";
             }
 
