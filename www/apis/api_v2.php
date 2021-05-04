@@ -53,16 +53,21 @@ if (isset($_POST['request'])) {
     return;
 }
 
-handleMosaicRequest($request_type);
-handleOrganizationRequest($request_type);
-handleProjectRequest($request_type);
-handleUserRequest($request_type);
+try {
+    handleMosaicRequest($request_type);
+    handleOrganizationRequest($request_type);
+    handleProjectRequest($request_type);
+    handleUserRequest($request_type);
+} catch (Throwable $t) {
+    error_log($t->getMessage());
+    echo responseMessage("ERROR", "something went wrong");
+}
 
 function responseMessage($code, $message) {
     return json_encode(["code" => $code, "message" => $message]);
 }
 
-function enforceAuth() {
+function enforceAuth(): bool {
     if ($_SESSION["id"] != session_id()) {
         echo json_encode("USER NOT AUTHENTICATED");
         return false;

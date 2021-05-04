@@ -1,90 +1,80 @@
 <?php
 
 require_once "api_v2.php";
-require_once "../util_v2/user_utils.php";
+require_once "../api_functions/user_api_functions.php";
 
+/**
+ * @throws \Doctrine\ORM\OptimisticLockException
+ * @throws \Doctrine\ORM\ORMException
+ */
 function handleUserRequest($request_type) {
+    switch ($request_type) {
 
-    global $entityManager;
+        case "GET_AUTH":
+            if ($_SESSION["id"] == session_id()) {
+                echo json_encode("true");
+            } else {
+                echo json_encode("false");
+            }
+            break;
 
-    try {
-        switch ($request_type) {
+        case "CREATE_USER":
+            $email = $_POST['email'];
+            $givenName = $_POST['givenName'];
+            $familyName = $_POST['familyName'];
+            $password = $_POST['password'];
+            $shake = $_POST['shake'];
 
-            case "GET_AUTH":
-                if ($_SESSION["id"] == session_id()) {
-                    echo json_encode("true");
-                } else {
-                    echo json_encode("false");
-                }
+            $response = createUser($email, $givenName, $familyName, $password, $shake);
+            echo $response;
+            break;
 
-                break;
+        case "LOGIN_USER":
+            $email = $_POST['email'];
+            $password = $_POST['password'];
 
-            case "CREATE_USER":
-                $email = $_POST['email'];
-                $givenName = $_POST['givenName'];
-                $familyName = $_POST['familyName'];
-                $password = $_POST['password'];
-                $shake = $_POST['shake'];
+            $response = loginUser($email, $password);
+            echo $response;
+            break;
 
-                $response = createUser($email, $givenName, $familyName, $password, $shake);
-                echo $response;
+        case "LOGOUT_USER":
+            if (!enforceAuth()) return;
 
-                break;
+            session_unset();
+            session_destroy();
 
-            case "LOGIN_USER":
-                $email = $_POST['email'];
-                $password = $_POST['password'];
+            $response = responseMessage("SUCCESS", "");
+            echo $response;
+            break;
 
-                $response = loginUser($email, $password);
-                echo $response;
+        case "GET_ORGANIZATIONS":
+            if (!enforceAuth()) return;
 
-                break;
+            $uid = $_SESSION['uid'];
 
-            case "LOGOUT_USER":
-                if (!enforceAuth()) return;
+            $response = getOrganizations($uid);
+            echo $response;
+            break;
 
-                session_unset();
-                session_destroy();
+        case "GET_SIDEBAR_ORGANIZATIONS":
 
-                $response = responseMessage("SUCCESS", "");
-                echo $response;
+            if (!enforceAuth()) return;
 
-                break;
+            $uid = $_SESSION['uid'];
 
-            case "GET_ORGANIZATIONS":
-                if (!enforceAuth()) return;
+            $response = getSidebarOrganizations($uid);
+            echo $response;
+            break;
 
-                $uid = $_SESSION['uid'];
+        case "CREATE_ORGANIZATION":
+            if (!enforceAuth()) return;
 
-                $response = getOrganizations($uid);
-                echo $response;
+            $uid = $_SESSION['uid'];
+            $organizationName = $_POST['organizationName'];;
+            $visible = $_POST['visible'];
 
-                break;
-
-            case "GET_SIDEBAR_ORGANIZATIONS":
-                
-                if (!enforceAuth()) return;
-
-                $uid = $_SESSION['uid'];
-                
-                $response = getSidebarOrganizations($uid);
-                echo $response;
-
-                break;
-
-            case "CREATE_ORGANIZATION":
-                if (!enforceAuth()) return;
-
-                $uid = $_SESSION['uid'];
-                $organizationName = $_POST['organizationName'];;
-                $visible = $_POST['visible'];
-
-                $response = createOrganization($uid, $organizationName, $visible);
-                echo $response;
-                break;
-        }
-    } catch (Throwable $t) {
-        error_log($t->getMessage());
-        echo responseMessage("ERROR", "something went wrong");
+            $response = createOrganization($uid, $organizationName, $visible);
+            echo $response;
+            break;
     }
 }
