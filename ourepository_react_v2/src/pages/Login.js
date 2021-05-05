@@ -31,8 +31,9 @@ const LoginPage = (props) => {
   const {x, y} = useMousePosition();
 
   React.useEffect(() => {
-    userApiService.isAuth().then((data) => {
-      if (data.data === "true") {
+    userApiService.isAuth().then((response) => {
+      const data = response.data;
+      if (data.code === "SUCCESS") {
         navigate('/app');
       }
     }).catch((err) => {
@@ -41,12 +42,12 @@ const LoginPage = (props) => {
     });
   }, []);
 
-  const submitSignIn = async (event) => {
-    try {
-      event.preventDefault();
+  const submitSignIn = (event) => {
+    event.preventDefault();
 
-      const response = await userApiService.loginUser(email, password);
-      if (response.data.code === "SUCCESS") {
+    userApiService.loginUser(email, password).then((response) => {
+      const data = response.data;
+      if (data.code === "SUCCESS") {
         if (state) {
           navigate(state);
         } else {
@@ -55,12 +56,13 @@ const LoginPage = (props) => {
       } else {
         alert(response.data.message);
       }
-    } catch (err) {
+    }).catch((err) => {
       console.log(err);
-    }
+      alert(err);
+    });
   };
 
-  const submitSignUp = async (event) => {
+  const submitSignUp = (event) => {
     event.preventDefault();
 
     userApiService.createUser(email, givenName, familyName, password, Math.random() * x * y).then((response) => {

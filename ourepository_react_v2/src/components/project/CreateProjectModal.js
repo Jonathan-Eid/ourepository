@@ -68,7 +68,7 @@ export default function CreateProjectModal({setOpen}) {
   const [projectName, setProjectName] = React.useState(null)
   const [visible, setVisible] = React.useState(false)
 
-  const submit = async (event) => {
+  const submit = (event) => {
     try {
       event.preventDefault();
 
