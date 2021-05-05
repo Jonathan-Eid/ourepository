@@ -11,7 +11,7 @@ function handleUserRequest($request_type) {
     switch ($request_type) {
 
         case "GET_AUTH":
-            if ($_SESSION["id"] == session_id()) {
+            if ($_SESSION['id'] == session_id()) {
                 echo responseMessage("SUCCESS",  "");
             } else {
                 echo responseMessage("FAILURE", "User is not authenticated.");

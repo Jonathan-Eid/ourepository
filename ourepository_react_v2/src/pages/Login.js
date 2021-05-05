@@ -19,7 +19,7 @@ import userApiService from "../services/userApi";
 
 const LoginPage = (props) => {
 
-  const {state} = useLocation();
+  let {state} = useLocation();
   const navigate = useNavigate();
 
   const [email, setEmail] = useState('');
@@ -66,6 +66,7 @@ const LoginPage = (props) => {
     userApiService.createUser(email, givenName, familyName, password, Math.random() * x * y).then((response) => {
       const data = response.data;
       if (data.code === "SUCCESS") {
+        state = null;
         submitSignIn(event);
       } else {
         alert(data.message);

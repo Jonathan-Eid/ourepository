@@ -40,9 +40,9 @@ function createUser($email, $givenName, $familyName, $password, $shake) {
     $entityManager->persist($newUser);
     $entityManager->flush();
 
-    $_SESSION["uid"] = $existingUser->getId();
-    $_SESSION["id"] = session_id();
-    return responseMessage("FAILURE", $_SESSION["id"]);
+    $_SESSION['uid'] = $newUser->getId();
+    $_SESSION['id'] = session_id();
+    return responseMessage("SUCCESS", $_SESSION['id']);
 }
 
 function loginUser($email, $password) {
@@ -59,11 +59,11 @@ function loginUser($email, $password) {
         $checkHash = hash_pbkdf2("sha256", $password, $shake, 16, 20);
 
         if ($checkHash == $existingUser->getHash()) {
-            $_SESSION["uid"] = $existingUser->getId();
-            $_SESSION["id"] = session_id();
-            return responseMessage("SUCCESS", $_SESSION["id"]);
+            $_SESSION['uid'] = $existingUser->getId();
+            $_SESSION['id'] = session_id();
+            return responseMessage("SUCCESS", $_SESSION['id']);
         } else {
-            return responseMessage("FAILURE", $_SESSION["id"]);
+            return responseMessage("FAILURE", $_SESSION['id']);
         }
 
     } else {

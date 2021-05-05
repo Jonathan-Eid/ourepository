@@ -59,8 +59,8 @@ try {
     handleProjectRequest($request_type);
     handleUserRequest($request_type);
 } catch (Throwable $t) {
-    error_log($t->getMessage());
-    echo responseMessage("FAILURE", "something went wrong");
+    error_log($t->getTraceAsString());
+    echo responseMessage("FAILURE", "Something went wrong.");
 }
 
 function responseMessage($code, $message) {
@@ -68,7 +68,7 @@ function responseMessage($code, $message) {
 }
 
 function enforceAuth(): bool {
-    if ($_SESSION["id"] != session_id()) {
+    if ($_SESSION['id'] != session_id()) {
         echo responseMessage("FAILURE", "User is not authenticated.");
         return false;
     }

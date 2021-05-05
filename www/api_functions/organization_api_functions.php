@@ -55,7 +55,7 @@ function addUser($role, $email) {
 function getOrganization($uid, $organizationUuid) {
     global $entityManager;
 
-    $query = $entityManager->createQuery('SELECT o FROM organizations o JOIN o.memberRoles m WHERE m.member = ' . $uid . ' AND  o.uuid = \'' . $organizationUuid . '\'');
+    $query = $entityManager->createQuery('SELECT o FROM Organization o JOIN o.memberRoles m WHERE m.member = ' . $uid . ' AND  o.uuid = \'' . $organizationUuid . '\'');
 
     $organizations = $query->getResult();
     if (!isset($organizations)) {
@@ -178,7 +178,7 @@ function changeRolePermissions($uid, $roleId, $changes) {
         return;
     }
 
-    $query = $entityManager->createQuery('SELECT o FROM organizations o JOIN o.memberRoles m WHERE m.member = ' . $uid . ' AND  m.role = \'' . $roleId . '\'');
+    $query = $entityManager->createQuery('SELECT o FROM Organization o JOIN o.memberRoles m WHERE m.member = ' . $uid . ' AND  m.role = \'' . $roleId . '\'');
     $organization = $query->getResult()[0];
     error_log(json_encode($organization));
     $role = $entityManager->getRepository('Role')
