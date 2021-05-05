@@ -41,14 +41,13 @@ const PrivateRoute = ({element: Component, path, ...rest}) => {
 
   const render = () => {
     if (loading) {
-      return (<div/>);
+      return (<><div>LOADING</div></>);
     } else {
       if (authStatus) {
         return (<Route path={path} element={Component} />);
       } else {
         navigate('/login', {state: location.pathname});
       }
-
     }
   }
 

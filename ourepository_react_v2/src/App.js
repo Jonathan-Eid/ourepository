@@ -50,11 +50,11 @@ function App() {
 
           {protectedRoutes.map((parentRoute) => {
             return (
-              <Route path={parentRoute.path} element={parentRoute.element}>
+              <PrivateRoute path={parentRoute.path} element={parentRoute.element}>
                 {parentRoute.children.map((route) => {
                   return <PrivateRoute path={route.path} element={route.element}/>
                 })}
-              </Route>
+              </PrivateRoute>
             );
           })}
           {unprotectedRoutes.map((parentRoute) => {
