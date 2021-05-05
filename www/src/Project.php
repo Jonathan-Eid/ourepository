@@ -38,56 +38,128 @@ class Project implements JsonSerializable
     protected $owners;
 
 
-
     /** 
      * @var \Ramsey\Uuid\UuidInterface
      * @ORM\Column(type="uuid", unique=true)
      */
     protected $uuid;
 
-    public function __construct() {
-        $this->proj_Acls = new ArrayCollection();
-        $this->uuid = Uuid::uuid4()->toString();
-        $this->mosaics = new ArrayCollection();
-    }
-
+    /**
+     * @return mixed
+     */
     public function getId()
     {
         return $this->id;
     }
 
+    /**
+     * @param mixed $id
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * @return mixed
+     */
     public function getName()
     {
         return $this->name;
     }
 
+    /**
+     * @param mixed $name
+     */
     public function setName($name)
     {
         $this->name = $name;
     }
 
-    public function setOrganization($organization){
-        $this->organization = $organization;
-    }
-
-    public function getOrganization(){
-        return $this->organization;
-    }
-
-    public function setMosaics($mosaics){
-        $this->mosaics = $mosaics;
-    }
-
-    public function getMosaics(){
+    /**
+     * @return mixed
+     */
+    public function getMosaics()
+    {
         return $this->mosaics;
     }
 
-    public function setOwners($owners){
+    /**
+     * @param mixed $mosaics
+     */
+    public function setMosaics($mosaics)
+    {
+        $this->mosaics = $mosaics;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getProjAcls()
+    {
+        return $this->proj_Acls;
+    }
+
+    /**
+     * @param mixed $proj_Acls
+     */
+    public function setProjAcls($proj_Acls)
+    {
+        $this->proj_Acls = $proj_Acls;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getOrganization()
+    {
+        return $this->organization;
+    }
+
+    /**
+     * @param mixed $organization
+     */
+    public function setOrganization($organization)
+    {
+        $this->organization = $organization;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getOwners()
+    {
+        return $this->owners;
+    }
+
+    /**
+     * @param mixed $owners
+     */
+    public function setOwners($owners)
+    {
         $this->owners = $owners;
     }
 
-    public function getOwners(){
-        return $this->owners;
+    /**
+     */
+    public function getUuid()
+    {
+        return $this->uuid;
+    }
+
+    /**
+     */
+    public function setUuid($uuid)
+    {
+        $this->uuid = $uuid;
+    }
+
+
+
+    public function __construct() {
+         $this->proj_Acls = new ArrayCollection();
+         $this->uuid = Uuid::uuid4()->toString();
+         $this->mosaics = new ArrayCollection();
     }
 
     public function jsonSerialize()

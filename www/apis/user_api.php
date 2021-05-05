@@ -71,9 +71,8 @@ function handleUserRequest($request_type) {
 
             $uid = $_SESSION['uid'];
             $organizationName = $_POST['organizationName'];;
-            $visible = $_POST['visible'];
 
-            $response = createOrganization($uid, $organizationName, $visible);
+            $response = createOrganization($uid, $organizationName);
             echo $response;
             break;
     }

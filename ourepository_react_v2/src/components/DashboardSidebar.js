@@ -93,7 +93,7 @@ const DashboardSidebar = ({ onMobileClose, openMobile }) => {
 
   // get the organizations, projects, and mosaics for the current user
   React.useEffect(() => {
-    userApiService.getSidebarOrgs().then((response) => {
+    userApiService.getSidebarOrganizations().then((response) => {
       const data = response.data;
       if (data.code === "SUCCESS") {
         const organizationItems = [];

@@ -14,7 +14,6 @@ const Project = () => {
 
   const {projectUuid} = useParams();
 
-  const [project, setProject] = React.useState(null)
   const [mosaics, setMosaics] = React.useState([])
 
   React.useEffect(() => {
@@ -29,7 +28,7 @@ const Project = () => {
       console.log(err);
       alert(err);
     });
-  }, []);
+  }, [projectUuid]);
 
   return (
     <>

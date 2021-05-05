@@ -1,8 +1,9 @@
-  
 <?php
+
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Ramsey\Uuid\Uuid;
+
 /**
  * @ORM\Entity 
  * @ORM\Table(name="organizations")
@@ -16,10 +17,6 @@ class Organization implements JsonSerializable
 
     /** @ORM\Column(type="string") */
     protected $name;
-
-    /** @ORM\Column(type="boolean") */
-    protected $visible;
-
     /**
      * @ORM\OneToMany(targetEntity="Project", mappedBy="organization", fetch="EAGER")
      */
@@ -80,22 +77,6 @@ class Organization implements JsonSerializable
     public function setName($name)
     {
         $this->name = $name;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getVisible()
-    {
-        return $this->visible;
-    }
-
-    /**
-     * @param mixed $visible
-     */
-    public function setVisible($visible)
-    {
-        $this->visible = $visible;
     }
 
     /**
@@ -204,8 +185,7 @@ class Organization implements JsonSerializable
     public function jsonSerialize() {
         return array(
             'uuid'=> $this->uuid,
-            'name' => $this->name,
-            'visible'=> $this->visible
+            'name' => $this->name
         );
     }
 }

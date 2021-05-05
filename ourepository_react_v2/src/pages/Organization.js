@@ -14,7 +14,6 @@ const Organization = () => {
 
   const {organizationUuid} = useParams();
 
-  const [organization, setOrganization] = React.useState(null)
   const [projects, setProjects] = React.useState([])
 
   React.useEffect(() => {
@@ -29,7 +28,7 @@ const Organization = () => {
       console.log(err);
       alert(err);
     });
-  }, []);
+  }, [organizationUuid]);
 
   return (
     <>
@@ -44,7 +43,7 @@ const Organization = () => {
         }}
       >
         <Container maxWidth={false}>
-          <ProjectListToolbar />
+          <ProjectListToolbar key={organizationUuid} />
           <Box sx={{ pt: 3 }}>
             <Grid
               container

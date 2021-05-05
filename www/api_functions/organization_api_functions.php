@@ -17,13 +17,14 @@ function createProject($projectName, $organizationUuid) {
     $newProject = new Project();
     $newProject->setName($projectName);
     $newProject->setOrganization($existingOrg);
-    $newProject->setMosaics("");
     $newProject->setOwners(true);
 
     $entityManager->persist($newProject);
     $entityManager->flush();
 
-    return responseMessage("SUCCESS", "");
+    $responseObject = array();
+    $responseObject['projectUuid'] = $newProject->getUuid();
+    return responseMessage("SUCCESS", $responseObject);
 }
 
 /**

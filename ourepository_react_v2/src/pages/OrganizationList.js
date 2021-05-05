@@ -15,7 +15,7 @@ const OrganizationList = () => {
 
   // get the organizations, projects, and mosaics for the current user
   React.useEffect(() => {
-    userApiService.getOrgs().then((response) => {
+    userApiService.getOrganizations().then((response) => {
       const data = response.data;
       if (data.code === "SUCCESS") {
         setOrganizations(data.message.organizations);

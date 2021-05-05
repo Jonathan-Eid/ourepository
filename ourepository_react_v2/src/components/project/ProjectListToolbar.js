@@ -10,9 +10,11 @@ import {
 import { Search as SearchIcon } from 'react-feather';
 import React from "react";
 import CreateProjectModal from "./CreateProjectModal";
+import {useParams} from "react-router-dom";
 
 const ProjectListToolbar = (props) => {
 
+  const {organizationUuid} = useParams();
   const [open, setOpen] = React.useState(false);
 
   const handleCreateProjectClick = () => {
@@ -21,7 +23,7 @@ const ProjectListToolbar = (props) => {
 
   return (
     <div>
-      {open && <CreateProjectModal setOpen={handleCreateProjectClick} />}
+      {open && <CreateProjectModal setOpen={handleCreateProjectClick} organizationUuid={organizationUuid} />}
       <Box {...props}>
         <Box
           sx={{

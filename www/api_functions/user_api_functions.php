@@ -117,7 +117,7 @@ function getSidebarOrganizations($uid) {
  * @throws \Doctrine\ORM\OptimisticLockException
  * @throws \Doctrine\ORM\ORMException
  */
-function createOrganization($uid, $organizationName, $visible) {
+function createOrganization($uid, $organizationName) {
     global $entityManager, $org_perm_map;
 
     $existingUser = $entityManager->getRepository('User')
@@ -152,7 +152,6 @@ function createOrganization($uid, $organizationName, $visible) {
     //            $newOrganization->addRole($adminRole);
     //            $newOrganization->addRole($defaultRole);
     $newOrganization->setName($organizationName);
-    $newOrganization->setVisible($visible);
 
     $newMemberRole->setOrganization($newOrganization);
     $adminRole->setOrganization($newOrganization);

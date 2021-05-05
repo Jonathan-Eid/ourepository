@@ -5,13 +5,13 @@ const url = "apis/api_v2.php"
 
 class OrganizationApiService {
 
-  createProject(name, organizationUuid) {
+  createProject(projectName, organizationUuid) {
     return axios({
       method: 'post',
       url,
       data: new URLSearchParams({
         request: "CREATE_PROJECT",
-        name,
+        projectName,
         organizationUuid
       }),
       withCredentials: true,
@@ -34,13 +34,13 @@ class OrganizationApiService {
     })
   }
 
-  getOrganization(uuid) {
+  getOrganization(organizationUuid) {
     return axios({
       method: 'get',
       url,
       params: {
         request: "GET_ORGANIZATION",
-        uuid
+        organizationUuid
       },
       withCredentials: true,
       responseType: 'text'

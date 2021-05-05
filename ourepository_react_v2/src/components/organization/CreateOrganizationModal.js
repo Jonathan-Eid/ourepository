@@ -36,13 +36,6 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column'
   },
-  // paper: {
-  //   position: 'absolute',
-  //   marginTop: theme.spacing(8),
-  //   display: 'flex',
-  //   flexDirection: 'column',
-  //   alignItems: 'center',
-  // },
   avatar: {
     margin: theme.spacing(1),
     backgroundColor: theme.palette.secondary.main,
@@ -65,12 +58,11 @@ export default function CreateOrganizationModal({setOpen}) {
   const [modalStyle] = React.useState(getModalStyle);
 
   const [organizationName, setOrganizationName] = React.useState(null)
-  const [visible, setVisible] = React.useState(false)
 
-  const submit = async (event) => {
+  const submit = (event) => {
     event.preventDefault();
 
-    userApiService.createOrg(organizationName, visible).then((response) => {
+    userApiService.createOrganization(organizationName).then((response) => {
       const data = response.data;
       if (data.code === "SUCCESS") {
         setOpen(false);
@@ -104,11 +96,6 @@ export default function CreateOrganizationModal({setOpen}) {
           autoFocus
           onInput={e => setOrganizationName(e.target.value)}
         />
-        <FormLabel>Visible</FormLabel>
-        <RadioGroup name="visible" value={visible} defaultValue={false} onChange={e => setVisible(e.target.value === "true")}>
-          <FormControlLabel value={false} control={<Radio />} label="No" />
-          <FormControlLabel value={true} control={<Radio />} label="Yes" />
-        </RadioGroup>
         <Button
           type="submit"
           fullWidth

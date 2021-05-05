@@ -59,7 +59,7 @@ class UserApiService {
     });
   }
 
-  getOrgs() {
+  getOrganizations() {
     return axios({
       method: 'get',
       url,
@@ -71,7 +71,7 @@ class UserApiService {
     });
   }
 
-  getSidebarOrgs() {
+  getSidebarOrganizations() {
     return axios({
       method: 'get',
       url,
@@ -83,14 +83,13 @@ class UserApiService {
     });
   }
 
-  createOrg(name, visible) {
+  createOrganization(organizationName) {
     return axios({
       method: 'post',
       url,
       data: new URLSearchParams({
         request: "CREATE_ORGANIZATION",
-        name,
-        visible,
+        organizationName
       }),
       withCredentials: true,
       responseType: 'text'

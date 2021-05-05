@@ -24,9 +24,6 @@ class Mosaic implements JsonSerializable
     protected $filename;
 
     /** @ORM\Column(type="boolean") */
-    protected $visible;
-
-    /** @ORM\Column(type="boolean") */
     protected $members;
 
     /** @ORM\Column(type="boolean") */
@@ -194,16 +191,6 @@ class Mosaic implements JsonSerializable
     public function setFilename($filename)
     {
         $this->filename = $filename;
-    }
-
-    public function getVisible()
-    {
-        return $this->visible;
-    }
-
-    public function setVisible($visible)
-    {
-        $this->visible = $visible;
     }
 
     public function getMembers()

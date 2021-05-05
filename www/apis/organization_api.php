@@ -9,15 +9,13 @@ require_once "../api_functions/organization_api_functions.php";
  */
 function handleOrganizationRequest($request_type) {
 
-    global $entityManager;
-
     switch ($request_type) {
 
         case "CREATE_PROJECT":
             if (!enforceAuth()) return;
 
-            $projectName = $_POST['name'];
-            $organizationUuid = $_POST['org'];
+            $projectName = $_POST['projectName'];
+            $organizationUuid = $_POST['organizationUuid'];
             
             $response = createProject($projectName, $organizationUuid);
             echo $response;
@@ -37,7 +35,7 @@ function handleOrganizationRequest($request_type) {
             if (!enforceAuth()) return;
 
             $uid = $_SESSION['uid'];
-            $organizationUuid = $_GET['uuid'];
+            $organizationUuid = $_GET['organizationUuid'];
 
             $response = getOrganization($uid, $organizationUuid);
             echo $response;
