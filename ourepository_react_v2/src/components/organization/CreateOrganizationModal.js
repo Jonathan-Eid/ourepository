@@ -68,19 +68,20 @@ export default function CreateOrganizationModal({setOpen}) {
   const [visible, setVisible] = React.useState(false)
 
   const submit = async (event) => {
-    try {
-      event.preventDefault();
+    event.preventDefault();
 
-      const res = await userApiService.createOrg(organizationName, visible);
-      if (res.data.code === "ORG_CREATED") {
+    userApiService.createOrg(organizationName, visible).then((response) => {
+      const data = response.data;
+      if (data.code === "SUCCESS") {
         setOpen(false);
-        navigate(`/app/organization/${res.data.message.organizationUuid}`);
+        navigate(`/app/organization/${data.message.organizationUuid}`);
       } else {
-        alert("An error occurred");
+        alert(data.message);
       }
-    } catch (err) {
+    }).catch((err) => {
       console.log(err);
-    }
+      alert(err);
+    });
   };
 
   const body = (

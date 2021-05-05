@@ -17,13 +17,14 @@ const OrganizationList = () => {
   React.useEffect(() => {
     userApiService.getOrgs().then((response) => {
       const data = response.data;
-      if (data.code === "ORGS_RECEIVED") {
+      if (data.code === "SUCCESS") {
         setOrganizations(data.message.organizations);
-      } else if (data.code === "ORGS_RECEIVED_FAILED") {
-        alert("Something went wrong");
+      } else {
+        alert(data.message);
       }
     }).catch((err) => {
       console.log(err);
+      alert(err);
     });
   }, []);
 

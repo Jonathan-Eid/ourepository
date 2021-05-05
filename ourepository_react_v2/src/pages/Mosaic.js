@@ -19,13 +19,14 @@ const Mosaic = () => {
   React.useEffect(() => {
     mosaicApiService.getMosaic(mosaicUuid).then((response) => {
       const data = response.data;
-      if (data.code === "MOSAIC_RECEIVED") {
-        setMosaic(data.message);
-      } else if (data.code === "MOSAIC_RECEIVED_FAILED") {
-        alert("Something went wrong");
+      if (data.code === "SUCCESS") {
+        setMosaic(data.message.mosaic);
+      } else {
+        alert(data.message);
       }
     }).catch((err) => {
       console.log(err);
+      alert(err);
     });
   }, []);
 

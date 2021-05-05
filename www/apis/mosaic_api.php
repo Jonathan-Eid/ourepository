@@ -49,7 +49,7 @@ function handleMosaicRequest($request_type) {
         case "INFERENCE_MOSAIC":
             if (!enforceAuth()) return;
 
-            echo responseMessage("PLACEHOLDER", "lorem ipsum");
+            echo responseMessage("FAILURE", "lorem ipsum");
             break;
     }
 }

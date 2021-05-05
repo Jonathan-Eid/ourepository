@@ -60,7 +60,7 @@ try {
     handleUserRequest($request_type);
 } catch (Throwable $t) {
     error_log($t->getMessage());
-    echo responseMessage("ERROR", "something went wrong");
+    echo responseMessage("FAILURE", "something went wrong");
 }
 
 function responseMessage($code, $message) {
@@ -69,7 +69,7 @@ function responseMessage($code, $message) {
 
 function enforceAuth(): bool {
     if ($_SESSION["id"] != session_id()) {
-        echo json_encode("USER NOT AUTHENTICATED");
+        echo responseMessage("FAILURE", "User is not authenticated.");
         return false;
     }
     return true;

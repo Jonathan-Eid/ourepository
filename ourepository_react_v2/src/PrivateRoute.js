@@ -5,7 +5,7 @@ import userApiService from "./services/userApi";
 import {alertClasses} from "@material-ui/core";
 
 
-const PrivateRoute = ({element: Component, path, ...rest}) => {
+const PrivateRoute = ({element: Component, path}) => {
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -14,28 +14,17 @@ const PrivateRoute = ({element: Component, path, ...rest}) => {
   const [loading, setLoading] = React.useState(true)
 
   React.useEffect(() => {
-    userApiService.isAuth().then((data) => {
-      if (data.data === "true") {
-        localStorage.setItem("user", "true");
+    userApiService.isAuth().then((response) => {
+      const data = response.data;
+      if (data.code === "SUCCESS") {
         setAuthStatus(true);
       } else {
-        localStorage.removeItem("user");
         setAuthStatus(false)
       }
       setLoading(false);
     }).catch((err) => {
       console.log(err);
-    });
-
-    emitter.addListener("storage", async () => {
-      let res = await userApiService.isAuth();
-      if (res.data === "true") {
-        localStorage.setItem("user", "true");
-        setAuthStatus(true);
-      } else {
-        setAuthStatus(false);
-      }
-      setLoading(false);
+      alert(err);
     });
   }, []);
 

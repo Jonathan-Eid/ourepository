@@ -95,7 +95,7 @@ const DashboardSidebar = ({ onMobileClose, openMobile }) => {
   React.useEffect(() => {
     userApiService.getSidebarOrgs().then((response) => {
       const data = response.data;
-      if (data.code === "SIDEBAR_ORGS_RECEIVED") {
+      if (data.code === "SUCCESS") {
         const organizationItems = [];
         data.message.organizations.forEach(organization => {
           const organizationItem = {};
@@ -115,11 +115,12 @@ const DashboardSidebar = ({ onMobileClose, openMobile }) => {
         })
 
         setOrganizationItems(organizationItems);
-      } else if (data.code === "SIDEBAR_ORGS_RECEIVED_FAILED") {
-        alert("Something went wrong");
+      } else {
+        alert(data.message);
       }
     }).catch((err) => {
       console.log(err);
+      alert(err);
     });
   }, []);
 

@@ -20,20 +20,21 @@ const Organization = () => {
   React.useEffect(() => {
     organizationApiService.getProjects(organizationUuid).then((response) => {
       const data = response.data;
-      if (data.code === "PROJECTS_RECEIVED") {
+      if (data.code === "SUCCESS") {
         setProjects(data.message.projects);
-      } else if (data.code === "PROJECTS_RECEIVED_FAILED") {
-        alert("Something went wrong");
+      } else {
+        alert(data.message);
       }
     }).catch((err) => {
       console.log(err);
+      alert(err);
     });
   }, []);
 
   return (
     <>
       <Helmet>
-        <title>Organization | OURepostory</title>
+        <title>Organization | OURepository</title>
       </Helmet>
       <Box
         sx={{

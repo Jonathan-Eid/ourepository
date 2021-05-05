@@ -37,6 +37,7 @@ const LoginPage = (props) => {
       }
     }).catch((err) => {
       console.log(err);
+      alert(err);
     });
   }, []);
 
@@ -60,23 +61,19 @@ const LoginPage = (props) => {
   };
 
   const submitSignUp = async (event) => {
-    try {
-      event.preventDefault();
+    event.preventDefault();
 
-      const res = await userApiService.createUser(email, givenName, familyName, password, Math.random() * x * y);
-      if (res.data.code === "user_exists") {
-        alert(res.data.message)
-      }
-      if (res.data.code === "created_user") {
-        localStorage.setItem("user", "true");
-        emitter.emit("storage");
+    userApiService.createUser(email, givenName, familyName, password, Math.random() * x * y).then((response) => {
+      const data = response.data;
+      if (data.code === "SUCCESS") {
         submitSignIn(event);
       } else {
-        alert("An error occurred");
+        alert(data.message);
       }
-    } catch (err) {
+    }).catch((err) => {
       console.log(err);
-    }
+      alert(err);
+    });
   };
 
   const useStyles = makeStyles((theme) => ({

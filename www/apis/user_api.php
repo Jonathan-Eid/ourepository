@@ -12,9 +12,9 @@ function handleUserRequest($request_type) {
 
         case "GET_AUTH":
             if ($_SESSION["id"] == session_id()) {
-                echo json_encode("true");
+                echo responseMessage("SUCCESS",  "");
             } else {
-                echo json_encode("false");
+                echo responseMessage("FAILURE", "User is not authenticated.");
             }
             break;
 

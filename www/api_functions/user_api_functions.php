@@ -15,7 +15,7 @@ function createUser($email, $givenName, $familyName, $password, $shake) {
 
     // if a user exists with the same email, do not continue
     if (isset($existingUser)) {
-        return responseMessage("USER_ALREADY_EXISTS", "A user with this email already exists");
+        return responseMessage("FAILURE", "A user with this email already exists");
     }
 
     // otherwise, create a new user
@@ -42,7 +42,7 @@ function createUser($email, $givenName, $familyName, $password, $shake) {
 
     $_SESSION["uid"] = $existingUser->getId();
     $_SESSION["id"] = session_id();
-    return responseMessage("USER_CREATED", $_SESSION["id"]);
+    return responseMessage("FAILURE", $_SESSION["id"]);
 }
 
 function loginUser($email, $password) {
@@ -63,11 +63,11 @@ function loginUser($email, $password) {
             $_SESSION["id"] = session_id();
             return responseMessage("SUCCESS", $_SESSION["id"]);
         } else {
-            return responseMessage("WRONG_PASSWORD", $_SESSION["id"]);
+            return responseMessage("FAILURE", $_SESSION["id"]);
         }
 
     } else {
-        return responseMessage("USER_NOT_EXISTS", "No user found with the given email");
+        return responseMessage("FAILURE", "No user found with the given email");
     }
 }
 

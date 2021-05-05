@@ -59,7 +59,7 @@ function getOrganization($uid, $organizationUuid) {
 
     $organizations = $query->getResult();
     if (!isset($organizations)) {
-        return responseMessage("NO_ORG_FOUND", "No organization found.");
+        return responseMessage("FAILURE", "No organization found.");
     }
 
     $responseObject = array();
@@ -94,7 +94,7 @@ function hasOrgPermission($uid, $permission, $organizationUuid) {
 
     $acls = $query->getResult();
     if (!isset($acls)) {
-        return responseMessage("NO_ORG_PERMISSION", "The user does not have the proper permissions.");
+        return responseMessage("FAILURE", "The user does not have the proper permissions.");
     }
 
     $responseObject = array();
@@ -114,7 +114,7 @@ function getOrgRoles($uid, $organizationUuid) {
 
     $roles = $query->getResult();
     if (!isset($roles)) {
-        return responseMessage("NO_ORG_ROLE", "Failed to retrieves roles from organization");
+        return responseMessage("FAILURE", "Failed to retrieves roles from organization");
     }
 
     $responseObject = array();
@@ -131,7 +131,7 @@ function getOrganizationUsers($organizationUuid) {
 
     $users = $query->getResult();
     if (!isset($users)) {
-        return responseMessage("NO_ORG_USER", "Failed to retrieves users from organization");
+        return responseMessage("FAILURE", "Failed to retrieves users from organization");
     }
 
     $responseObject = array();
@@ -148,7 +148,7 @@ function getRolePermissions($roleId) {
 
     $roles = $query->getResult();
     if (!isset($roles)) {
-        return responseMessage("NO_ROLE_PERMISSIONS", "Failed to retrieve permissions for this role");
+        return responseMessage("FAILURE", "Failed to retrieve permissions for this role");
     }
 
     $responseObject = array();

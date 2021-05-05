@@ -141,13 +141,13 @@ function getMosaic($mosaicUuid) {
 
     // return information about the mosaic
     $responseObject = array();
-    $responseObject = array_merge($responseObject, $mosaic->jsonSerialize());
+    $responseObject["mosaic"] = array_merge($responseObject, $mosaic->jsonSerialize());
 
     // filenames
     $filename = $mosaic->getFilename();
     $filename_base = substr($filename, 0, strrpos($filename, "."));
     $tilingDir = "mosaics/{$mosaicOwnerId}/{$filename_base}_files";
-    $responseObject['tilingDir'] = $tilingDir;
+    $responseObject["mosaic"]["tilingDir"] = $tilingDir;
 
     return responseMessage("SUCCESS", $responseObject);
 }

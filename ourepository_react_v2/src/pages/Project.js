@@ -20,20 +20,21 @@ const Project = () => {
   React.useEffect(() => {
     projectApiService.getMosaics(projectUuid).then((response) => {
       const data = response.data;
-      if (data.code === "MOSAICS_RECEIVED") {
+      if (data.code === "SUCCESS") {
         setMosaics(data.message.mosaics);
-      } else if (data.code === "MOSAICS_RECEIVED_FAILED") {
-        alert("Something went wrong");
+      } else {
+        alert(data.message);
       }
     }).catch((err) => {
       console.log(err);
+      alert(err);
     });
   }, []);
 
   return (
     <>
       <Helmet>
-        <title>Project | OURepostory</title>
+        <title>Project | OURepository</title>
       </Helmet>
       <Box
         sx={{
