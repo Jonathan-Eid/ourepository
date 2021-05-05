@@ -23,11 +23,11 @@ class UserApiService {
       url,
       data: new URLSearchParams({
         request: "CREATE_USER",
-        email: email,
+        email,
         password,
         givenName,
         familyName,
-        shake: shake
+        shake
       }),
       responseType: 'text'
     });
@@ -39,7 +39,7 @@ class UserApiService {
       url,
       data: new URLSearchParams({
         request: "LOGIN_USER",
-        email: email,
+        email,
         password,
       }),
       withCredentials: true,
