@@ -1,11 +1,13 @@
 import React from "react";
-import {Route, useNavigate} from "react-router-dom";
+import {Route, useNavigate, useLocation} from "react-router-dom";
 import emitter from "./services/emitter"
 import userApiService from "./services/userApi";
+import {alertClasses} from "@material-ui/core";
 
 
 const PrivateRoute = ({element: Component, path, ...rest}) => {
 
+  const location = useLocation();
   const navigate = useNavigate();
 
   const [authStatus, setAuthStatus] = React.useState(false)
@@ -44,7 +46,7 @@ const PrivateRoute = ({element: Component, path, ...rest}) => {
       if (authStatus) {
         return (<Route path={path} element={Component} />);
       } else {
-        navigate('/login');
+        navigate('/login', {state: location.pathname});
       }
 
     }

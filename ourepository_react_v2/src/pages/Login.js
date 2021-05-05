@@ -14,11 +14,12 @@ import {makeStyles} from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import emitter from "../services/emitter"
 import useMousePosition from "../hooks/useMousePosition";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useLocation} from "react-router-dom";
 import userApiService from "../services/userApi";
 
 const LoginPage = (props) => {
 
+  const {state} = useLocation();
   const navigate = useNavigate();
 
   const [email, setEmail] = useState('');
@@ -45,11 +46,13 @@ const LoginPage = (props) => {
 
       const response = await userApiService.loginUser(email, password);
       if (response.data.code === "SUCCESS") {
-        navigate('/');
-      } else if (response.data.code === "WRONG_PASSWORD") {
-        alert("Incorrect password");
+        if (state) {
+          navigate(state);
+        } else {
+          navigate('/app');
+        }
       } else {
-        alert("Something went wrong");
+        alert(response.data.message);
       }
     } catch (err) {
       console.log(err);
