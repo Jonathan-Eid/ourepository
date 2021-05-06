@@ -4,7 +4,7 @@ import sidebarService from "../services/sidebar"
 import Popup from 'reactjs-popup';
 import {Link, useRouteMatch, Switch, Route, useParams} from "react-router-dom"
 import 'reactjs-popup/dist/index.css';
-import {start_upload} from "../resumable2_v2";
+import {startUpload} from "../resumable2_v2";
 import {Redirect} from "react-router-dom";
 import {useState} from "react";
 
@@ -126,7 +126,7 @@ const CreateMosaicPage = (props) => {
     console.log(selectedFile.md5_hash);
 
 
-    start_upload(name, selectedFile, proj, visible);
+    startUpload(name, selectedFile, proj, visible);
 
     //   apiService.createMosaic(name,proj,visible,selectedFile,selectedFile.name,selectedFile.size,555555,chunks).then((data) => {
     //     if(data.data.code == "MOS_CREATED"){

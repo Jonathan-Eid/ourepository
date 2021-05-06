@@ -61,7 +61,7 @@ function getMd5Hash(file, onFinish) {
   loadNext();
 }
 
-export async function startUpload(mosaicName, file, projectUuid) {
+export function startUpload(mosaicName, file, projectUuid) {
   var identifier = getUniqueIdentifier(file);
   //different versions of firefox have different field names
   var filename = file.webkitRelativePath || file.fileName || file.name;

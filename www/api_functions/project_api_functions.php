@@ -48,7 +48,7 @@ function createMosaic($uid, $mosaicName, $projectUuid, $filename, $md5Hash, $num
     //  TODO 3. file does exist and has finished uploading -- report finished
     //  4. file does exist but with different hash -- error message
 
-    $query = "SELECT md5_hash, number_chunks, uploaded_chunks, chunk_status, status FROM mosaics WHERE filename = '$filename' AND owner_id = 'uid'";
+    $query = "SELECT md5_hash, number_chunks, uploaded_chunks, chunk_status, status FROM mosaics WHERE filename = '$filename' AND owner_id = '$uid'";
     error_log($query);
     $result = query_our_db($query);
     $row = $result->fetch_assoc();
