@@ -27,7 +27,7 @@ function getMosaics($projectUuid) {
  * This function only initiates the upload;
  * @throws \Doctrine\ORM\ORMException
  */
-function createMosaic($uid, $mosaicName, $projectUuid, $visible, $filename, $md5Hash, $numberChunks, $sizeBytes) {
+function createMosaic($uid, $mosaicName, $projectUuid, $filename, $md5Hash, $numberChunks, $sizeBytes) {
     global $entityManager;
 
     // get the project to place this mosaic in
@@ -54,20 +54,19 @@ function createMosaic($uid, $mosaicName, $projectUuid, $visible, $filename, $md5
     $row = $result->fetch_assoc();
     if ($row == NULL) {
         //  1. file does not exist, insert into database -- start upload
-        $chunk_status = str_repeat('0', $numberChunks);
+        $chunkStatus = str_repeat('0', $numberChunks);
 
         // create the new mosaic
         $newMosaic = new Mosaic();
         $newMosaic->setIdentifier($mosaicName);
         $newMosaic->setFilename($filename);
-        $newMosaic->setVisible(true);
-        $newMosaic->setMembers($visible);
+        $newMosaic->setMembers(true);
         $newMosaic->setRoles(true);
         $newMosaic->setProject($existingProj);
         $newMosaic->setOwnerId($uid);
         $newMosaic->setNumberChunks($numberChunks);
         $newMosaic->setUploadedChunks(0);
-        $newMosaic->setChunkStatus($chunk_status);
+        $newMosaic->setChunkStatus($chunkStatus);
         $newMosaic->setSizeBytes($sizeBytes);
         $newMosaic->setBytesUploaded(0);
         $newMosaic->setMd5Hash($md5Hash);
@@ -86,7 +85,7 @@ function createMosaic($uid, $mosaicName, $projectUuid, $visible, $filename, $md5
         $entityManager->flush();
 
         $responseObject = array();
-        $responseObject['mosaic_info'] = getMosaicInfo($uid, $md5Hash);
+        $responseObject['mosaicInfo'] = getMosaicInfo($uid, $md5Hash);
 
         return responseMessage("SUCCESS", $responseObject);
 

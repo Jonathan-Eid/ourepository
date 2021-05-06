@@ -86,12 +86,17 @@ const items = [
   }
 ];
 
+let indicateRender = false;
+export const indicateRenderSidebar = () => {
+  indicateRender = !indicateRender;
+}
+
 const DashboardSidebar = ({ onMobileClose, openMobile }) => {
   const location = useLocation();
 
-  const [organizationItems, setOrganizationItems] = React.useState(null)
+  const [organizationItems, setOrganizationItems] = React.useState(null);
 
-  // get the organizations, projects, and mosaics for the current user
+  // get the organization and projects for the current user
   React.useEffect(() => {
     userApiService.getSidebarOrganizations().then((response) => {
       const data = response.data;
@@ -122,7 +127,7 @@ const DashboardSidebar = ({ onMobileClose, openMobile }) => {
       console.log(err);
       alert(err);
     });
-  }, []);
+  }, [indicateRender]);
 
   useEffect(() => {
     if (openMobile && onMobileClose) {

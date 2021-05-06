@@ -7,9 +7,7 @@ require_once "../api_functions/project_api_functions.php";
  * @throws \Doctrine\ORM\ORMException
  */
 function handleProjectRequest($request_type) {
-
-    global $our_db;
-
+    
     switch ($request_type) {
 
         case "GET_MOSAICS":
@@ -25,15 +23,14 @@ function handleProjectRequest($request_type) {
             if (!enforceAuth()) return;
 
             $uid = $_SESSION['uid'];
-            $mosaicName = $_POST['name'];
-            $projectUuid = $our_db->real_escape_string($_POST['projectUuid']);
-            $visible = $our_db->real_escape_string($_POST['visible']);
-            $filename = $our_db->real_escape_string($_POST['filename']);
-            $md5Hash = $our_db->real_escape_string($_POST['md5Hash']);
-            $numberChunks = $our_db->real_escape_string($_POST['numberChunks']);
-            $sizeBytes = $our_db->real_escape_string($_POST['sizeBytes']);
+            $mosaicName = $_POST['mosaicName'];
+            $projectUuid = $_POST['projectUuid'];
+            $filename = $_POST['filename'];
+            $md5Hash = $_POST['md5Hash'];
+            $numberChunks = $_POST['numberChunks'];
+            $sizeBytes = $_POST['sizeBytes'];
 
-            $response = createMosaic($uid, $mosaicName, $projectUuid, $visible, $filename, $md5Hash, $numberChunks, $sizeBytes);
+            $response = createMosaic($uid, $mosaicName, $projectUuid, $filename, $md5Hash, $numberChunks, $sizeBytes);
             echo $response;
             break;
 

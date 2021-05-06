@@ -6,7 +6,7 @@ require_once "../util/export_labels_v2.php";
 
 function processChunk($uid, $identifier, $md5Hash, $chunk) {
     connect_our_db();
-    global $our_db, $UPLOAD_DIRECTORY;
+    global $UPLOAD_DIRECTORY;
 
     if (count($_FILES) == 0) {
         error_log("ERROR, no files attached to upload!");
@@ -71,15 +71,16 @@ function processChunk($uid, $identifier, $md5Hash, $chunk) {
 
     $query = "UPDATE mosaics SET uploaded_chunks = $dbUploadedChunks, chunk_status = '$dbChunkStatus', bytes_uploaded = bytes_uploaded + $chunkSize WHERE md5_hash = '$md5Hash' AND owner_id = '$uid'";
     error_log($query);
+    query_our_db($query);
 
     // build the response object
-    $dbMosaicInfo = getMosaicInfo($uid, $md5Hash);
+    $responseObject = getMosaicInfo($uid, $md5Hash);
 
     // if all the chinks have been uploaded
-    $dbNumberChunks = $dbMosaicInfo['numberChunks'];
+    $dbNumberChunks = $responseObject['numberChunks'];
     if ($dbUploadedChunks == $dbNumberChunks) {
-        $dbFilename = $dbMosaicInfo['filename'];
-        $dbMd5Hash = $dbMosaicInfo['md5_hash'];
+        $dbFilename = $responseObject['filename'];
+        $dbMd5Hash = $responseObject['md5Hash'];
 
         // create the final file
         $target = "$UPLOAD_DIRECTORY/$uid/$dbFilename";
@@ -94,12 +95,12 @@ function processChunk($uid, $identifier, $md5Hash, $chunk) {
             fclose($fp);
             //TODO: check and see if hash of final file matches upload
 
-            $new_md5_hash = md5_file($target);
+            $newMd5Hash = md5_file($target);
 
-            error_log("new md5 hash:      '$new_md5_hash'");
+            error_log("new md5 hash:      '$newMd5Hash'");
             error_log("expected md5 hash: '$dbMd5Hash'");
 
-            if ($new_md5_hash == $dbMd5Hash) {
+            if ($newMd5Hash == $dbMd5Hash) {
                 $query = "UPDATE mosaics SET status = 'UPLOADED' WHERE md5_hash = '$dbMd5Hash' AND owner_id = '$uid'";
                 error_log($query);
                 query_our_db($query);
@@ -122,13 +123,12 @@ function processChunk($uid, $identifier, $md5Hash, $chunk) {
 
         } else {
             error_log("ERROR! Could not create the final file.");
-            $responseObject['err_title'] = "File Upload Failure";
             return responseMessage("FAILURE", "An error occurred while putting the chunk files together to make the full uploaded file. Please delete and retry.");
         }
     }
 
     error_log("number_uploaded $dbUploadedChunks of $dbNumberChunks");
-    return responseMessage("SUCCESS", "");
+    return responseMessage("SUCCESS", $responseObject);
 }
 
 function getMosaic($mosaicUuid) {
