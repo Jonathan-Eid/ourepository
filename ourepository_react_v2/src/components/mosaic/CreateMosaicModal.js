@@ -50,9 +50,11 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(1),
   },
   formElement: {
-    width: '50%',
     marginTop: theme.spacing(1),
     marginBottom: theme.spacing(1),
+  },
+  fileUploadButton: {
+    width: '50%'
   },
   submit: {
     margin: theme.spacing(3, 0, 2),
@@ -60,9 +62,12 @@ const useStyles = makeStyles((theme) => ({
   input: {
     display: 'none',
   },
+  verticalFlexBox: {
+    display: 'flex',
+  }
 }));
 
-export default function CreateMosaicModal({setOpen, projectUuid}) {
+export default function CreateMosaicModal({setOpen, projectUuid, indicateRenderProjectPage}) {
 
   const navigate = useNavigate();
 
@@ -78,9 +83,10 @@ export default function CreateMosaicModal({setOpen, projectUuid}) {
     if (!selectedFile) {
       alert("Please select a file.");
     } else {
-      startUpload(mosaicName, selectedFile, projectUuid);
+      startUpload(mosaicName, selectedFile, projectUuid, indicateRenderProjectPage);
       setOpen(false);
-      alert("It may take some time for your mosaic to show up. A page refresh will be needed.")
+      // indicateRenderProjectPage();
+      // alert("It may take some time for your mosaic to show up. A page refresh will be needed.")
     }
   };
 
@@ -115,10 +121,12 @@ export default function CreateMosaicModal({setOpen, projectUuid}) {
             onClick={e => e.target.value = null}
           />
           <label htmlFor="icon-button-file">
-            <Button variant="contained" color="secondary" component="span" startIcon={<CloudUploadIcon />}>
-              Select File
-            </Button>
-            {selectedFile && selectedFile.name}
+            <div>
+              <Button classes={classes.fileUploadButton} variant="contained" color="secondary" component="span" startIcon={<CloudUploadIcon />}>
+                Select File
+              </Button>
+              {selectedFile && selectedFile.name}
+            </div>
           </label>
         </FormGroup>
         <Button

@@ -61,7 +61,7 @@ function getMd5Hash(file, onFinish) {
   loadNext();
 }
 
-export function startUpload(mosaicName, file, projectUuid) {
+export function startUpload(mosaicName, file, projectUuid, indicateRenderProjectPage) {
   var identifier = getUniqueIdentifier(file);
   //different versions of firefox have different field names
   var filename = file.webkitRelativePath || file.fileName || file.name;
@@ -86,9 +86,10 @@ export function startUpload(mosaicName, file, projectUuid) {
     projectApiService.createMosaic(mosaicName, projectUuid, file, file.name, file.size, md5Hash, numberChunks).then((response) => {
       const data = response.data;
       if (data.code === "SUCCESS") {
+        indicateRenderProjectPage();
         var mosaicInfo = data.message.mosaicInfo;
         mosaicInfo.file = file; //set the file in the response mosaicInfo so it can be used later
-        uploadChunk(mosaicInfo, file);
+        uploadChunk(mosaicInfo, file, indicateRenderProjectPage);
       } else {
         alert(data.message);
       }
@@ -101,7 +102,7 @@ export function startUpload(mosaicName, file, projectUuid) {
   getMd5Hash(file, onFinish);
 }
 
-function uploadChunk(mosaicInfo, file) {
+function uploadChunk(mosaicInfo, file, indicateRenderProjectPage) {
   //store the mosaic info in case the upload needs to be restarted
   mosaics[mosaicInfo.identifier] = mosaicInfo;
 
@@ -116,6 +117,9 @@ function uploadChunk(mosaicInfo, file) {
   var chunkNumber = chunkStatus.indexOf("0");
   //console.log("chunk status: '" + chunkStatus + "'");
   console.log("next chunk: " + chunkNumber + " of " + numberChunks);
+
+  // TODO progress
+
 
   var fileReader = new FileReader();
 
@@ -152,7 +156,7 @@ function uploadChunk(mosaicInfo, file) {
         //console.log("uploading next chunk with response:");
         //console.log(response);
 
-        uploadChunk(mosaicInfo, file);
+        uploadChunk(mosaicInfo, file, indicateRenderProjectPage);
       } else {
 
       }

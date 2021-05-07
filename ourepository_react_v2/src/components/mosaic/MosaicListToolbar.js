@@ -12,7 +12,7 @@ import React from "react";
 import CreateMosaicModal from "./CreateMosaicModal";
 import {useParams} from "react-router-dom";
 
-const MosaicListToolbar = (props) => {
+const MosaicListToolbar = ({indicateRenderProjectPage}) => {
 
   const {projectUuid} = useParams();
   const [open, setOpen] = React.useState(false);
@@ -23,8 +23,12 @@ const MosaicListToolbar = (props) => {
 
   return (
     <div>
-      {open && <CreateMosaicModal setOpen={handleCreateMosaicClick} projectUuid={projectUuid} />}
-      <Box {...props}>
+      {open && <CreateMosaicModal
+        setOpen={handleCreateMosaicClick}
+        projectUuid={projectUuid}
+        indicateRenderProjectPage={indicateRenderProjectPage}
+      />}
+      <Box>
         <Box
           sx={{
             display: 'flex',

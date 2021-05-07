@@ -14,13 +14,23 @@ const Project = () => {
 
   const {projectUuid} = useParams();
 
-  const [mosaics, setMosaics] = React.useState([])
+  const [mosaicMap, setMosaicMap] = React.useState(null);
+  const [indicateRender, setIndicateRender] = React.useState(false);
+
+  const indicateRenderProjectPage = () => {
+    setIndicateRender(!indicateRender);
+  }
 
   React.useEffect(() => {
     projectApiService.getMosaics(projectUuid).then((response) => {
       const data = response.data;
       if (data.code === "SUCCESS") {
-        setMosaics(data.message.mosaics);
+        let mosaicMap = new Map();
+        data.message.mosaics.forEach(mosaic => {
+          mosaic["progress"] = 0.0;
+          mosaicMap.set(mosaic["uuid"], mosaic);
+        });
+        setMosaicMap(mosaicMap);
       } else {
         alert(data.message);
       }
@@ -28,7 +38,7 @@ const Project = () => {
       console.log(err);
       alert(err);
     });
-  }, [projectUuid]);
+  }, [projectUuid, indicateRender]);
 
   return (
     <>
@@ -43,13 +53,13 @@ const Project = () => {
         }}
       >
         <Container maxWidth={false}>
-          <MosaicListToolbar />
+          <MosaicListToolbar indicateRenderProjectPage={indicateRenderProjectPage} />
           <Box sx={{ pt: 3 }}>
             <Grid
               container
               spacing={3}
             >
-              {mosaics && mosaics.map((mosaic) => (
+              {mosaicMap && [...mosaicMap.values()].map((mosaic) => (
                 <Grid
                   item
                   key={mosaic.uuid}
@@ -57,9 +67,13 @@ const Project = () => {
                   md={6}
                   xs={12}
                 >
-                  <MosaicCard mosaic={mosaic} />
+                  <MosaicCard mosaic={mosaic} mosaicName={mosaic.name} />
                 </Grid>
               ))}
+              {/*<button onClick={() => {*/}
+              {/*  mosaicMap.get([...mosaicMap.keys()][0]).name = "hi";*/}
+              {/*  setMosaicMap(mosaicMap);*/}
+              {/*}}>hello</button>*/}
             </Grid>
           </Box>
         </Container>
