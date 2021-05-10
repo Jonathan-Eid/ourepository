@@ -4,7 +4,7 @@
 - Install Node.js
 - Install [libvips](https://libvips.github.io/libvips/install.html)
     - Check installation with `vipsthumbnail -h`
-    - Ubuntu Install : ```sudo apt-get install libvips-tools```
+    - Ubuntu Install : 'sudo apt-get install libvips-tools`
 
 - Install GDAL
     - [Instructions for Windows](https://sandbox.idre.ucla.edu/sandbox/tutorials/installing-gdal-for-windows)
@@ -25,9 +25,9 @@ cat << EOF >> ./db/db_info.php
 \$our_db_user="$db_username";
 \$our_db_password="$db_password";
 \$our_db_name="our";
-\our_cluster_server="$cluster_server_name";
-\our_cluster_username="$rit_username";
-\our_cluster_password="$rit_password";
+\$our_cluster_server="$cluster_server_name";
+\$our_cluster_username="$rit_username";
+\$our_cluster_password="$rit_password";
 ?>
 EOF
 ```
@@ -41,38 +41,32 @@ cat << EOF >> ./www/settings.php
 \$BASE_DIRECTORY = "./"; 
 \$UPLOAD_DIRECTORY = "./mosaic_uploads";
 \$ARCHIVE_DIRECTORY = "./mosaics";
+\$SHARED_DRIVE_DIRECTORY = "$shared_drive_directory";
 ?>
 EOF
 ```
 
+Make sure `settings.php` only contains these contents. Depending on your system, full paths may need to be used.
+
 #### Start web servers 
 ##### Backend port 5000; Frontend port 3000 
 
-```
-./dev.sh
-
-```
+`./dev.sh`
 
 Note: if using Windows these commands will not work. instead you must manually create the db_info and settings files and manually insert the contents.
 
-To run on windows simply type 
-
-```
-dev.sh
-
-```
-
+To run on Windows:
+`dev.sh`
 
 #### Populating Database Schema
 while in www/
 ##### Windows
-'''
-reload_schema.bat
-'''
+
+`reload_schema.bat`
+
 ##### Linux/Mac
-'''
-./reload_schema.sh
-'''
+
+`./reload_schema.sh`
 
 ### Important files
 
@@ -87,52 +81,35 @@ To run on windows simply type
 ```
 dev.sh
 ```
+
 #### Folder Walkthrough
 ##### React
 
 ###### API calls to the php server can be found here
-```
-./ourepository_react/src/services
 
-```
+`./ourepository_react_v2/src/services`
+
 
 ###### Page routes can be found here
-```
-./ourepository_react/src/App.js
 
-
-```
+`./ourepository_react_v2/src/App.js`
 
 ###### Pages and page components can be found here
-```
-./ourepository_react/src/pages
-./ourepository_react/src/components
+
+`./ourepository_react/src/pages`  
+`./ourepository_react/src/components`
 
 
-```
-
-
-###### TailwindCSS is our css framework, config found here
-```
-./ourepository_react/tailwind.config.js
-
-```
+######  The website design is based off a [Material-UI template](https://github.com/devias-io/material-kit-react)
 
 
 #### File Structure Notes
 ##### PHP
 
 ###### API routes 
-```
-./ourepository/www/api_v2.php
 
-```
+`./www/apis`
 
-###### Docrine ORM Entities
-```
-./ourepository/www/src/
+###### Doctrine ORM Entities
 
-```
-
-
-
+`./www/src/`
