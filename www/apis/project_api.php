@@ -18,7 +18,13 @@ function handleProjectRequest($request_type) {
             $response = getMosaics($projectUuid);
             echo $response;
             break;
+        case "GET_ORG":
+            if (!enforceAuth()) return;
+            $projectUuid = $_GET['projectUuid'];
 
+            $response = getOrg($projectUuid);
+            echo $response;
+            break;
         case "CREATE_MOSAIC":
             if (!enforceAuth()) return;
 

@@ -24,6 +24,21 @@ function getMosaics($projectUuid) {
 }
 
 /**
+ * returns the UUid of the organization associated with the project
+ */
+function getOrg($projectUuid) {
+    global $entityManager;
+
+    $project = $entityManager->getRepository('Project')->findOneBy(array('uuid' => $projectUuid));
+    $orgid = $project->getOrganization();
+    $org = $entityManager->getRepository('Organization')->findOneBy(array('id' => $orgid));
+    $responseObject = array();
+    $responseObject['orgUuid'] = $org->getUuid();
+
+    return responseMessage("SUCCESS", $responseObject);
+}
+
+/**
  * This function only initiates the upload;
  * @throws \Doctrine\ORM\ORMException
  */

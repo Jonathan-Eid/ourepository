@@ -18,6 +18,19 @@ class ProjectApiService {
     })
   }
 
+  getOrg(projectUuid) {
+    return axios({
+      method: 'get',
+      url,
+      params: {
+        request: "GET_ORG",
+        projectUuid
+      },
+      withCredentials: true,
+      responseType: 'text'
+    })
+  }
+
   createMosaic(mosaicName, projectUuid, file, filename, sizeBytes, md5Hash, numberChunks) {
     return axios({
       method: 'post',
