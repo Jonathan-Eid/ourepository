@@ -44,6 +44,15 @@ The `inferences` directory contains all inferences performed by a model. Each in
 image name that contains the image with detection on top, and a CSV for the bounding boxes for each label the model 
 was trained on. Organization is by model UUID then image name.
 
+## Early Stopping
+
+When training, the model will dynamically determine when to stop. This is based on the results of evaluating the model
+on the test set. The model is evaluated on the test set every `steps_per_run` steps. Once it is detected that the
+(smoothed) loss on the test set has gone up twice, training will stop. This means that training will continue until it
+begins to over-fit, then it will stop. This way, the model is trained for as long as it can be, but never longer than it
+should be. There is no need to hard code the desired number of total steps to train as this could be different depending
+on the difficulty of the annotation type.
+
 ## Troubleshooting
 
 Issues may arise related to HDF5 if rasterio is imported before Tensorflow. Take note importing files that import 
