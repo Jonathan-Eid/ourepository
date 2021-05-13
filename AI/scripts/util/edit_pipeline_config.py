@@ -1,5 +1,5 @@
 """
-Take a pipeline.config from a pre-trained model and configure it to train on a mosaic.
+Take a pipeline.config from a pre-trained model and configure it to train on a set of mosaic.
 This involves (possibly) changing the number of classes and pointing to configuration to the correct paths for the
 training and testing TFRecords and the label map.
 """
@@ -37,7 +37,7 @@ def load_config(pipeline_config_path):
     return pipeline_config
 
 
-def edit_pipeline_config(pretrained_model_dir, output_dir, num_classes, annotations_dir):
+def edit_pipeline_config(pretrained_model_dir, output_dir, num_classes, annotations_dir, num_steps):
     """
     Edit a pipeline configuration model to work with training on a specific set of training data.
     This changes the number of classes, the batch size, the path to the pre-trained model checkpoint, the type of
@@ -75,6 +75,10 @@ def edit_pipeline_config(pretrained_model_dir, output_dir, num_classes, annotati
 
     # set the batch size
     pipeline_config.train_config.batch_size = 8  # TODO change? Affects memory usage
+    logger.info(f"Batch size: {pipeline_config.train_config.batch_size}")
+
+    # set the number of training steps
+    pipeline_config.train_config.num_steps = num_steps
 
     # Set the path to the checkpoint from the pre-trained model. This does not have to be changed for continuing
     # training from a checkpoint. TensorFlow will figure out the most recent checkpoint automatically.
