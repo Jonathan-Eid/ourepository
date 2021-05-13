@@ -27,7 +27,7 @@ function handleOrganizationRequest($request_type) {
             $role = $_POST['role'];
             $email = $_POST['email'];
 
-            $response = createProject($role, $email);
+            $response = addUser($role, $email);
             echo $response;
             break;
             

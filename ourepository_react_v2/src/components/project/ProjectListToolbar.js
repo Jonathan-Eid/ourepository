@@ -10,6 +10,7 @@ import {
 import { Search as SearchIcon } from 'react-feather';
 import React from "react";
 import CreateProjectModal from "./CreateProjectModal";
+import AddUserModal from "../organization/AddUserModal";
 import EditOrgModal from "../organization/EditOrgModal";
 import {useParams} from "react-router-dom";
 import organizationApiService from "../../services/organizationApi";
@@ -19,7 +20,9 @@ const ProjectListToolbar = (props) => {
   const {organizationUuid} = useParams();
   const [open, setOpen] = React.useState(false);
   const [openEdit, setOpenEdit] = React.useState(false);
+  const [openAdd, setOpenAdd] = React.useState(false);
   const [canEditOrg, setCanEditOrg] = React.useState(true);
+  const [canAddUsers, setCanAddUsers] = React.useState(true);
 
   const handleCreateProjectClick = () => {
     setOpen(!open);
@@ -35,18 +38,33 @@ const ProjectListToolbar = (props) => {
     })
   }
 
+  const hasAdd = () => {
+    organizationApiService.hasPermission("ADD_MEMBERS",organizationUuid).then((response) => {
+      const data = response.data;
+      if (data.code === "SUCCESS") {
+        setCanAddUsers(true);
+      }
+    })
+  }
+
   const handleEditOrgClick = () => {
     setOpenEdit(!openEdit)
   }
 
+  const handleAddUserClick = () => {
+    setOpenAdd(!openAdd)
+  }
+
   React.useEffect(() => {
     hasAdmin();
+    hasAdd();
   },[])
 
   return (
     <div>
       {open && <CreateProjectModal setOpen={handleCreateProjectClick} organizationUuid={organizationUuid} />}
       {openEdit && <EditOrgModal setOpen={handleEditOrgClick} organizationUuid={organizationUuid} />}
+      {openAdd && <AddUserModal setOpen={handleAddUserClick} organizationUuid={organizationUuid} />}
       <Box {...props}>
         <Box
           sx={{
@@ -57,6 +75,10 @@ const ProjectListToolbar = (props) => {
           {canEditOrg &&
           <Button onClick={handleEditOrgClick}>
             Edit Organization
+          </Button>}
+          {hasAdd && 
+          <Button onClick={handleAddUserClick}>
+            Add User
           </Button>}
           <Button>
             Import
