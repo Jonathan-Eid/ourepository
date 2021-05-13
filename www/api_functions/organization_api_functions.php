@@ -94,7 +94,7 @@ function hasOrgPermission($uid, $permission, $organizationUuid) {
     $query->setParameter('permissions', array('all', $permission));
 
     $acls = $query->getResult();
-    if (!isset($acls)) {
+    if (sizeof($acls)==0) {
         return responseMessage("FAILURE", "The user does not have the proper permissions.");
     }
 
@@ -207,10 +207,10 @@ function changeRolePermissions($uid, $roleId, $changes) {
         }
     }
 
-    $responseObject = array();
-    $responseObject["roles"] = $roles;
+    //$responseObject = array();
+    //$responseObject["roles"] = $res;
 
-    return responseMessage("SUCCESS", $responseObject);
+    return responseMessage("SUCCESS", "");
 }
 
 /**
@@ -261,10 +261,10 @@ function addRole($uid, $roleName, $changes, $organizationUuid) {
         }
     }
 
-    $responseObject = array();
-    $responseObject["roles"] = $roles;
+    //$responseObject = array();
+    //$responseObject["roles"] = $role;
 
-    return responseMessage("SUCCESS", $responseObject);
+    return responseMessage("SUCCESS", "");
 }
 
 /**

@@ -21,15 +21,15 @@ const ProjectListToolbar = (props) => {
   const [open, setOpen] = React.useState(false);
   const [openEdit, setOpenEdit] = React.useState(false);
   const [openAdd, setOpenAdd] = React.useState(false);
-  const [canEditOrg, setCanEditOrg] = React.useState(true);
-  const [canAddUsers, setCanAddUsers] = React.useState(true);
+  const [canEditOrg, setCanEditOrg] = React.useState(false);
+  const [canAddUsers, setCanAddUsers] = React.useState(false);
 
   const handleCreateProjectClick = () => {
     setOpen(!open);
   }
 
   const hasAdmin = () => {
-    organizationApiService.getProjects(organizationUuid).then((response) => {
+    organizationApiService.hasPermission("EDIT_ORG",organizationUuid).then((response) => {
       const data = response.data;
       if (data.code === "SUCCESS") {
         setCanEditOrg(true);
@@ -40,6 +40,7 @@ const ProjectListToolbar = (props) => {
 
   const hasAdd = () => {
     organizationApiService.hasPermission("ADD_MEMBERS",organizationUuid).then((response) => {
+      console.log(response.data);
       const data = response.data;
       if (data.code === "SUCCESS") {
         setCanAddUsers(true);
@@ -76,7 +77,7 @@ const ProjectListToolbar = (props) => {
           <Button onClick={handleEditOrgClick}>
             Edit Organization
           </Button>}
-          {hasAdd && 
+          {canAddUsers && 
           <Button onClick={handleAddUserClick}>
             Add User
           </Button>}
