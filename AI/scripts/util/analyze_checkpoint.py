@@ -39,7 +39,6 @@ def tfevent_final_losses(model_dir, type='train', n=2):
                     val = tensor_util.MakeNdarray(v.tensor).item(0)
                     max_step = e.step
                     losses.append(val)
-                    print(f"Found new loss at step {e.step}: {val}")
     last_two = list(smooth(losses)['data'])[-n:]
     return last_two
 

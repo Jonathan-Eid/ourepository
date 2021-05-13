@@ -46,5 +46,8 @@ was trained on. Organization is by model UUID then image name.
 
 ## Troubleshooting
 
+
+## Troubleshooting
+
 Issues may arise related to HDF5 if rasterio is imported before Tensorflow. Take note importing files that import 
 either of these packages.

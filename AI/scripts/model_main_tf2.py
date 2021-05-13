@@ -21,22 +21,12 @@ TODO Flags must be adjusted a bit for which are required
 flags:
 
 model_main_tf2.py:
-  --checkpoint_dir: Path to directory holding a checkpoint.  If `checkpoint_dir`
-    is provided, this binary operates in eval-only mode, writing resulting
-    metrics to `model_dir`.
-  --checkpoint_every_n: Integer defining how often we checkpoint.
-    (default: '50')
-    (an integer)
   --[no]continue_from_checkpoint: whether training should continue from a
     checkpoint
     (default: 'false')
   --data_dir: directory containing directories containing mosaic and CSVs to
     train on
-    (default: 'C:/Users/Ian/Documents/College/Fourth Year/Fall Semester/Software
-    Engineering Project/ourepository/AI/scripts\\../test/test')
-  --[no]eval_on_train_data: Enable evaluating on train data (only supported in
-    distributed training).
-    (default: 'false')
+    (default: [PATH_TO_SCRIPTS_DIR]../test/test')
   --eval_timeout: Number of seconds to wait for anevaluation checkpoint before
     exiting.
     (default: '3600')
@@ -48,8 +38,6 @@ model_main_tf2.py:
     (default: 'faster_rcnn_resnet50_v1_640x640_coco17_tpu-8')
   --model_uuid: the UUID of the model to run
     (default: 'test')
-  --num_train_steps: Number of train steps.
-    (an integer)
   --num_workers: When num_workers > 1, training uses
     MultiWorkerMirroredStrategy. When num_workers = 1 it uses MirroredStrategy.
     (default: '1')
@@ -64,6 +52,9 @@ model_main_tf2.py:
     examples for evaluation, where n is provided. This is only used if
     `eval_training_data` is True.
     (default: '5')
+    (an integer)
+  --steps_per_run: how many steps to between evaluation
+    (default: '25')
     (an integer)
   --tpu_name: Name of the Cloud TPU for Cluster Resolvers.
   --[no]use_tpu: Whether the job is executing on a TPU.
@@ -94,9 +85,8 @@ logger = logging.getLogger(__name__)
 
 flags.DEFINE_string('pipeline_config_path', None, 'Path to pipeline config '
                                                   'file.')
-flags.DEFINE_integer('num_train_steps', None, 'Number of train steps.')
-flags.DEFINE_bool('eval_on_train_data', False, 'Enable evaluating on train '
-                                               'data (only supported in distributed training).')
+
+
 flags.DEFINE_integer('sample_1_of_n_eval_examples', None, 'Will sample one of '
                                                           'every n eval input examples, where n is provided.')
 flags.DEFINE_integer('sample_1_of_n_eval_on_train_examples', 5, 'Will sample '
@@ -106,10 +96,6 @@ flags.DEFINE_integer('sample_1_of_n_eval_on_train_examples', 5, 'Will sample '
 flags.DEFINE_string(
     'model_dir', None, 'Path to output model directory '
                        'where event and checkpoint files will be written.')
-flags.DEFINE_string(
-    'checkpoint_dir', None, 'Path to directory holding a checkpoint.  If '
-                            '`checkpoint_dir` is provided, this binary operates in eval-only mode, '
-                            'writing resulting metrics to `model_dir`.')
 
 flags.DEFINE_integer('eval_timeout', 3600, 'Number of seconds to wait for an'
                                            'evaluation checkpoint before exiting.')
@@ -123,8 +109,7 @@ flags.DEFINE_integer(
     'num_workers', 1, 'When num_workers > 1, training uses '
                       'MultiWorkerMirroredStrategy. When num_workers = 1 it uses '
                       'MirroredStrategy.')
-flags.DEFINE_integer(
-    'checkpoint_every_n', 50, 'Integer defining how often we checkpoint.')
+
 flags.DEFINE_boolean('record_summaries', True,
                      ('Whether or not to record summaries during'
                       ' training.'))
@@ -150,6 +135,11 @@ flags.DEFINE_boolean(
     'continue_from_checkpoint',
     help='whether training should continue from a checkpoint',
     default=False
+)
+flags.DEFINE_integer(
+    'steps_per_run',
+    help='how many steps to between evaluation',
+    default=25
 )
 
 FLAGS = flags.FLAGS
@@ -183,7 +173,6 @@ def train_model(pipeline_config_path, model_dir, steps_per_run):
         model_lib_v2.train_loop(
             pipeline_config_path=pipeline_config_path,
             model_dir=model_dir,
-            train_steps=FLAGS.num_train_steps,
             use_tpu=FLAGS.use_tpu,
             checkpoint_every_n=steps_per_run-1,
             record_summaries=FLAGS.record_summaries,
@@ -204,7 +193,6 @@ def eval_model(pipeline_config_path, model_dir):
     model_lib_v2.eval_continuously(
         pipeline_config_path=pipeline_config_path,
         model_dir=model_dir,
-        train_steps=FLAGS.num_train_steps,
         sample_1_of_n_eval_examples=FLAGS.sample_1_of_n_eval_examples,
         sample_1_of_n_eval_on_train_examples=(
             FLAGS.sample_1_of_n_eval_on_train_examples),
@@ -224,7 +212,7 @@ def train_and_eval(last_results, pipeline_config_path, model_dir, steps_per_run)
     :param model_dir: the directory containing the model files
     :param steps_per_run: how many steps will be taken this run
     :return: a dict containing information about the training progress including if the eval loss went up and if we
-    should stop or not.
+        should stop or not.
     """
 
     # train for n steps
@@ -273,7 +261,6 @@ def main(unused_argv):
         if FLAGS.continue_from_checkpoint:
             logger.info(f'Continuing from checkpoint at {full_path(model_dir)}')
             num_steps = checkpoint_steps(model_dir)
-            # TODO save and load results dict from previous run
         else:
             # if not continuing from checkpoint, raise error
             logger.error(f'Checkpoint file exists at {full_path(model_dir)} but continue_from_checkpoint is false')
@@ -295,7 +282,7 @@ def main(unused_argv):
 
     # begin the main training loop. Will continuously run until it is detected that the model is beginning to over-fit
     results = {'went_up': False, 'should_stop': False}
-    steps_per_run = 25
+    steps_per_run = FLAGS.steps_per_run
     while not results['should_stop']:
         num_steps += steps_per_run
 
