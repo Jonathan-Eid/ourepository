@@ -59,9 +59,9 @@ function initiate_upload($owner_id) {
 
     $filename = $our_db->real_escape_string($_POST['filename']);
     $identifier = $our_db->real_escape_string($_POST['identifier']);
-    $number_chunks = $our_db->real_escape_string($_POST['number_chunks']);
-    $size_bytes = $our_db->real_escape_string($_POST['size_bytes']);
-    $md5_hash = $our_db->real_escape_string($_POST['md5_hash']);
+    $number_chunks = $our_db->real_escape_string($_POST['numberChunks']);
+    $size_bytes = $our_db->real_escape_string($_POST['sizeBytes']);
+    $md5_hash = $our_db->real_escape_string($_POST['md5Hash']);
 
     $filename = str_replace(" ", "_", $filename);
     if (!preg_match("/^[a-zA-Z0-9_.-]*$/", $filename)) {
@@ -163,7 +163,7 @@ function process_chunk($owner_id) {
         exit(1);
     }
 
-    if (!isset($_POST['md5_hash'])) {
+    if (!isset($_POST['md5Hash'])) {
         error_log("ERROR! Missing upload md5_hash");
         $response['err_title'] = "File Chunk Upload Failure";
         $response['err_msg'] = "File md5_hash was missing.";
@@ -180,7 +180,7 @@ function process_chunk($owner_id) {
     }
 
     $identifier = $_POST['identifier'];
-    $md5_hash = $_POST['md5_hash'];
+    $md5_hash = $_POST['md5Hash'];
     $chunk = $_POST['chunk'];
     $chunk_size = 0;
 

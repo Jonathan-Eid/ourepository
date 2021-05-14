@@ -1,8 +1,8 @@
-  
 <?php
+
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
-
+use Ramsey\Uuid\Uuid;
 
 /**
  * @ORM\Entity 
@@ -17,9 +17,10 @@ class Organization implements JsonSerializable
 
     /** @ORM\Column(type="string") */
     protected $name;
-
-    /** @ORM\Column(type="boolean") */
-    protected $visible;
+    /**
+     * @ORM\OneToMany(targetEntity="Project", mappedBy="organization", fetch="EAGER")
+     */
+    protected $projects;
 
     /**
      * @ORM\OneToMany(targetEntity="OrgACL", mappedBy="organization")
@@ -36,61 +37,155 @@ class Organization implements JsonSerializable
      */
     protected $roles;
 
-    // /** @ORM\Column(type="boolean") */
-    // protected $projects;
 
-    public function __construct() {
-        $this->orgAcls = new ArrayCollection();
-        $this->memberRoles = new ArrayCollection();
-        $this->roles = new ArrayCollection();
+    /** 
+     * @var \Ramsey\Uuid\UuidInterface
+     * @ORM\Column(type="uuid", unique=true)
+     */
+    protected $uuid;
 
-        
+    /** @ORM\OneToMany(targetEntity="Label", mappedBy="organization") */
+    protected $labels;
 
-    }
-
-
-
+    /**
+     * @return mixed
+     */
     public function getId()
     {
         return $this->id;
     }
 
+    /**
+     * @param mixed $id
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * @return mixed
+     */
     public function getName()
     {
         return $this->name;
     }
 
+    /**
+     * @param mixed $name
+     */
     public function setName($name)
     {
         $this->name = $name;
     }
 
-    public function setVisible($visible)
+    /**
+     * @return mixed
+     */
+    public function getProjects()
     {
-        $this->visible = $visible;
+        return $this->projects;
     }
 
-    public function addOrgACL($acl)
+    /**
+     * @param mixed $projects
+     */
+    public function setProjects($projects)
     {
-        $this->orgAcls->add($acl);
+        $this->projects = $projects;
     }
 
-    public function addMemberRole($memberRole)
+    /**
+     * @return ArrayCollection
+     */
+    public function getOrgAcls(): ArrayCollection
     {
-        $this->memberRoles->add($memberRole);
+        return $this->orgAcls;
     }
 
-    public function addRole($role)
+    /**
+     * @param ArrayCollection $orgAcls
+     */
+    public function setOrgAcls(ArrayCollection $orgAcls)
     {
-        $this->roles->add($role);
+        $this->orgAcls = $orgAcls;
     }
 
-    public function jsonSerialize()
+    /**
+     * @return ArrayCollection
+     */
+    public function getMemberRoles(): ArrayCollection
     {
+        return $this->memberRoles;
+    }
+
+    /**
+     * @param ArrayCollection $memberRoles
+     */
+    public function setMemberRoles(ArrayCollection $memberRoles)
+    {
+        $this->memberRoles = $memberRoles;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getRoles(): ArrayCollection
+    {
+        return $this->roles;
+    }
+
+    /**
+     * @param ArrayCollection $roles
+     */
+    public function setRoles(ArrayCollection $roles)
+    {
+        $this->roles = $roles;
+    }
+
+    /**
+     */
+    public function getUuid()
+    {
+        return $this->uuid;
+    }
+
+    /**
+     */
+    public function setUuid($uuid)
+    {
+        $this->uuid = $uuid;
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getLabels(): ArrayCollection
+    {
+        return $this->labels;
+    }
+
+    /**
+     * @param ArrayCollection $labels
+     */
+    public function setLabels(ArrayCollection $labels)
+    {
+        $this->labels = $labels;
+    }
+
+    public function __construct() {
+        $this->projects = new ArrayCollection();
+        $this->orgAcls = new ArrayCollection();
+        $this->memberRoles = new ArrayCollection();
+        $this->roles = new ArrayCollection();
+        $this->uuid = Uuid::uuid4()->toString();
+        $this->labels = new ArrayCollection();
+    }
+
+    public function jsonSerialize() {
         return array(
-            'name' => $this->name,
-            'visible'=> $this->visible,
+            'uuid'=> $this->uuid,
+            'name' => $this->name
         );
     }
-
 }

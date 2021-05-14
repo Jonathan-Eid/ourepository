@@ -3,9 +3,14 @@
         "doctrine/orm": "^2.8.2",
         "symfony/yaml": "2.*",
         "doctrine/collections": "^1.6",
-        "firebase/php-jwt": "^5.2"
+        "ramsey/uuid-doctrine": "^1.6",
+        "firebase/php-jwt": "^5.2",
+        "phpseclib/phpseclib": "~3.0",
+        "ext-json": "*"
     },
     "autoload": {
         "psr-0": {"": "src/"}
-    }
+    },
+    "name": "",
+    "description": ""
 }

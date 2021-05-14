@@ -41,12 +41,12 @@ function generate_thumbnail($owner_id, $mosaic_id) {
     echo "thumbnail filename: '$thumbnail_filename'\n";
 
     //$command = "convert '$UPLOAD_DIRECTORY/$owner_id/$filename' -resize '350x350^' -gravity center -alpha off -crop 350x350+0+0 +repage '$ARCHIVE_DIRECTORY/$owner_id/$thumbnail_filename'";
-    $command = "vipsthumbnail '$UPLOAD_DIRECTORY/$owner_id/$filename' --size 350x350 --crop -o '$ARCHIVE_DIRECTORY/$owner_id/$thumbnail_filename'";
+    $command = "vipsthumbnail \"$UPLOAD_DIRECTORY/$owner_id/$filename\" --size 350x350 --crop -o \"$ARCHIVE_DIRECTORY/$owner_id/$thumbnail_filename\"";
     echo "command: '$command'\n";
     $output = shell_exec($command);
 
     //$command = "convert '$UPLOAD_DIRECTORY/$owner_id/$filename' -resize 1000 -alpha off '$ARCHIVE_DIRECTORY/$owner_id/$preview_filename'";
-    $command = "vipsthumbnail '$UPLOAD_DIRECTORY/$owner_id/$filename' --size 1000 -o '$ARCHIVE_DIRECTORY/$owner_id/$preview_filename'";
+    $command = "vipsthumbnail \"$UPLOAD_DIRECTORY/$owner_id/$filename\" --size 1000 -o \"$ARCHIVE_DIRECTORY/$owner_id/$preview_filename\"";
     echo "command: '$command'\n";
     $output = shell_exec($command);
 
@@ -62,7 +62,7 @@ function update_mosaic_metadata($owner_id, $mosaic_id) {
     $row = $result->fetch_assoc();
     $filename = $row["filename"];
 
-    $command = "gdalinfo '$UPLOAD_DIRECTORY/$owner_id/$filename'";
+    $command = "gdalinfo \"$UPLOAD_DIRECTORY/$owner_id/$filename\"";
     $output = shell_exec($command);
 
     echo $output . "\n";
@@ -283,7 +283,7 @@ function split_mosaic($owner_id, $mosaic_id) {
     query_our_db($query);
 
     //$command = "../scripts/magick-slicer.sh -v3 -e png -mid $mosaic_id '$UPLOAD_DIRECTORY/$owner_id/$filename' '$ARCHIVE_DIRECTORY/$owner_id/$filename_base'";
-    $command = "vips dzsave --suffix .png '$UPLOAD_DIRECTORY/$owner_id/$filename' '$ARCHIVE_DIRECTORY/$owner_id/$filename_base'";
+    $command = "vips dzsave --suffix .png \"$UPLOAD_DIRECTORY/$owner_id/$filename\" \"$ARCHIVE_DIRECTORY/$owner_id/$filename_base\"";
     echo "command: '$command'\n";
     $output = shell_exec($command);
 
@@ -315,6 +315,9 @@ function split_mosaic($owner_id, $mosaic_id) {
 
 
 function process_uploaded_mosaic($owner_id, $mosaic_id) {
+    global $ARCHIVE_DIRECTORY;
+    mkdir("$ARCHIVE_DIRECTORY/$owner_id", 0777, true);
+
     generate_thumbnail($owner_id, $mosaic_id);
     update_mosaic_metadata($owner_id, $mosaic_id);
     split_mosaic($owner_id, $mosaic_id);

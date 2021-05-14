@@ -5,7 +5,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity 
  * @ORM\Table(name="member_roles")
  */
-class MemberRole
+class MemberRole implements JsonSerializable
 {
     /** @ORM\Id 
     * @ORM\Column(type="integer") 
@@ -27,7 +27,7 @@ class MemberRole
     protected $organization;
 
 
-    /** @ORM\OneToOne(targetEntity="Role") */
+    /** @ORM\ManyToOne(targetEntity="Role") */
     protected $role;
 
 
@@ -37,10 +37,6 @@ class MemberRole
         return $this->id;
     }
 
-    public function getName()
-    {
-        return $this->name;
-    }
     
     public function setName($name)
     {
@@ -61,4 +57,12 @@ class MemberRole
     {
         $this->role = $role;
     } 
+
+    public function jsonSerialize()
+    {
+        return array(
+            'id' => $this->id,
+            'member' => $this->member
+        );
+    }
 }

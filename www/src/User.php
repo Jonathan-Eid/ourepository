@@ -7,7 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 /**
  * @ORM\Entity @ORM\Table(name="users")
  */
-class User
+class User implements JsonSerializable
 {
     /** @ORM\Id @ORM\Column(type="integer") @ORM\GeneratedValue */
     protected $id;
@@ -123,5 +123,13 @@ class User
     {
         return $this->memberRoles;
     }
-
+    public function jsonSerialize()
+    {
+        return array(
+            'id' => $this->id,
+            'email' => $this->email,
+            'given_name' => $this->given_name,
+            'family_name' => $this->family_name
+        );
+    }
 }
